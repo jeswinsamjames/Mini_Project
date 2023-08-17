@@ -21,13 +21,19 @@
             <div class="col-md-8">
               <div class="mb-4">
               <h3> <strong>Create new account</strong></h3>
-            </div>
+            
+              {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <strong></strong> {{ message.message }} 
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {% endfor %}
 
             <form action="#" method="post" name="form">
               {% csrf_token %}
               <div class="form-group ">
-                <label for="full_name">Full Name</label>
-                <input type="text" class="form-control" name="name" id="full_name">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="name" id="full_name" required>
                 <div class="error-message"></div>
               </div>
             
@@ -53,25 +59,20 @@
                 <input type="password" class="form-control" name="cnpass"  id="cnpassword">
                 <div class="error-message"></div>
               </div>
-              <div class="d-flex mb-5 align-items-center">
-                <label class="control control--checkbox mb-0">
-                  <span class="caption">Remember me</span>
-                  <input type="checkbox" checked="checked" />
-                  <div class="control__indicator"></div>
-                </label>
-              </div>
-              <button type="submit" class="btn text-white btn-block btn-primary">Register</button>
+              <button type="submit"  class="btn text-white btn-block btn-primary">Register</button>
            
               <div class="form-container">
                 <!-- ... other form elements ... -->
                 <a class="d-block text-left my-4 text-muted" href="/login">or Login</a>
-                <div class="social-icons">
-                  <a href="#" class="social-icon facebook-icon"><i class="fab fa-facebook"></i></a>
-                  <a href="#" class="social-icon twitter-icon"><i class="fab fa-twitter"></i></a>
-                  <a href="#" class="social-icon google-icon"><i class="fab fa-google"></i></a>
+                <div class="container">
+                  <button class="login-button google" id="google-login">
+                    <a href="#" class="social-icon google-icon"><i class="fab fa-google"></i></a>
+                    <span>Login with Google</span>
+                  </button>
                 </div>
               </div>
             </form>
+          </div>
             
             
             </div>

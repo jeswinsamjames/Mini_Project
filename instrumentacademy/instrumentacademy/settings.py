@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,8 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home',
     'captcha',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     
 ]
+
+SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET=True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -129,7 +138,27 @@ STATICFILES_DIRS = [
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+AUTHENTICATION_BACKENDS = [
+    'users.backends.EmailBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+    ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MESSAGE_TAGS={
+    messages.ERROR:'danger'
+}
 
 RECAPTCHA_PUBLIC_KEY = '6LeZ068nAAAAABep7CDUw-elMEnLjSAF07KjWLBT'
 RECAPTCHA_PRIVATE_KEY = '6LeZ068nAAAAANneaQWJ6rubVAInZRvLqJhFI4iK'

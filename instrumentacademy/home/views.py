@@ -29,7 +29,8 @@ def login(request):
             auth.login(request,user)
             return redirect('/')
         else :
-            messages.info(request,"Invalid Credentials!")
+            messages.error(request,"Invalid Credentials!")
+            return redirect('/login')
     return render(request,"login.html")
 
 
@@ -40,24 +41,33 @@ def logout(request):
 
 def register(request):
     if request.method == 'POST':
-        username=request.POST.get('name')
-        email=request.POST.get('email')
-        password=request.POST.get('pass')
-        confirmpassword=request.POST.get('cnpass')
-        if confirmpassword==password:
-            if User.objects.filter(email=email).exists():
-                messages.error(request,'Email already exists!')
-                return render(request,'register.html')
-            else :
-                user_reg=User.objects.create_user(username=username,email=email,password=password)
-                user_reg.save()
+        username = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('pass')
+        confirmpassword = request.POST.get('cnpass')
 
-            # Handle user registration here (create user, log in, etc.)
-                messages.success(request, 'Registration successful. You can now log in.')
-                return redirect('login')  # Redirect to login page
-        else:
-            messages.error(request,'Password does not match')
-            return render(request,'reg.html')
+        if password != confirmpassword:
+            messages.error(request, 'Passwords do not match.')
+            return redirect('/register')
+        
+        try:
+            user = User.objects.get(username=username)
+            messages.error(request, 'Username already taken.')
+            return redirect('/register')
+        except User.DoesNotExist:
+            pass
+        
+        try:
+            user = User.objects.get(email=email)
+            messages.warning(request, 'Email id already exists.')
+            return redirect('/register')
+        except User.DoesNotExist:
+            pass
+        
+        user = User.objects.create_user(username=username, email=email, password=password)
+        messages.success(request, 'Registration successful. You can now log in.')
+        return redirect('/login')
+        
     return render(request, 'register.html')
 
 def base(request):

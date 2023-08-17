@@ -178,7 +178,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 10vh;
+    height: 5vh;
 }
 .social-icon {
     display: inline-block;
@@ -192,12 +192,7 @@ h2 {
     line-height: 50px;
     font-size: 24px;
 }
-.facebook-icon {
-    background-color: #1877f2;
-}
-.twitter-icon {
-    background-color: #1da1f2;
-}
+
 .google-icon {
     background-color: #ea4335;
 }
@@ -212,6 +207,32 @@ h2 {
 /* Error styles for form group */
 .form-group.error input.form-control {
   border-color: #ff6666;
+}
+.container {
+  text-align: center;
+}
+
+.login-button {
+  display: inline-block;
+  background-color: #fff;
+  border: 2px solid #4285F4;
+  border-radius: 4px;
+  padding: 2px 50px;
+  text-decoration: none;
+  color: #4285F4;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #4285F4;
+  color: #fff;
+}
+
+.icon {
+  width: 10px;
+  height: 10px;
+  vertical-align: middle;
+  margin-right: 10px;
 }
  
   
