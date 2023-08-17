@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+   {% block title %}
+    login
+   {% endblock title %}
+ {% block body %}
+ 
+  
+  <div class="content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 order-md-2">
+          <img src="{% static 'assets/img/index1.png' %}" alt="Image" class="img-fluid">
+        </div>
+        <div class="col-md-6 contents">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="mb-4">
+              <h3>Sign In to <strong>MusciLearn Hub</strong></h3>
+            </div>
+              <form action="#" method="post">
+                {% csrf_token %}
+                <div class="form-group first">
+                  <label for="username">Username</label>
+                  <input type="text" class="form-control" id="username" name="username">
+                  <div class="error-message"></div>
+                </div>
+                
+                <div class="form-group last mb-4">
+                  <label for="password">Password</label>
+                  <input type="password" class="form-control" id="password" name="password">
+                  <div class="error-message"></div>
+                </div>
+                <div class="input-group mb-3">
+                  <div class="g-recaptcha" data-sitekey="6LcJj44nAAAAAM_NCztnb4EgTD6QHnfAgix5P25k"></div>
+                </div>
+
+  
+                <input type="submit" value="Log In" class="btn text-white btn-block btn-primary"><br>
+                <div>
+                  <a href="/forget">Forget Password</a>
+                </div>
+  <div>
+    <a href="/register">Don't have an account? Sign Up</a>
+  </div>
+                <div class="form-container">  
+                  <!-- ... other form elements ... -->
+                  <span class="d-block text-left my-4 text-muted">or sign in with</span>
+                  <div class="social-icons">
+                    <a href="{% static '#' %}" class="social-icon facebook-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="{% static '#' %}" class="social-icon twitter-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="{% static '#' %}" class="social-icon google-icon"><i class="fab fa-google"></i></a>
+                </div>
+              </div>
+              
+              </div>
+              
+              </form>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  
+    <script src="{%static 'assets/js/loginjs/jquery-3.3.1.min.js'%}"></script>
+    <script src="{%static 'assets/js/loginjs/popper.min.js'%}"></script>
+    <script src="{%static 'assets/js/loginjs/bootstrap.min.js'%}"></script>
+    <script src="{%static 'assets/js/loginjs/main.js'%}"></script>
+    <script src="{%static 'assets/js/loginjs/login.js'%}"></script>
+
+    {% endblock body %}
+  </body>
