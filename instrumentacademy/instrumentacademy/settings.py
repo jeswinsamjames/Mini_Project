@@ -139,7 +139,7 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 AUTHENTICATION_BACKENDS = [
-    'users.backends.EmailBackend',
+    
     'allauth.account.auth_backends.AuthenticationBackend'
     ]
 

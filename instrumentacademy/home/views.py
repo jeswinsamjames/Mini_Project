@@ -70,8 +70,31 @@ def register(request):
         
     return render(request, 'register.html')
 
+    
+
 def base(request):
     return render(request,"base.html" )
+
+
+def google_logout(request):
+    # Revoke the access token from Google
+    if 'access_token' in request.session:
+        access_token = request.session['access_token']
+        # Implement the code to revoke the access token from Google using the API
+        # For example, using the requests library:
+        # import requests
+        # revoke_url = f"https://accounts.google.com/o/oauth2/revoke?token={access_token}"
+        # response = requests.get(revoke_url)
+        # if response.status_code == 200:
+        #     del request.session['access_token']
+        # else:
+        #     print("Failed to revoke access token")
+        del request.session['access_token']  # Remove the token from session
+
+    # Clear user session data
+    request.session.flush()
+    messages.success(request, "Logged out successfully.")
+    return redirect('/login') 
 
 def forget(request):
     return render(request,"forget.html" )

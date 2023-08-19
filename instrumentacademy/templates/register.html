@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
   {% block title %}
   Registration
   {% endblock title %}
@@ -64,14 +65,15 @@
               <div class="form-container">
                 <!-- ... other form elements ... -->
                 <a class="d-block text-left my-4 text-muted" href="/login">or Login</a>
-                <div class="container">
-                  <button class="login-button google" id="google-login">
-                    <a href="#" class="social-icon google-icon"><i class="fab fa-google"></i></a>
-                    <span>Login with Google</span>
-                  </button>
-                </div>
+                
               </div>
             </form>
+            <div class="container">
+              <button class="login-button google" id="google-login" onclick="window.location.href='{% provider_login_url 'google' %}?next=/'">
+                <i class="fab fa-google"></i>
+                <span>Login with Google</span>
+              </button>
+            </div>
           </div>
             
             
