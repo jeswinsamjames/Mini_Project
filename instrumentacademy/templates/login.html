@@ -5,8 +5,18 @@
    {% block title %}
     login
    {% endblock title %}
+   <script>
+    function renderRecaptcha() {
+        grecaptcha.render('recaptcha', {
+            'sitekey': 'YOUR_RECAPTCHA_SITE_KEY',
+            'callback': verifyRecaptcha,
+        });
+    }
+  </script>
+  <script src="https://www.google.com/recaptcha/api.js?onload=renderRecaptcha&render=explicit" async defer></script>
+  
  {% block body %}
- 
+
   
   <div class="content">
     <div class="container">
@@ -20,43 +30,50 @@
               <div class="mb-4">
               <h3>Sign In to <strong>MusciLearn Hub</strong></h3>
             </div>
+            {% if error %}
+            <span>{{error}}</span>    
+            {% endif %}
             {% for message in messages %}
               <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                 <strong></strong> {{ message.message }} 
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
               {% endfor %}
-              <form action="#" method="post">
+              
+
+              <form action="{% url 'login' %}" name="LoginForm"method="post">
                 {% csrf_token %}
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 <div class="form-group first">
-                  <label for="username">Username</label>
-                  <input type="text" class="form-control" id="username" name="username">
-                  <div class="error-message"></div>
+                    <label for="id_email">username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                    <div class="error-message">{{ form.username.errors }}</div>
+                </div>
+                <div class="form-group last mb-4">
+                    <label for="id_password">Password</label>
+                    <input type="password" class="form-control" id="id_password" name="password">
+                    <div class="error-message">{{ form.password.errors }}</div>
+                </div>
+                  <!-- Include the reCAPTCHA widget -->
+                  <div class="g-recaptcha" data-sitekey="6LeZ068nAAAAABep7CDUw-elMEnLjSAF07KjWLBT" data-callback="verifyRecaptcha"></div>
+    
+                  <!-- Hidden input field to store the reCAPTCHA response token -->
+                  <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
+
+                  
+                <input type="submit" value="Log In" class="btn text-white btn-block btn-primary"><br>
+                <div>
+                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
                 </div>
                 
-                <div class="form-group last mb-4">
-                  <label for="password">Password</label>
-                  <input type="password" class="form-control" id="password" name="password">
-                  <div class="error-message"></div>
-                </div>
-                <div class="input-group mb-3">
-                  <div class="g-recaptcha" data-sitekey='6LeZ068nAAAAABep7CDUw-elMEnLjSAF07KjWLBT'></div>
-              </div>
-  
-                <input type="submit" value="Log In" onclick="check()" class="btn text-white btn-block btn-primary"><br>
                 <div>
-                  <a href="/forget">Forget Password</a>
+                    <a href="/registration">Don't have an account? Sign Up</a>
                 </div>
-  <div>
-    <a href="/register">Don't have an account? Sign Up</a>
-  </div>
-                <div class="form-container">  
-                  <!-- ... other form elements ... -->
-                  <span class="d-block text-left my-4 text-muted">or sign in with</span>
-                  
-                 
-              </div>
-              
+                <div class="form-container">
+                    <span class="d-block text-left my-4 text-muted">or sign in with</span>
+                    <!-- ... social login buttons or other elements ... -->
+                </div>
+                
               {% comment %} <script>
                 // Check if there is an error message in the session
                 const errorMessage = "{{ messages.get_messages }}";
@@ -65,9 +82,9 @@
                     alert(errorMessage);
                 }
             </script> {% endcomment %}
-              </div>
-              
-              </form>
+            </form>
+            
+
               <div class="container">
                 <button class="login-button google" id="google-login" onclick="window.location.href='{% provider_login_url 'google' %}?next=/'">
                   <i class="fab fa-google"></i>
@@ -92,4 +109,46 @@
     <script src="{%static 'assets/js/loginjs/login.js'%}"></script>
 
     {% endblock body %}
-  </body>
+
+    <script src="https://www.google.com/recaptcha/api.js?render=YOUR_RECAPTCHA_SITE_KEY" async defer></script>
+    <script>
+      function verifyRecaptcha(token) {
+          // Send the reCAPTCHA token to your server for verification
+          fetch('/verify-recaptcha/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': getCookie('csrftoken'),  // Include the CSRF token
+              },
+              body: JSON.stringify({ token: token }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // reCAPTCHA verification succeeded, submit the form
+                  document.getElementById('login-form').submit();
+              } else {
+                  // Handle reCAPTCHA verification failure (e.g., show an error message)
+                  alert('reCAPTCHA verification failed. Please try again.');
+              }
+          });
+      }
+  
+      // Get the CSRF token from cookies
+      function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+  </script>
+  
+ 

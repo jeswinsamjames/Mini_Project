@@ -1,0 +1,183 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+   
+</head>
+    <title>User Profile</title>
+    
+    <style>
+      
+        
+        .profileform h1 {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+    .profileform .profile-container {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .profileform p {
+            margin: 10px 0;
+            padding: 0;
+        }
+        .field-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .profileform a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+     
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header text-center bg-primary text-white">
+                        Admin Profile
+                    </div>
+                    <div class="card-body">
+                        <form id="user-profile-form" method="post" enctype="multipart/form-data" action="{% url 'edit_profile_tutor' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="id_profile_picture">Profile Picture:</label>
+                                <input type="file" class="form-control-file" id="id_profile_picture" name="profile_picture">
+                                <small class="form-text text-muted">Upload a professional profile picture.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_first_name">First Name:</label>
+                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_last_name">Last Name:</label>
+                                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.last_name }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_email">Email:</label>
+                                <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_phoneNo">Phone Number:</label>
+                                <input type="text" class="form-control" id="id_phoneNo" name="phoneNo" value="{{ user.userprofile.phoneNo }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_address">Address:</label>
+                                <input type="text" class="form-control" id="id_address" name="address" value="{{ user.userprofile.address }}" readonly>
+                            </div>
+                            <!-- Add more fields here as needed -->
+    
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" id="edit-button">Edit Profile</button>
+                                <button type="button" class="btn btn-success ml-2" id="save-button" style="display: none;">Save</button>
+                                <button type="button" class="btn btn-secondary ml-2" id="cancel-button" style="display: none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <!-- Include Bootstrap JS and other scripts here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+          // Initially, only the Edit button is visible
+          
+          $("#edit-button").show();
+          $("#save-button").hide();
+          $("#cancel-button").hide();
+    
+          // Function to toggle between Edit and View modes
+          function toggleEditMode() {
+            
+            // Toggle readonly attribute for input fields
+            $("input, textarea").prop("readonly", function (_, attr) {
+              return !attr;
+            });
+            
+    
+            // Toggle visibility of buttons
+            $("#edit-button").toggle();
+            $("#save-button").toggle();
+            $("#cancel-button").toggle();
+    
+            // Toggle visibility of gender options
+            toggleGenderOptions();
+          }
+    
+          // Function to toggle visibility of gender options
+          function toggleGenderOptions() {
+            const editMode = $("#edit-button").is(":visible");
+            const selectedGender = $("input[name='gender']:checked").val();
+    
+            $("input[name='gender']").each(function () {
+              const genderValue = $(this).data("gender");
+              if (!editMode || genderValue === selectedGender) {
+                $(this).closest(".form-check").show();
+                $("#gender1").hide();
+              } else {
+                $(this).closest(".form-check").hide();
+                $("#gender1").show();
+              }
+            });
+          }
+    
+          // Edit button click event
+          $("#edit-button").click(function () {
+            toggleEditMode();
+          });
+    
+          // Cancel button click event
+          $("#cancel-button").click(function () {
+            toggleEditMode();
+            // Reset form to original values
+            $("#user-profile-form")[0].reset();
+          });
+    
+          // Save button click event
+          $("#save-button").click(function () {
+            toggleEditMode();
+            // Submit the form for saving changes
+            $("#user-profile-form").submit();
+          });
+    
+          // Initial setup of gender options visibility
+          toggleGenderOptions();
+        });
+      </script>
+    
+    
+    {% endblock content %}

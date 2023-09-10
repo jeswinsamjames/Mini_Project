@@ -1,0 +1,254 @@
+{% extends 'user/home.html' %}
+{% block style %}
+<script>
+    $(document).ready(function() {
+        // Function to toggle the edit mode
+        function toggleEdit(formId, editButton, saveButton, cancelButton) {
+            const form = $(`#${formId}`);
+            const userEditableInputs = form.find('input:not([type="hidden"]), select, textarea');
+            const editBtn = $(editButton);
+            const saveBtn = $(saveButton);
+            const cancelBtn = $(cancelButton);
+
+            userEditableInputs.prop('disabled', function(i, val) {
+                return !val;
+            });
+
+            editBtn.toggle();
+            saveBtn.toggle();
+            cancelBtn.toggleClass('invisible');
+        }
+
+        // Add click event listeners to the edit buttons for each section
+        $('.edit-button').click(function() {
+            const sectionId = $(this).closest('.tab-pane').attr('id');
+            toggleEdit(`${sectionId}-form`, `#${sectionId} .edit-button`, `#${sectionId} .save-button`, `#${sectionId} .cancel-button`);
+        });
+
+        // Add click event listeners to the cancel buttons for each section
+        $('.cancel-button').click(function() {
+            const sectionId = $(this).closest('.tab-pane').attr('id');
+            toggleEdit(`${sectionId}-form`, `#${sectionId} .edit-button`, `#${sectionId} .save-button`, `#${sectionId} .cancel-button`);
+        });
+    });
+    
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const usernameInput = document.getElementById('username');
+
+    // Reference to the validation message element
+    const validationMessage = document.getElementById('username-error');
+
+    // Reference to the submit button (if needed)
+    const submitButton = document.getElementById('sub');
+
+    // Add an event listener to the input field
+    usernameInput.addEventListener('input', function() {
+        const username = usernameInput.value.trim();
+        if (username === '') {
+            // Clear the validation message if the field is empty
+            validationMessage.textContent = '';
+            submitButton.disabled = false; // Enable the submit button
+            return;
+        }
+
+        // Call the live_valid function with the entered username
+        live_valid(username);
+    });
+    function live_valid(username) {
+        const validationMessage = document.getElementById('username-error');
+        submitButton=document.getElementById('sub');
+        console.log("error around here")
+        fetch('/validate-username/', {
+            method: 'POST', // Use POST method as per your Django view
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({ username: username }), // Send the username as JSON data
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.is_taken) {
+                validationMessage.style.color = 'red';
+                validationMessage.textContent = 'Username is already taken.';
+                submitButton.disabled = true;
+            } else {
+                validationMessage.style.color = 'green';
+                validationMessage.textContent = 'Username is available.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+});
+</script>
+<style>
+    .custom-container {
+        min-height: 350px; /* Adjust the minimum width as needed */
+    }
+    /* Dark Theme Styles */
+.dark-theme {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
+    border: 1px solid #555; /* Border style */
+    border-radius: 5px; /* Rounded corners for the container */
+}
+
+/* Active tab link style */
+.list-group-item.active {
+    background-color: #555; /* Active tab background color */
+}
+
+/* Inactive tab link style */
+.list-group-item {
+    background-color: #333; /* Inactive tab background color */
+    color: #fff; /* Text color for inactive tabs */
+}
+
+/* Additional CSS for Tab Content */
+.tab-content.dark-theme {
+    padding: 20px;
+}
+
+/* Style for headings in tab content */
+.tab-content h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #e45eff; /* Custom heading color */
+    text-align: center; /* Center-align the headings */
+}
+
+.tab-content p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+input[type="radio"] + label {
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Style the checked radio button label */
+input[type="radio"]:checked + label,input[type="radio"]:disabled:checked + label {
+    color: #007bff; /* Set the desired text color for the checked option */
+}
+input[type="radio"]:disabled:checked + label {
+    color: white; /* Your desired text color for disabled and checked radio buttons */
+}
+/* Style the disabled radio buttons */
+input[type="radio"]:disabled + label {
+    color: #888; /* Set a grayed-out text color for disabled options */
+}
+</style>
+{% endblock style %}
+
+
+{% block content %}
+<div class="custom-container">
+    <div class="container mt-5 mb-4 dark-theme">
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Sidebar for section selection -->
+                <div class="list-group">
+                    <a href="#user-info" class="list-group-item list-group-item-action active" data-toggle="tab">User Information</a>
+                    <a href="#bio" class="list-group-item list-group-item-action" data-toggle="tab">Bio</a>
+                    <a href="#contact" class="list-group-item list-group-item-action" data-toggle="tab">Contact</a>
+                    <!-- Add more section links as needed -->
+                </div>
+            </div>
+            <div class="col-md-9">
+                <!-- Tab content -->
+                <div class="tab-content dark-theme">
+                    <!-- User Information Section -->
+                    <div class="tab-pane fade show active" id="user-info">
+                        <h2>User Information</h2>
+                        <form method="post" action="{% url 'save_user' %}" id="user-info-form">
+                            {%  csrf_token %}
+                            <!-- User information fields here -->
+                            <input type="hidden" name="form_name" value="user">
+                            {% if  user.userprofile.profile_image %}
+                            <div class="d-flex justify-content-center align-items-center">
+                                <img src="{{ user.userprofile.profile_image.url }}" alt="Profile Image" class="img-fluid rounded-circle" width="150px">
+                            </div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" disabled><span id="username-error"></span>
+                            </div>
+                                                    
+                            <button type="button" class="btn btn-primary edit-button">Edit</button>
+                            <button type="submit" class="btn btn-success save-button" style="display: none;">Save</button>
+                            <button id="sub" type="button" class="btn btn-secondary cancel-button invisible">Cancel</button>
+                        </form>
+                    </div>
+
+                    <!-- Bio Section -->
+                    <div class="tab-pane fade" id="bio">
+                        <h2>Bio</h2>
+                        <form method="post" action="{% url 'save_bio' %}" id="bio-form">
+                            {% csrf_token %}
+                            <!-- Bio fields here -->
+                            <input type="hidden" name="form_name" value="bio">
+                            <div class="form-group">
+                                <label for="first-name">First Name:</label>
+                                <input type="text" id="first-name" name="first_name" class="form-control" value="{{ user.first_name }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Last Name:</label>
+                                <input type="text" id="last-name" name="last_name" class="form-control" value="{{ user.last_name }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Gender:</label>
+                                <div class="form-check">
+                                    <input type="radio" id="male" name="gender" value="M" class="form-check-input" disabled {% if user.userprofile.gender == 'M' %}checked{% endif %}>
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="female" name="gender" value="F" class="form-check-input" disabled {% if user.userprofile.gender == 'F' %}checked{% endif %}>
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="other" name="gender" value="O" class="form-check-input" disabled {% if user.userprofile.gender == 'O' %}checked{% endif %}>
+                                    <label class="form-check-label" for="other">Other</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of Birth:</label>
+                                <input type="date" id="dob" name="dob" class="form-control" value="{{ user.userprofile.dob|date:'Y-m-d' }}" disabled>
+                            </div>
+                            <button type="button" class="btn btn-primary edit-button">Edit</button>
+                            <button type="submit" class="btn btn-success save-button" style="display: none;">Save</button>
+                            <button type="button" class="btn btn-secondary cancel-button invisible">Cancel</button>
+                        </form>
+                    </div>
+
+                    <!-- Contact Section -->
+                    <div class="tab-pane fade" id="contact">
+                        <h2>Contact</h2>
+                        <form method="post" action="{% url 'save_contact' %}" id="contact-form">
+                            {% csrf_token %}
+                            <!-- Contact fields here -->
+                            <input type="hidden" name="form_name" value="contact">
+                            <div class="form-group">
+                                <label for="email">E-mail:</label>
+                                <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone-number">Phone Number:</label>
+                                <input type="text" id="phone-number" name="phone_number" class="form-control" value="{{ user.userprofile.phone_number }}" disabled>
+                            </div>
+                            <button type="button" class="btn btn-primary edit-button">Edit</button>
+                            <button type="submit" class="btn btn-success save-button" style="display: none;">Save</button>
+                            <button type="button" class="btn btn-secondary cancel-button invisible">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
+
+{% endblock content %}

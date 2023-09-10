@@ -29,15 +29,22 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'home',
     'captcha',
     'django.contrib.sites',
@@ -88,7 +95,7 @@ WSGI_APPLICATION = 'instrumentacademy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'database.sqlite3',
     }
 }
 
@@ -133,27 +140,32 @@ import os
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static')
 ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 AUTHENTICATION_BACKENDS = [
-    
+
+    'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
     ]
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Optional: Skip email confirmation
+LOGIN_REDIRECT_URL = '/leanerindex' 
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': False,
+        
     }
 }
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '378533382283-h5l53gflpqu9mks8tu56f6itvs4usmb3.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MESSAGE_TAGS={
@@ -162,3 +174,15 @@ MESSAGE_TAGS={
 
 RECAPTCHA_PUBLIC_KEY = '6LeZ068nAAAAABep7CDUw-elMEnLjSAF07KjWLBT'
 RECAPTCHA_PRIVATE_KEY = '6LeZ068nAAAAANneaQWJ6rubVAInZRvLqJhFI4iK'
+
+RECAPTCHA_REQUIRED = True
+RECAPTCHA_WIDGET_CLASS = 'captcha.widgets.ReCaptchaV2Checkbox'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mailtoshowvalidationok@gmail.com'  
+EMAIL_HOST_PASSWORD = 'qtwpnirvgsxzhtdo'  
+DEFAULT_FROM_EMAIL = 'mailtoshowvalidationok@gmail.com'
+

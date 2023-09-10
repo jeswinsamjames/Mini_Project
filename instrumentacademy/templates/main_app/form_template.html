@@ -1,0 +1,72 @@
+<form id="user-profile-form" method="post" enctype="multipart/form-data" action="{% url 'edit_profile_tutor' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_first_name">First Name:</label>
+        <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="id_last_name">Last Name:</label>
+        <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.last_name }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="id_email">Email:</label>
+        <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}" readonly>
+    </div>
+    <div class="form-group">
+        <label>Gender:</label>
+        <p id="gender1">
+            {% if user.userprofile.gender == 'M' %} Male{% endif %}
+            {% if user.userprofile.gender == 'F' %} Female{% endif %}
+            {% if user.userprofile.gender == 'O' %} Others{% endif %}
+        </p>
+        <div class="form-check">
+            <input type="radio" id="male" name="gender" value="M" class="form-check-input" readonly {% if user.userprofile.gender == 'M' %}checked{% endif %}>
+            <label class="form-check-label" for="male">Male</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" id="female" name="gender" value="F" class="form-check-input" readonly {% if user.userprofile.gender == 'F' %}checked{% endif %}>
+            <label class="form-check-label" for="female">Female</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" id="other" name="gender" value="O" class="form-check-input" readonly {% if user.userprofile.gender == 'O' %}checked{% endif %}>
+            <label class="form-check-label" for="other">Other</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="id_profile_picture">Profile Picture:</label>
+        <input type="file" class="form-control-file" id="id_profile_picture" name="profile_picture">
+        <small class="form-text text-muted">Upload a professional profile picture.</small>
+    </div>
+    <div class="form-group">
+        <label for="id_phoneNo">Phone Number:</label>
+        <input type="text" class="form-control" id="id_phoneNo" name="phoneNo" value="{{ user.userprofile.phoneNo }}" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_address">Address:</label>
+        <input type="text" class="form-control" id="id_address" name="address" value="{{ user.userprofile.address }}" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_description">Description:</label>
+        <textarea class="form-control" id="id_description" name="description" readonly>{{ user.userprofile.description }}</textarea>
+    </div>
+    
+   
+   
+    <!-- Qualifications -->
+    <div class="form-group">
+        <label for="id_qualifications">Qualifications:</label>
+        <textarea class="form-control" id="id_qualifications" name="qualifications" rows="4" readonly>{{ user.userprofile.qualifications }}</textarea>
+    </div>
+
+    <!-- Teaching Experience -->
+    <div class="form-group">
+        <label for="id_teaching_experience">Teaching Experience:</label>
+        <textarea class="form-control" id="id_teaching_experience" name="teaching_experience" rows="4" readonly>{{ user.userprofile.teaching_experience }}</textarea>
+    </div>
+
+    <button type="button" class="btn btn-primary" id="edit-button">Edit Profile</button>
+    <button type="button" class="btn btn-success" id="save-button" style="display: none;">Save</button>
+    <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;">Cancel</button>
+</form>
