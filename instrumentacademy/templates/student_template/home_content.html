@@ -268,7 +268,7 @@ var barChart = new Chart(barChartCanvas, {
     
             function sendToServer(token){
               $.ajax({
-                url: "{% url 'student_fcmtoken' %}",
+                {% comment %} url: "{% url 'student_fcmtoken' %}", {% endcomment %}
                 type: 'POST',
                 data: {
                     token: token,

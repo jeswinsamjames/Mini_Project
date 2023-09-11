@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -54,17 +53,17 @@
                         class="nav-link {% if manage_staff == request.path or request.path == edit_staff %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            Manage Staff
+                            Manage Tutor
 
                         </p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    {% url 'add_staff' as add_staff %}
-                    <a href="{{add_staff}}" class="nav-link {% if add_staff == request.path %} active {% endif %}">
+                    {% url 'register_tutor' as register_tutor %}
+                    <a href="{{register_tutor}}" class="nav-link {% if register_tutor == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            Add Staff
+                            Add Tutor
 
                         </p>
                     </a>
@@ -102,22 +101,12 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    {% url 'admin_notify_student' as admin_notify_student %}
-                    <a href="{{admin_notify_student}}" class="nav-link {% if admin_notify_student == request.path %} active {% endif %}">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Notify Student
-
-                        </p>
-                    </a>
-                </li>
               
 
                 
                 <li class="nav-item">
-                    {% url 'add_course' as add_course %}
-                    <a href="{{add_course}}" class="nav-link  {% if add_course == request.path %} active {% endif %}">
+                    {% url 'manage_course' as manage_course %}
+                    <a href="{{manage_course}}" class="nav-link  {% if manage_course == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             Add Course
@@ -137,28 +126,7 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    {% url 'add_subject' as add_subject %}
-                    <a href="{{add_subject}}" class="nav-link  {% if add_subject == request.path %} active {% endif %}">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Add Subject
-
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    {% url 'manage_subject' as manage_subject %}
-                    {% url 'edit_subject' subject_id as edit_subject %}
-                    <a href="{{manage_subject}}"
-                        class="nav-link  {% if edit_subject == request.path or manage_subject == request.path %} active {% endif %}">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Manage Subject
-
-                        </p>
-                    </a>
-                </li>
+               
                 <li class="nav-item">
                     {% url 'add_session' as add_session %}
                     <a href="{{add_session}}" class="nav-link  {% if add_session == request.path %} active {% endif %}">
@@ -214,18 +182,7 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                {% url 'view_staff_leave' as view_staff_leave %}
-
-                    <a href="{{view_staff_leave}}" class="nav-link  {% if view_staff_leave == request.path %} active {% endif %}">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Staff Leave
-                            
-                        </p>
-                    </a>
-                </li>
-               
+            
 {% elif user.userprofile.isTutor == 2 %}
    
  

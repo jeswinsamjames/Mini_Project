@@ -24,11 +24,11 @@ class UserProfile(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=120)
-    image = models.ImageField(upload_to='course_images')
-    title = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='course_images', null=True, blank=True)
+    instrument_name = models.CharField(max_length=100)
     description = models.TextField()
     # tutors = models.ManyToManyField(Tutor)
-    enrollments = models.PositiveIntegerField(default=0)
+    # enrollments = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

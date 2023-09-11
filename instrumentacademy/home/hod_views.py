@@ -42,40 +42,6 @@ def admin_home(request):
     return render(request, 'hod_template/home_content.html', context={})
 
 
-# def add_staff(request):
-#     form = StaffForm(request.POST or None, request.FILES or None)
-#     context = {'form': form, 'page_title': 'Add Staff'}
-#     if request.method == 'POST':
-#         if form.is_valid():
-#             first_name = form.cleaned_data.get('first_name')
-#             last_name = form.cleaned_data.get('last_name')
-#             address = form.cleaned_data.get('address')
-#             email = form.cleaned_data.get('email')
-#             gender = form.cleaned_data.get('gender')
-#             password = form.cleaned_data.get('password')
-#             course = form.cleaned_data.get('course')
-#             passport = request.FILES.get('profile_pic')
-#             fs = FileSystemStorage()
-#             filename = fs.save(passport.name, passport)
-#             passport_url = fs.url(filename)
-#             try:
-#                 user = CustomUser.objects.create_user(
-#                     email=email, password=password, user_type=2, first_name=first_name, last_name=last_name, profile_pic=passport_url)
-#                 user.gender = gender
-#                 user.address = address
-#                 user.staff.course = course
-#                 user.save()
-#                 messages.success(request, "Successfully Added")
-#                 return redirect(reverse('add_staff'))
-
-#             except Exception as e:
-#                 messages.error(request, "Could Not Add " + str(e))
-#         else:
-#             messages.error(request, "Please fulfil all requirements")
-
-#     return render(request, 'hod_template/add_staff_template.html', context)
-
-
 # def add_student(request):
 #     student_form = StudentForm(request.POST or None, request.FILES or None)
 #     context = {'form': student_form, 'page_title': 'Add Student'}
@@ -110,27 +76,10 @@ def admin_home(request):
 #     return render(request, 'hod_template/add_student_template.html', context)
 
 
-# def add_course(request):
-#     form = CourseForm(request.POST or None)
-#     context = {
-#         'form': form,
-#         'page_title': 'Add Course'
-#     }
-#     if request.method == 'POST':
-#         if form.is_valid():
-#             name = form.cleaned_data.get('name')
-#             try:
-#                 course = Course()
-#                 course.name = name
-#                 course.save()
-#                 messages.success(request, "Successfully Added")
-#                 return redirect(reverse('add_course'))
-#             except:
-#                 messages.error(request, "Could Not Add")
-#         else:
-#             messages.error(request, "Could Not Add")
-#     return render(request, 'hod_template/add_course_template.html', context)
 
+# def add_course (request):
+#     course = Course.objects.all()
+#     return render(request, 'courses.html', {'course': course})
 
 # def add_subject(request):
 #     form = SubjectForm(request.POST or None)
@@ -251,13 +200,27 @@ def approve_tutor(request, tutor_id):
 
     return redirect('pending_tutors') 
 
+
+def register_tutor(request):
+    # if request.method == 'POST':
+    #     form = TutorRegistrationForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         user = form.save()
+    #         # You may want to log in the new tutor user here
+    #         return redirect('register_tutor')  # Redirect to the tutor's profile page
+    # else:
+    #     form = TutorRegistrationForm()
+    return render(request, 'hod_template/add_staff_template.html')
+
+
 def manage_student(request):
-    # students = CustomUser.objects.filter(user_type=3)
-    # context = {
-    #     'students': students,
-    #     'page_title': 'Manage Students'
-    # }
-    return render(request, "hod_template/manage_student.html", context={})
+    # Assuming you have a user_type field in your UserProfile model to distinguish students
+    students = UserProfile.objects.filter(user=0)
+    context = {
+        'students': students,
+        'page_title': 'Manage Students'
+    }
+    return render(request, "hod_template/manage_student.html", context)
 
 
 def manage_course(request):

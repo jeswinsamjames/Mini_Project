@@ -22,10 +22,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 
-@admin.register(Course)
-class CourseListAdmin(admin.ModelAdmin):
-    list_display = ('name', 'title', 'enrollments', 'created_at', 'updated_at')
-    search_fields = ('name', 'title')
-    list_filter = ('created_at', 'updated_at')
-    prepopulated_fields = {'title': ('name',)}
+admin.site.register(Course)
+
 

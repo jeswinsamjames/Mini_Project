@@ -12,7 +12,8 @@ from .forms import EditProfileForm
 
 
 def index(request):
-    return render(request,'index.html')
+    course = Course.objects.all()
+    return render(request,'index.html',{'course': course})
 
 def blog(request):
     return render(request,'blog.html')
@@ -31,12 +32,10 @@ def userdashboard(request):
     return render(request,"usersprofile.html" )
 
 
-def courses(request):
-    # Retrieve the course object using the course_id
+def viewcourses(request):
     course = Course.objects.all()
-
-    # Render a template to display the course details
     return render(request, 'courses.html', {'course': course})
+
 
 
 def leanerindex(request):
@@ -118,34 +117,36 @@ def registration(request):
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = authenticate(username=username, password=password)
 
-        if not user.is_superuser:
-            up = UserProfile.objects.get(user=user)
+        if user is not None:
+            if not user.is_superuser:
+                up = UserProfile.objects.get(user=user)
+                
+                if up.isTutor == 1:
+                    # Tutor approval is pending
+                    return render(request, 'login.html', {'error': "Pending admin approval"})
 
-            if up.isTutor == 1:
-                # Tutor approval is pending
-                return render(request, 'login.html', {'error': "Pending admin approval"})
+                elif up.isTutor == 2:
+                    # Tutor is approved, redirect to tutor dashboard
+                    userlogin(request, user)
+                    request.session['username'] = username
+                    return redirect('view_profile_tutor')  # Use the actual URL name
 
-            elif up.isTutor == 2:
-                # Tutor is approved, redirect to tutor dashboard
+                else:
+                    # Redirect learners to the learner dashboard
+                    userlogin(request, user)
+                    request.session['username'] = username
+                    return redirect('learnerindex')  # Use the actual URL name
+
+            elif user.is_superuser:
                 userlogin(request, user)
-                request.session['username'] = username
-                return redirect('view_profile_tutor')  # Replace 'tutorindex' with the actual URL for the tutor dashboard
-             
-            # Redirect learners to the learner dashboard
-            userlogin(request, user)
-            request.session['username'] = username
-            return redirect('learnerindex')  # Replace 'learnerindex' with the actual URL for the learner dashboard
+                return redirect('admin_dashboard/home/')  # Use the actual URL name
 
-        elif user.is_superuser:
-            userlogin(request, user)    
-            return redirect('admin_dashboard/home/')   
         else:
             messages.error(request, "Invalid Username/Password")
-            return redirect('login')
 
     return render(request, 'login.html')
 

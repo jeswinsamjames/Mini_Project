@@ -207,16 +207,16 @@ def student_feedback(request):
 #     return render(request, "student_template/student_view_profile.html", context)
 
 
-@csrf_exempt
-def student_fcmtoken(request):
-    token = request.POST.get('token')
-    student_user = get_object_or_404(CustomUser, id=request.user.id)
-    try:
-        student_user.fcm_token = token
-        student_user.save()
-        return HttpResponse("True")
-    except Exception as e:
-        return HttpResponse("False")
+# @csrf_exempt
+# def student_fcmtoken(request):
+#     token = request.POST.get('token')
+#     student_user = get_object_or_404(CustomUser, id=request.user.id)
+#     try:
+#         student_user.fcm_token = token
+#         student_user.save()
+#         return HttpResponse("True")
+#     except Exception as e:
+#         return HttpResponse("False")
 
 
 def student_view_notification(request):

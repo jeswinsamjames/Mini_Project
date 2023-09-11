@@ -13,8 +13,9 @@ urlpatterns = [
     path('leanerindex', views.leanerindex,name='learnerindex'),
     path('sample', views.sample),
     path('login', views.login,name='login'),
+    path('viewcourses', views.viewcourses,name='viewcourses'),
    
-    path('courses', views.courses,name='courses'),
+    
 
 
     path('tutorslist', views.tutorslist,name='tutorslist'),
@@ -43,7 +44,7 @@ urlpatterns = [
     path("student/home/", student_views.student_home, name='student_home'),
     path("student/view/attendance/", student_views.student_view_attendance, name='student_view_attendance'),
     path("student/feedback/", student_views.student_feedback, name='student_feedback'),
-    path("student/fcmtoken/", student_views.student_fcmtoken,name='student_fcmtoken'),
+#     path("student/fcmtoken/", student_views.student_fcmtoken,name='student_fcmtoken'),
     path("student/view/notification/", student_views.student_view_notification, name="student_view_notification"),
     path('student/view/result/', student_views.student_view_result,name='student_view_result'),
     path('view_profile/learner/', student_views.view_profile_learner, name='view_profile_learner'),
@@ -94,10 +95,10 @@ urlpatterns = [
      path("tutor/delete/<int:tutor_id>", hod_views.delete_tutor, name='delete_tutor'),
      path('pending-tutors/', PendingTutorListView.as_view(), name='pending_tutors'),
      path('approve-tutor/<int:tutor_id>/', approve_tutor, name='approve_tutor'),
-     path("course/manage/", hod_views.manage_course, name='manage_course'),
+     path("admin/home/course/", hod_views.manage_course, name='manage_course'),
      path("subject/manage/", hod_views.manage_subject, name='manage_subject'),
-#     path("staff/add", hod_views.add_staff, name='add_staff'),
-#     path("course/add", hod_views.add_course, name='add_course'),
+     path('register_tutor/', hod_views.register_tutor, name='register_tutor'),
+     # path("admin/home/course/", hod_views.add_course, name='add_course'),
 #     path("send_student_notification/", hod_views.send_student_notification,
 #          name='send_student_notification'),
 #     path("send_staff_notification/", hod_views.send_staff_notification,
