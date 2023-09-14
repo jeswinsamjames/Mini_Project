@@ -3,8 +3,7 @@ import requests
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import (HttpResponse, HttpResponseRedirect,
-                              get_object_or_404, redirect, render)
+from django.shortcuts import (HttpResponse, HttpResponseRedirect,get_object_or_404, redirect, render)
 from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -16,11 +15,9 @@ from .models import *
 
 
 def admin_home(request):
-    # total_staff = Staff.objects.all().count()
-    # total_students = Student.objects.all().count()
-    # subjects = Subject.objects.all()
-    # total_subject = subjects.count()
-    # total_course = Course.objects.all().count()
+    tutor_count = UserProfile.objects.filter(isTutor=2).count()
+    student_count = UserProfile.objects.filter(isTutor=0).count()
+    # course_count = Course.objects.count()
     # attendance_list = Attendance.objects.filter(subject__in=subjects)
     # total_attendance = attendance_list.count()
     # attendance_list = []
@@ -29,17 +26,17 @@ def admin_home(request):
     #     attendance_count = Attendance.objects.filter(subject=subject).count()
     #     subject_list.append(subject.name[:7])
     #     attendance_list.append(attendance_count)
-    # context = {
+    context = {
     #     'page_title': "Administrative Dashboard",
-    #     'total_students': total_students,
-    #     'total_staff': total_staff,
-    #     'total_course': total_course,
+         'student_count': student_count,
+          'tutor_count': tutor_count,
+        # 'course_count': course_count,
     #     'total_subject': total_subject,
     #     'subject_list': subject_list,
     #     'attendance_list': attendance_list
 
-    # }
-    return render(request, 'hod_template/home_content.html', context={})
+    }
+    return render(request, 'hod_template/home_content.html', context)
 
 
 # def add_student(request):
@@ -77,9 +74,6 @@ def admin_home(request):
 
 
 
-# def add_course (request):
-#     course = Course.objects.all()
-#     return render(request, 'courses.html', {'course': course})
 
 # def add_subject(request):
 #     form = SubjectForm(request.POST or None)
@@ -107,6 +101,13 @@ def admin_home(request):
 #             messages.error(request, "Fill Form Properly")
 
 #     return render(request, 'hod_template/add_subject_template.html', context)
+
+
+   
+
+
+
+
 
 
 def manage_staff(request):
@@ -164,6 +165,7 @@ def edit_tutor(request, tutor_id):
         'tutor_id': tutor_id,
         'page_title': 'Edit Tutor',
     }
+    print(user)
     return render(request, "hod_template/edit_tutor_template.html", context)
 
 def delete_tutor(request, tutor_id):
@@ -185,6 +187,7 @@ class PendingTutorListView(ListView):
         # Filter for pending tutors
         return UserProfile.objects.filter(isTutor=1)
 
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 @login_required
@@ -200,36 +203,87 @@ def approve_tutor(request, tutor_id):
 
     return redirect('pending_tutors') 
 
+def reject_and_delete_tutor(request, tutor_id):
+    tutor = get_object_or_404(UserProfile, user__id=tutor_id, isTutor=1)
 
-def register_tutor(request):
-    # if request.method == 'POST':
-    #     form = TutorRegistrationForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         user = form.save()
-    #         # You may want to log in the new tutor user here
-    #         return redirect('register_tutor')  # Redirect to the tutor's profile page
-    # else:
-    #     form = TutorRegistrationForm()
-    return render(request, 'hod_template/add_staff_template.html')
+    # Reject the tutor by changing isTutor to 3 (or any other value that indicates rejection)
+    tutor.isTutor = 3
+    tutor.save()
+
+    # Delete the tutor's user account
+    user_id = tutor.user.id
+    User.objects.get(id=user_id).delete()
+
+    messages.success(request, "Tutor rejected and deleted successfully!")
+
+    return redirect('pending_tutors')
+
+def add_tutor(request):
+    if request.method == 'POST':
+        # Get data from the form
+        username = request.POST['username']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        cpassword = request.POST['cpassword']
+        if password == cpassword:
+            if User.objects.filter(username=username).exists():
+                messages.success(request, "Username alredy exist")
+                return redirect('registration')
+            elif User.objects.filter(email=email).exists():
+                messages.success(request, "Email alredy exist")
+                return redirect('registration')
+            else:
+                user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
+                tutor = UserProfile(user=user, isTutor=2)  # Automatically set isTutor to 2
+                tutor.save()
+                
+                
+            print("User Created");
+            messages.success(request,"Registration success!!")
+            return redirect('login')
+        else:
+            messages.error(request, "Passwords do not match.")
+            messages.success(request,"Registration failed")
+    return render(request, "hod_template/add_staff_template.html")
 
 
 def manage_student(request):
     # Assuming you have a user_type field in your UserProfile model to distinguish students
-    students = UserProfile.objects.filter(user=0)
+    students = UserProfile.objects.filter(isTutor = 0)
+    students = [student.user for student in students]
     context = {
         'students': students,
         'page_title': 'Manage Students'
     }
+    print(students)
     return render(request, "hod_template/manage_student.html", context)
 
 
 def manage_course(request):
-    # courses = Course.objects.all()
-    # context = {
-    #     'courses': courses,
-    #     'page_title': 'Manage Courses'
-    # }
-    return render(request, "hod_template/manage_course.html", context={})
+    
+    return render(request, 'hod_template/tutor_course_enroll.html')
+
+def view_catgories(request):
+    course = category.objects.all()
+    return render(request, 'hod_template/tutor_course_enroll.html', {'courses': course})
+    
+
+def filtered_course_list(request, category_name):
+    # Get the category object based on the category_id
+    ccategory = get_object_or_404(category, name=category_name)
+
+    # Filter courses based on the category object
+    courses = CourseDetail.objects.filter(course=ccategory)
+
+    context = {
+        'category': ccategory,
+        'courses': courses,
+    }   
+    print(ccategory)
+
+    return render(request, 'tutor_template/course_list.html', context)
 
 
 def manage_subject(request):
@@ -241,7 +295,7 @@ def manage_subject(request):
     return render(request, "hod_template/manage_subject.html", context={})
 
 
-# def edit_student(request, student_id):
+def edit_student(request, student_id):
 #     student = get_object_or_404(Student, id=student_id)
 #     form = StudentForm(request.POST or None, instance=student)
 #     context = {
@@ -287,7 +341,7 @@ def manage_subject(request):
 #         else:
 #             messages.error(request, "Please Fill Form Properly!")
 #     else:
-#         return render(request, "hod_template/edit_student_template.html", context)
+         return render(request, "hod_template/edit_student_template.html", context={})
 
 
 # def edit_course(request, course_id):
@@ -560,6 +614,31 @@ def admin_view_profile(request):
     #             request, "Error Occured While Updating Profile " + str(e))
     return render(request, "hod_template/admin_view_profile.html", context={})
 
+@login_required
+def edit_admin_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        # Update the user's data
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        
+        # Handle profile picture upload
+        profile_picture = request.FILES.get('profile_picture')
+        if profile_picture:
+            user_profile = UserProfile.objects.get(user=user)
+            UserProfile.profile_picture = profile_picture
+            user_profile.save()            
+        user.save()
+
+        messages.success(request, "Profile updated successfully!")
+        return redirect('admin_view_profile')
+
+    return render(request, 'hod_template/admin_view_profile.html', {'user': user})
 
 
 
@@ -628,6 +707,18 @@ def admin_view_profile(request):
 
 
 
+def delete_student(request, learner_id):
+    student = get_object_or_404(UserProfile, id=learner_id, isTutor=0)
+    
+    # Assuming you have some confirmation logic here
+    # For example, checking if the request is a POST request
+    if request.method == 'POST':
+        student.user.delete()  # Delete the associated User object
+        
+        # Redirect to a success page or some other page
+        return redirect('success_page')  # Replace 'success_page' with the actual URL
+    
+    return render(request, 'confirm_student_deletion.html', {'student': student})
 
 # def delete_student(request, student_id):
 #     student = get_object_or_404(CustomUser, student__id=student_id)

@@ -1,5 +1,6 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
+
 {% block page_title %}{{page_title}}{% endblock page_title %}
 
 {% block content %}
@@ -14,16 +15,28 @@
             <tr>
                 <th>Username</th>
                 <th>Email</th>
+                <th>Resume</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {% for tutor in pending_tutors %}
+            
             <tr>
                 <td>{{ tutor.user.username }}</td>
                 <td>{{ tutor.user.email }}</td>
                 <td>
+                    {% if tutor.resume %}
+                        <a href="{{ tutor.resume.url }}" target="_blank">View Resume</a>
+                    {% else %}
+                        No resume available
+                    {% endif %}
+                </td>
+                <td>
                     <a href="{% url 'approve_tutor' tutor.user.id %}" class="btn btn-success">Approve</a>
+
+                    <a href="{% url 'reject_and_delete_tutor' tutor.user.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Reject</a> 
+                            
                 </td>
             </tr>
             {% empty %}

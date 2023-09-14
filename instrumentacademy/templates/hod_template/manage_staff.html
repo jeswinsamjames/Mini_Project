@@ -22,6 +22,7 @@
                                     <th>Email</th>
                                     <th>Gender</th>
                                     <th>Course</th>
+                                    <th>Resume</th>
                                     <th>Avatar</th>
                                     <th>Edit</th>
                                 </tr>
@@ -42,8 +43,15 @@
                                         No Image
                                         {% endif %}
                                     </td>
+                                    <td>
+                                        {% if tutor.resume %}
+                                            <a href="{{ tutor.resume.url }}" target="_blank">View Resume</a>
+                                        {% else %}
+                                            No resume available
+                                        {% endif %}
+                                    </td>
                                       <td>
-                                        <a href="{% url 'edit_tutor' tutor.user.id %}" class="btn btn-primary">Edit</a> - 
+                                        <a href="{% url 'edit_tutor' tutor.id %}" class="btn btn-primary">Edit</a> - 
                                         <a href="{% url 'delete_tutor' tutor.user.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Delete</a> 
                                     </td>  
                                 </tr>

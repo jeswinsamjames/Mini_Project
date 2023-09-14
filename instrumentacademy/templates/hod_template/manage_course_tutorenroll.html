@@ -1,0 +1,71 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ page_title }}</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>SN</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Gender</th>
+                                    <th>Course</th>
+                                    <th>specialist</th>
+                                    <th>Resume</th>
+                                    <th>Avatar</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in enrollment_requests %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ request.tutor.user.first_name }} {{ request.tutor.user.last_name }}</td>
+                                    <td>{{ enrollment.tutor.user.email }}</td>
+                                    <td>{{ enrollment.tutor.user.userprofile.gender }}</td>
+                                    <td>{{ request.course }}</td>
+                                    <td>{{ enrollment.tutor.user.userprofile.specialist }}</td>
+                                    
+
+                                    <td>
+                                        {% if enrollment.tutor.resume %}
+                                            <a href="{{ enrollment.tutor.resume.url }}" target="_blank">View Resume</a>
+                                        {% else %}
+                                            No resume available
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if enrollment.tutor.user.userprofile.profile_picture %}
+                                            <img class="img img-fluid mb-2" height="100" width="100"
+                                                src="{{ enrollment.tutor.user.userprofile.profile_picture.url }}"
+                                                alt="{{ enrollment.tutor.user.first_name }}'s Profile Picture">
+                                        {% else %}
+                                            No Image
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'accept_enrollment' enrollment.id %}" class="btn btn-success">Accept</a> -
+                                        <a href="{% url 'reject_enrollment' enrollment.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Reject</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

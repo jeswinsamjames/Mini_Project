@@ -65,12 +65,18 @@
                         Admin Profile
                     </div>
                     <div class="card-body">
-                        <form id="user-profile-form" method="post" enctype="multipart/form-data" action="{% url 'edit_profile_tutor' %}">
+                        <form id="user-profile-form" method="post" enctype="multipart/form-data" action="{% url 'edit_admin_profile' %}">
                             {% csrf_token %}
+                            <div class="alert alert-danger" role="alert" style="display: none;"></div>
                             <div class="form-group">
                                 <label for="id_profile_picture">Profile Picture:</label>
-                                <input type="file" class="form-control-file" id="id_profile_picture" name="profile_picture">
+                                <input type="file" class="form-control-file" id="profile_picture" name="profile_picture">
                                 <small class="form-text text-muted">Upload a professional profile picture.</small>
+                                {% if user.userprofile.profile_picture %}
+                                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+                                {% else %}
+                                    <p>No profile picture available</p>
+                                {% endif %}
                             </div>
                             <div class="form-group">
                                 <label for="id_first_name">First Name:</label>
@@ -84,14 +90,7 @@
                                 <label for="id_email">Email:</label>
                                 <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}" readonly>
                             </div>
-                            <div class="form-group">
-                                <label for="id_phoneNo">Phone Number:</label>
-                                <input type="text" class="form-control" id="id_phoneNo" name="phoneNo" value="{{ user.userprofile.phoneNo }}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_address">Address:</label>
-                                <input type="text" class="form-control" id="id_address" name="address" value="{{ user.userprofile.address }}" readonly>
-                            </div>
+                            
                             <!-- Add more fields here as needed -->
     
                             <div class="d-flex justify-content-end">
@@ -99,6 +98,8 @@
                                 <button type="button" class="btn btn-success ml-2" id="save-button" style="display: none;">Save</button>
                                 <button type="button" class="btn btn-secondary ml-2" id="cancel-button" style="display: none;">Cancel</button>
                             </div>
+                            
+
                         </form>
                     </div>
                 </div>
@@ -115,34 +116,31 @@
     <script>
         $(document).ready(function () {
           // Initially, only the Edit button is visible
-          
           $("#edit-button").show();
           $("#save-button").hide();
           $("#cancel-button").hide();
-    
+      
           // Function to toggle between Edit and View modes
           function toggleEditMode() {
-            
             // Toggle readonly attribute for input fields
             $("input, textarea").prop("readonly", function (_, attr) {
               return !attr;
             });
-            
-    
+      
             // Toggle visibility of buttons
             $("#edit-button").toggle();
             $("#save-button").toggle();
             $("#cancel-button").toggle();
-    
+      
             // Toggle visibility of gender options
             toggleGenderOptions();
           }
-    
+      
           // Function to toggle visibility of gender options
           function toggleGenderOptions() {
             const editMode = $("#edit-button").is(":visible");
             const selectedGender = $("input[name='gender']:checked").val();
-    
+      
             $("input[name='gender']").each(function () {
               const genderValue = $(this).data("gender");
               if (!editMode || genderValue === selectedGender) {
@@ -154,30 +152,72 @@
               }
             });
           }
-    
+      
           // Edit button click event
           $("#edit-button").click(function () {
             toggleEditMode();
           });
-    
+      
           // Cancel button click event
           $("#cancel-button").click(function () {
             toggleEditMode();
             // Reset form to original values
             $("#user-profile-form")[0].reset();
+            $(".alert").hide(); // Hide any error messages
           });
-    
+      
           // Save button click event
           $("#save-button").click(function () {
+            // Validate the form
+            if (!validateForm()) {
+              return false; // Prevent form submission if validation fails
+            }
             toggleEditMode();
             // Submit the form for saving changes
             $("#user-profile-form").submit();
           });
-    
-          // Initial setup of gender options visibility
-          toggleGenderOptions();
+      
+          // Function to validate the form
+          function validateForm() {
+            // Regular expressions for validation
+            const namePattern = /^[A-Za-z\s]+$/; // Alphabets and spaces only
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/; // Valid email pattern
+      
+            // Get input values
+            const firstName = $("#id_first_name").val();
+            const lastName = $("#id_last_name").val();
+            const email = $("#id_email").val();
+      
+            // Validate first name
+            if (!namePattern.test(firstName)) {
+              displayError("Please enter a valid first name (letters and spaces only).");
+              return false;
+            }
+      
+            // Validate last name
+            if (!namePattern.test(lastName)) {
+              displayError("Please enter a valid last name (letters and spaces only).");
+              return false;
+            }
+      
+            // Validate email
+            if (!emailPattern.test(email)) {
+              displayError("Please enter a valid email address.");
+              return false;
+            }
+      
+            return true; // Form is valid
+          }
+      
+          // Function to display error messages using Bootstrap alerts
+          function displayError(message) {
+            $(".alert").text(message);
+            $(".alert").show();
+          }
         });
       </script>
+      
+      
     
     
     {% endblock content %}

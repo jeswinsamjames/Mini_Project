@@ -32,3 +32,7 @@ class TutorForm(forms.ModelForm):
         super(TutorForm, self).__init__(*args, **kwargs)
         self.fields['profile_picture'].required = False  # Make profile picture not required
 
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']

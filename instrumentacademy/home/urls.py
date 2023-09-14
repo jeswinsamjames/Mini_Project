@@ -9,17 +9,13 @@ urlpatterns = [
     
     path('', views.index),
     
-    path('blog', views.blog, name='blog'),
     path('leanerindex', views.leanerindex,name='learnerindex'),
-    path('sample', views.sample),
+   
     path('login', views.login,name='login'),
-    path('viewcourses', views.viewcourses,name='viewcourses'),
+    
+   
    
     
-
-
-    path('tutorslist', views.tutorslist,name='tutorslist'),
-    path('tutorslist/<str:instrument>', views.tutorslist_2,name='tutorslist_2'),
   
     path('homecontent', views.homecontent,name='homecontent'),
     path('index1', views.index1,name='index1'),
@@ -33,8 +29,8 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete'),
     path('registration', views.registration,name="registration"),
-    # path('learner_registration', views.learner_registration, name="learner_registration"),
-    path('userdashboard', views.userdashboard),
+    
+    
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
    
 
@@ -68,7 +64,8 @@ urlpatterns = [
     path("tutor/feedback/", tutor_views.tutor_feedback, name='tutor_feedback'),
     path('edit_profile/tutor/', tutor_views.edit_profile_tutor, name='edit_profile_tutor'),
     path('view_profile/tutor/', tutor_views.view_profile_tutor, name='view_profile_tutor'),
-
+     path('create-course/', tutor_views.create_course, name='create_course'),
+    path('course-list/', tutor_views.course_list, name='course_list'),
    
    
     
@@ -89,15 +86,24 @@ urlpatterns = [
 
      path("admin_dashboard/home/", hod_views.admin_home, name='admin_home'),
      path("admin_view_profile", hod_views.admin_view_profile,name='admin_view_profile'),
+     path('edit_admin_profile/', hod_views.edit_admin_profile, name='edit_admin_profile'),
      path("student/manage/", hod_views.manage_student, name='manage_student'),
      path("staff/manage/", hod_views.manage_staff, name='manage_staff'),
      path('edit_tutor/<int:tutor_id>/', hod_views.edit_tutor, name='edit_tutor'),
      path("tutor/delete/<int:tutor_id>", hod_views.delete_tutor, name='delete_tutor'),
      path('pending-tutors/', PendingTutorListView.as_view(), name='pending_tutors'),
      path('approve-tutor/<int:tutor_id>/', approve_tutor, name='approve_tutor'),
-     path("admin/home/course/", hod_views.manage_course, name='manage_course'),
+
+    
+     path("admin/home/category/", hod_views.manage_course, name='manage_course'),
+     path("view_catgories", hod_views.view_catgories, name='view_catgories'),
+     path('courses/<str:category_name>/', hod_views.filtered_course_list, name='filtered_course_list'),
      path("subject/manage/", hod_views.manage_subject, name='manage_subject'),
-     path('register_tutor/', hod_views.register_tutor, name='register_tutor'),
+     path('add_tutor/', hod_views.add_tutor, name='add_tutor'),
+     path('student/edit/<int:student_id>', hod_views.edit_student, name='edit_student'),
+     path("student/delete/<int:student_id>", hod_views.delete_student, name='delete_student'),
+   
+     path('reject_and_delete_tutor/<int:tutor_id>/', hod_views.reject_and_delete_tutor, name='reject_and_delete_tutor'),
      # path("admin/home/course/", hod_views.add_course, name='add_course'),
 #     path("send_student_notification/", hod_views.send_student_notification,
 #          name='send_student_notification'),
@@ -143,10 +149,8 @@ urlpatterns = [
 #     path("session/delete/<int:session_id>",
 #          hod_views.delete_session, name='delete_session'),
 
-#     path("student/delete/<int:student_id>",
-#          hod_views.delete_student, name='delete_student'),
-#     path("student/edit/<int:student_id>",
-#          hod_views.edit_student, name='edit_student'),
+#     
+    
 #     path("course/edit/<int:course_id>",
 #          hod_views.edit_course, name='edit_course'),
 #     path("subject/edit/<int:subject_id>",

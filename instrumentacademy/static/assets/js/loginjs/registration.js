@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
       message: "First name must be valid (no numbers or special characters).",
     },
     last_name: {
-      regex: /^[A-Za-z\s]{2,30}$/, // Only alphabets and spaces allowed
+      regex: /^[A-Za-z\s]{1,30}$/, // Only alphabets and spaces allowed
       message: "Last name must be valid (no numbers or special characters).",
     },
     email: {

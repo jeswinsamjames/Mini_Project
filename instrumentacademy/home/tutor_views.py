@@ -67,7 +67,8 @@ def edit_profile_tutor(request):
             user_profile.specialist = request.POST['specialist']
             user_profile.description = request.POST['description']
             user_profile.phoneNo = request.POST['phoneNo']
-            user_profile.qualifications = request.POST['qualifications']
+
+            # Handle teaching experience as a string with "year(s)"
             user_profile.teaching_experience = request.POST['teaching_experience']
             user.last_name = request.POST['last_name']
             user.first_name = request.POST['first_name']
@@ -89,6 +90,58 @@ def edit_profile_tutor(request):
     
     return render(request, 'tutor_template/tutorprofile.html', context)
 
+@login_required
+def create_course(request):
+     if request.method == 'POST':
+        # Get the form data from the request
+        name = request.POST['name']
+        instrument_name = request.POST['instrument_name']
+        description = request.POST['description']
+        years_of_experience = request.POST['years_of_experience']
+        is_active = True if request.POST.get('is_active') else False
+
+        # Handle the uploaded course image
+        course_image = request.FILES.get('course_image')
+        # Create a new category object based on the selected instrument_name
+        try:
+            category_obj = category.objects.get(instrument_name=instrument_name)
+        except category.DoesNotExist:
+            category_obj = None
+
+        if not category_obj:
+            # Handle the case where the selected instrument_name doesn't exist in the Category model
+            messages.error(request, 'Invalid instrument name selected.')
+            return redirect('create_course')
+
+        # Create a new course object
+        course = CourseDetail(
+            name=name,
+            course=category_obj,  # Use the category_obj as the course_type
+            description=description,
+            years_of_experience=years_of_experience,
+            is_active=is_active,
+            image=course_image,
+            tutor=request.user
+        )
+
+        # Save the course object to the database
+        course.save()
+
+        # Redirect to a success page or course listing
+        messages.success(request, 'Course created successfully!')
+        return redirect('course_list')
+
+    
+     return render(request, 'tutor_template/create_course.html')
+
+
+
+
+@login_required
+def course_list(request):
+    courses = CourseDetail.objects.all()
+    print(courses)
+    return render(request, 'tutor_template/course_list.html', {'courses': courses})
 
 def tutor_take_attendance(request):
     # tutor = get_object_or_404(tutor, admin=request.user)

@@ -22,6 +22,13 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(Course)
+@admin.register(category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'instrument_name')
+    
+admin.site.register(Courses)
+admin.site.register(CourseDetail)
+
+
 
 

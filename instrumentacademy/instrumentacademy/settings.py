@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'instrumentacademy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'database.sqlite3',
+        'NAME': BASE_DIR / 'database1.sqlite3',
     }
 }
 
@@ -148,12 +148,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 AUTHENTICATION_BACKENDS = [
-
+    
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
     ]
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Optional: Skip email confirmation
 LOGIN_REDIRECT_URL = '/leanerindex' 
+ACCOUNT_ADAPTER = 'home.allauth_adapter.CustomAccountAdapter'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -164,6 +165,8 @@ SOCIALACCOUNT_PROVIDERS = {
         
     }
 }
+LOGIN_REDIRECT_URL='/'
+LOGOUT_REDIRECT_URL='/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '378533382283-h5l53gflpqu9mks8tu56f6itvs4usmb3.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 

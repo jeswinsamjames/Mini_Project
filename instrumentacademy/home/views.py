@@ -12,13 +12,8 @@ from .forms import EditProfileForm
 
 
 def index(request):
-    course = Course.objects.all()
+    course = category.objects.all()
     return render(request,'index.html',{'course': course})
-
-def blog(request):
-    return render(request,'blog.html')
-def sample(request):
-    return render(request,"sample-inner-page.html")
 
 
 def loggout(request):
@@ -28,13 +23,8 @@ def loggout(request):
 def base(request):
     return render(request,"base.html" )
 
-def userdashboard(request):
-    return render(request,"usersprofile.html" )
 
 
-def viewcourses(request):
-    course = Course.objects.all()
-    return render(request, 'courses.html', {'course': course})
 
 
 
@@ -85,8 +75,8 @@ def mylearning(request):
 
 
 
-
 def registration(request):
+    
     if request.method == 'POST':
         username = request.POST['username']
         first_name = request.POST['first_name']
@@ -94,26 +84,32 @@ def registration(request):
         email = request.POST['email']
         password = request.POST['password']
         cpassword = request.POST['cpassword']
-        isT = request.POST.get('isTutor') == 'on' 
+        isT = request.POST.get('isTutor') == 'on'
+
+        # Check if a file was uploaded for the resume
+        resume = None
+        if isT:
+            resume = request.FILES.get('resume')
+
         if password == cpassword:
             if User.objects.filter(username=username).exists():
-                messages.success(request, "Username alredy exist")
+                messages.success(request, "Username already exists")
                 return redirect('registration')
             elif User.objects.filter(email=email).exists():
-                messages.success(request, "Email alredy exist")
+                messages.success(request, "Email already exists")
                 return redirect('registration')
             else:
-                user=User.objects.create_user(username=username,first_name=first_name,last_name=last_name,email=email,password=password)
-                user_profile = UserProfile.objects.create(user=user, isTutor=isT)
-                user.save();
-            print("User Created");
-            messages.success(request,"Registration success!!")
-            return redirect('login')
+                user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
+                user_profile = UserProfile.objects.create(user=user, isTutor=isT, resume=resume)
+                user.save()
+                messages.success(request, "Registration success!!")
+                return redirect('login')
         else:
             messages.error(request, "Passwords do not match.")
-            messages.success(request,"Registration failed")
+            messages.success(request, "Registration failed")
             return redirect('registration')
     return render(request, 'registration.html')
+
 
 def login(request):
     if request.method == 'POST':
@@ -189,16 +185,16 @@ def login(request):
 
 #     return render(request, 'student_template/profile.html', context)
 
-from django.contrib.admin.views.decorators import staff_member_required
-@staff_member_required
-def tutorslist(request):
-    tutors = Tutor.objects.all()
-    return render(request, 'tutorslist.html', {'tutors': tutors})
+# from django.contrib.admin.views.decorators import staff_member_required
+# @staff_member_required
+# def tutorslist(request):
+#     tutors = Tutor.objects.all()
+#     return render(request, 'tutorslist.html', {'tutors': tutors})
 
 
-def tutorslist_2(request,instrument=None):
-    tutors = Tutor.objects.filter(instrument_teaching__icontains=instrument)
-    return render(request, 'tutorslist.html', {'tutors': tutors})
+# def tutorslist_2(request,instrument=None):
+#     tutors = Tutor.objects.filter(instrument_teaching__icontains=instrument)
+#     return render(request, 'tutorslist.html', {'tutors': tutors})
 
 
 
@@ -262,12 +258,4 @@ def allorders(request):
     # 'orders':orders, 'carts':carts,
     # }
     return render(request, 'webadmin/allorders.html')
-
-from .models import *
-from .forms import *    
-def allvideos(request):
-    vid = video.objects.all()
-    context = {'video':vid}
-    return render(request, 'webadmin/allvideo.html', context)
-
 

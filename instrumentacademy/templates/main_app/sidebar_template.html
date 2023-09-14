@@ -15,7 +15,12 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{ request.user.profile_pic}}" class="img-circle elevation-2" alt="User Image">
+                {% comment %} {% if {{user.userprofile.profile_picture.url}} %}  <img src="{{user.userprofile.profile_picture.url}}" class="img-circle elevation-2" alt="User Image"> {% endif %} {% endcomment %}
+                {% if user.userprofile.profile_picture %}
+                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                
+            {% endif %}
             </div>
             <div class="info">
                 <a href="#" class="d-block">{{user}}</a>
@@ -59,8 +64,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    {% url 'register_tutor' as register_tutor %}
-                    <a href="{{register_tutor}}" class="nav-link {% if register_tutor == request.path %} active {% endif %}">
+                    {% url 'add_tutor' as add_tutor %}
+                    <a href="{{add_tutor}}" class="nav-link {% if add_tutor == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             Add Tutor
@@ -127,7 +132,16 @@
                     </a>
                 </li>
                
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
+                    <a href="{% url '' %}" class="nav-link {% if 'enrollment_requests' in request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            course enroll request
+                        </p>
+                    </a>
+                </li>
+                 {% endcomment %}
+                {% comment %}<li class="nav-item">
                     {% url 'add_session' as add_session %}
                     <a href="{{add_session}}" class="nav-link  {% if add_session == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
@@ -137,7 +151,7 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
+                 <li class="nav-item">
                 {% url 'manage_session' as manage_session %}
                 {% url 'edit_session' session_id as edit_session %}
                 <a href="{{manage_session}}"
@@ -149,7 +163,7 @@
                     </p>
                 </a>
         </li>
-                <li class="nav-item">
+                <li class="nav-item"> {% endcomment %}
                     {% url 'admin_view_attendance' as admin_view_attendance %}
 
                     <li class="nav-item">
@@ -160,7 +174,7 @@
                             </p>
                         </a>
                     </li>  
-            <li class="nav-item">
+            {% comment %} <li class="nav-item">
                 {% url 'student_feedback_message' as student_feedback_message %}
 
                 <a href="{{ student_feedback_message }}" class="nav-link  {% if student_feedback_message == request.path %} active {% endif %}">
@@ -181,7 +195,7 @@
                             
                         </p>
                     </a>
-                </li>
+                </li> {% endcomment %}
             
 {% elif user.userprofile.isTutor == 2 %}
    
@@ -198,8 +212,19 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{user.userprofile.profile_picture.url}}" class="img-circle elevation-2" alt="User Image">
+            {% comment %} {% if {{user.userprofile.profile_picture}} %}  <img src="{{user.userprofile.profile_picture.url}}" class="img-circle elevation-2" alt="User Image"> {% endif %}  {% endcomment %}
+           
+            {% comment %} <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture"class="img-circle elevation-2"alt="User Image">        {% endif %}  {% endcomment %}
+            <div class="image">
+                {% if user.userprofile.profile_picture %}
+                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="img-circle elevation-2">
+                {% else %}
+                    <!-- Add a default image or message if 'profile_picture' is empty -->
+                    <img src="{% static 'path_to_default_image.jpg' %}" alt="Default Profile Picture" class="img-circle elevation-2">
+                {% endif %}
             </div>
+            
+        </div>
             <div class="info">
                 <a href="#" class="d-block">{{ user}}</a>
             </div>
@@ -221,8 +246,8 @@
                 </li>
 
                 <li class="nav-item">
-                    {% url 'profile' as staff_view_profile %}
-                    <a href="{% url 'view_profile_tutor' %}" class="nav-link {% if profile == request.path %} active {% endif %}">
+                    {% url 'edit_profile_tutor' as edit_profile_tutor %}
+                    <a href="{% url 'edit_profile_tutor' %}" class="nav-link {% if tutor_course_enroll == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             View/Edit Profile
@@ -230,8 +255,18 @@
                         </p>
                     </a>
                 </li>
-
                 <li class="nav-item">
+                    {% url 'create_course' as create_course %}
+                    <a href="{{create_course}}" class="nav-link {% if staff_take_attendance == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Create Course
+
+                        </p>
+                    </a>
+                </li>
+
+                {% comment %} <li class="nav-item">
                     {% url 'staff_add_result' as staff_add_result %}
                     <a href="{{staff_add_result}}" class="nav-link {% if staff_add_result == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
@@ -250,7 +285,7 @@
 
                         </p>
                     </a>
-                </li>
+                </li> {% endcomment %}
                 <li class="nav-item">
                     {% url 'staff_take_attendance' as staff_take_attendance %}
                     <a href="{{staff_take_attendance}}" class="nav-link {% if staff_take_attendance == request.path %} active {% endif %}">
@@ -282,7 +317,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                     {% url 'staff_apply_leave' as staff_apply_leave %}
                     <a href="{{staff_apply_leave}}" class="nav-link {% if staff_apply_leave == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
@@ -302,7 +337,7 @@
 
                         </p>
                     </a>
-                </li>
+                </li> {% endcomment %}
           
 
 
@@ -352,7 +387,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                     {% url 'student_view_result' as student_view_result %}
                     <a href="{% url 'student_view_result' %}" class="nav-link {% if student_view_result == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
@@ -360,7 +395,7 @@
                             View Results
                         </p>
                     </a>
-                </li>
+                </li> {% endcomment %}
           
                 <li class="nav-item">
                     {% url 'student_view_attendance' as student_view_attendance %}
@@ -370,7 +405,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                     {% url 'student_view_notification' as student_view_notification %}
                     <a href="{{student_view_notification}}" class="nav-link {% if student_view_notification == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
@@ -401,7 +436,7 @@
 
                         </p>
                     </a>
-                </li>
+                </li> {% endcomment %}
           
 {% endif %}
 

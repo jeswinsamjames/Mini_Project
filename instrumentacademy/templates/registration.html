@@ -29,7 +29,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
               {% endfor %}
-              <form action="{% url 'registration' %}" method="post" name="RegistrationForm" autocomplete="on">
+              <form action="{% url 'registration' %}" method="post" name="RegistrationForm" autocomplete="off" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-group">
                   <label for="username">Username</label>
@@ -66,11 +66,31 @@
                     <div class="error-message"></div>
                 </div>
                 <div class="form-group">
-                  <input type="checkbox" name="isTutor" id="isTutor">
                   <label for="isTutor">Are you a Tutor?</label>
+                  <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="isTutor" name="isTutor">
+                      <label class="custom-control-label" for="isTutor"></label>
+                  </div>
               </div>
+              
+              <div id="resume-upload-field" style="display: none;">
+                <label for="resume">Upload Resume (PDF only)</label>
+                <div class="form-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="resume" id="resume" accept=".pdf">
+                        <label class="custom-file-label" for="resume">Choose PDF file</label>
+                    </div>
+                    <div id="file-name-display"></div>
+
+                    
+                </div>
+            </div>
             
-                <button type="submit" class="btn text-white btn-block btn-primary">Register</button>
+              
+              
+              
+            
+                <button type="submit" class="btn text-white btn-block btn-primary" formactiion="{% url 'registration' %}" value="Register">Register</button>
             
                
             
@@ -108,9 +128,71 @@
     <script src="{%static 'assets/js/loginjs/popper.min.js'%}"></script>
     <script src="{%static 'assets/js/loginjs/bootstrap.min.js'%}"></script>
     <script src="{%static 'assets/js/loginjs/main.js'%}"></script>
-    <script src="{%static 'assets/js/loginjs/registration.js'%}"></script>
-
+    <script src="{%static 'assets/js/loginjs/registration.js'%}"></script> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.152/pdf.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.152/pdf_viewer.css"
+  integrity="sha512-vTsLvqOLf0psR3BrP7b0Lo4ayl8odRgsGoWgV4Qb6ATYBXtPqH2WTraenFTNEUXd1IFWtPgp2LSkV2t4q64pVQ=="
+  crossorigin="anonymous" />
+  <script>
+    $(document).ready(function () {
+      const isTutorCheckbox = $("#isTutor");
+      const resumeUploadField = $("#resume-upload-field");
+      const fileInput = $("#resume");
+      const fileNameDisplay = $("#file-name-display");
+  
+      // Function to update the file name display
+      function updateFileNameDisplay() {
+        const file = fileInput[0].files[0]; // Get the selected file
+        if (file) {
+          // Set the text of the file name display element to the file's name
+          fileNameDisplay.text(file.name);
+        } else {
+          fileNameDisplay.text(''); // Clear the file name display if no file is selected
+        }
+      }
+  
+      // Add change event listener to the checkbox
+      isTutorCheckbox.change(function () {
+        if (this.checked) {
+          resumeUploadField.show();
+        } else {
+          resumeUploadField.hide();
+          fileNameDisplay.text(''); // Clear the file name display when hiding
+        }
+        // Call the updateFileNameDisplay function whenever the checkbox is changed
+        updateFileNameDisplay();
+      });
+  
+      // Call the updateFileNameDisplay function initially (in case there is a pre-selected file)
+      updateFileNameDisplay();
+  
+      // Submit form function
+      $("form").submit(function (e) {
+        if (isTutorCheckbox.is(":checked")) {
+          // If the checkbox is checked (tutor registration), check if a file is uploaded
+          const file = fileInput[0].files[0];
+          if (!file) {
+            alert("Please upload your resume.");
+            e.preventDefault(); // Prevent form submission if no resume is uploaded
+          } else {
+            // Resume is uploaded, continue with form submission
+            // You can add additional validation and registration logic for tutors here.
+          }
+        }
+      });
+    });
+  </script>
+  
+  
+  
+  
+  
+  
     <style>
+
       .contents {
         background-color: #fff;
         border-radius: 10px;
@@ -150,6 +232,48 @@
         color: #ff0000;
         font-size: 14px;
       }
+     
+
+
+
+/* Style the resume file input container */
+.custom-file {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 10px;
+}
+
+/* Style the resume file input */
+.custom-file-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Style the resume file input label */
+.custom-file-label {
+    position: relative;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Style the resume file input label on hover */
+.custom-file-label:hover {
+    background-color: #2980b9;
+}
+#file-name-display{
+  font-size: small;
+}
+
+
+
+
     </style>
     
     {% endblock body %}

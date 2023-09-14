@@ -15,52 +15,43 @@ class UserProfile(models.Model):
     specialist = models.CharField(max_length=50, choices=[('piano', 'Piano'), ('violin', 'Violin'), ('guitar', 'Guitar'), ('other', 'Other')], blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     qualifications = models.CharField(max_length=255, blank=True, null=True)
-    teaching_experience = models.TextField(blank=True, null=True)
+    teaching_experience = models.IntegerField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)  # Define the upload path
-
+    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
     def __str__(self):
         return self.user.username
     
 
-class Course(models.Model):
+class category(models.Model): 
+   
     name = models.CharField(max_length=120)
     image = models.ImageField(upload_to='course_images', null=True, blank=True)
     instrument_name = models.CharField(max_length=100)
     description = models.TextField()
-    # tutors = models.ManyToManyField(Tutor)
-    # enrollments = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+  
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name_plural = "Categories"
+
+class Courses(models.Model):
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
+    course_type = models.ForeignKey(category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.tutor.username}'s {self.course_type.name} Course"
+
+class CourseDetail(models.Model):
+    name = models.CharField(max_length=120, default='DefaultName')
+    course = models.ForeignKey(category, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='course_images', null=True, blank=True)
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
+    tutor_name = models.CharField(max_length=255)
+    years_of_experience = models.PositiveIntegerField()
+    description = models.TextField()
+    is_active = models.BooleanField(default=True)
 
 
+    def __str__(self):
+        return f"{self.tutor_name}'s "
 
-  
-
-
-    
-# from ckeditor.fields import RichTextField
-
-# class video(models.Model):
-#     title = models.CharField(max_length=100, null=False)
-#     # post = post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='videos')
-#     serial_number = models.IntegerField(null=False)
-#     video_id = models.CharField(max_length=100)
-#     is_preview = models.BooleanField(default=False)
-#     # desc = RichTextField(blank=True, null=True)
-
-#     def __str__(self):
-#         return self.title
-
-
-#student profile
-
-# class Student(models.Model):
-#     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-#     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING, null=True, blank=False)
-#     session = models.ForeignKey(Session, on_delete=models.DO_NOTHING, null=True)
-
-#     def __str__(self):
-#         return self.admin.last_name + ", " + self.admin.first_name

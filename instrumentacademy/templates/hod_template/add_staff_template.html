@@ -27,7 +27,7 @@
                         <h3 class="card-title">{{ page_title }}</h3>
                     </div>
 
-                    <form action="{% url 'register_tutor' %}" method="post" name="RegistrationForm" autocomplete="on">
+                    <form action="{% url 'add_tutor' %}" method="post" name="RegistrationForm" autocomplete="on">
                         {% csrf_token %}
                         <div class="card-body">
                             <div class="form-group">
