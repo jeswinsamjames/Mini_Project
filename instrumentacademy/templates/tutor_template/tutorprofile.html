@@ -64,10 +64,20 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">User Profile</div>
+                    <div class="card-header">Tutor Profile</div>
                     <div class="card-body">
                         <form id="user-profile-form" method="post" enctype="multipart/form-data" action="{% url 'edit_profile_tutor' %}">
                             {% csrf_token %}
+                            
+                            <!-- Profile Picture Tile -->
+                            <div class="profile-picture-tile text-center mb-4">
+                                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle border border-secondary" style="max-width:120px;">
+                                <input type="file" class="form-control-file mt-2" id="id_profile_picture" name="profile_picture" disabled>
+                                <small class="form-text text-muted">Upload a professional profile picture.</small>
+                            </div>
+                            
+                            
+                            <!-- User Information -->
                             <div class="form-group">
                                 <label for="id_first_name">First Name:</label>
                                 <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>
@@ -107,12 +117,6 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="id_profile_picture">Profile Picture:</label><br>
-                                {% comment %} <img src="{{user.userprofile.profile_picture.url}}" alt="asdas" class="img-fluid rounded-circle border border-secondary" style="max-width:120px;"> {% endcomment %}
-                                <input type="file" class="form-control-file" id="id_profile_picture" name="profile_picture">
-                                <small class="form-text text-muted">Upload a professional profile picture.</small>
-                            </div>
-                            <div class="form-group">
                                 <label for="id_phoneNo">Phone Number:</label>
                                 <input type="number" class="form-control" id="id_phoneNo" name="phoneNo" value="{{ user.userprofile.phoneNo }}" readonly>
                                 <!-- Validation Message for Phone Number -->
@@ -136,15 +140,7 @@
                                     <option value="violin">Violin</option>
                                     <option value="guitar">Guitar</option>
                                 </select>
-                                {% comment %} <input type="text" class="form-control" id="id_specialist" name="specialist" value="{{ user.userprofile.specialist }}" readonly> {% endcomment %}
                             </div>
-                            <div class="form-group">
-                                <label for="id_description">Description:<span class="description">(Include your awards other achievement, It is manditory, this will display to others)</span></label>
-                                <textarea class="form-control" id="id_description" name="description" readonly required>{{ user.userprofile.description }}</textarea>
-                                <!-- Validation Message for Description -->
-                                <div class="validation-error" id="description-error"></div>
-                            </div>
-                            
                            
             
     
@@ -155,6 +151,8 @@
                                 <!-- Validation Message for Teaching Experience -->
                                 <div class="validation-error" id="teaching-experience-error"></div>
                             </div>
+                            
+                            <!-- Continue with the rest of your form fields -->
     
                             <button type="button" class="btn btn-primary" id="edit-button">Edit Profile</button>
                             <button type="button" class="btn btn-success" id="save-button" style="display: none;">Save</button>
@@ -194,6 +192,7 @@
         
                 // Toggle visibility of gender options
                 toggleGenderOptions();
+                $("#id_profile_picture").prop("disabled", false);
             }
         
             // Function to toggle visibility of gender options
@@ -211,6 +210,7 @@
                         $("#gender1").show();
                     }
                 });
+               
             }
         
             // Edit button click event

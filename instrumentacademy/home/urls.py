@@ -49,37 +49,30 @@ urlpatterns = [
     #<<<<<<<<<<<<<<staff>>>>>>>>>>>>>>>
 
     path("tutor/home/", tutor_views.tutor_home, name='tutor_home'),
-    path("tutor/view/profile/", tutor_views.tutor_view_profile,
-         name='tutor_view_profile'),
+    path("tutor/view/profile/", tutor_views.tutor_view_profile, name='tutor_view_profile'),
     path("tutor/result/add/", tutor_views.tutor_add_result, name='tutor_add_result'),
     path("tutor/result/edit/", tutor_views.EditResultView,name='edit_student_result'),
-    path("tutor/attendance/take/", tutor_views.tutor_take_attendance,
-         name='tutor_take_attendance'),
-    path("tutor/attendance/update/", tutor_views.tutor_update_attendance,
-         name='tutor_update_attendance'),
-    # path("tutor/attendance/update/",
-    #      tutor_views.update_attendance, name='update_attendance'),
-    path("tutor/view/notification/", tutor_views.tutor_view_notification,
-         name="tutor_view_notification"),
+    path("tutor/attendance/take/", tutor_views.tutor_take_attendance, name='tutor_take_attendance'),
+    path("tutor/attendance/update/", tutor_views.tutor_update_attendance,name='tutor_update_attendance'),
+    path("tutor/view/notification/", tutor_views.tutor_view_notification, name="tutor_view_notification"),
     path("tutor/feedback/", tutor_views.tutor_feedback, name='tutor_feedback'),
     path('edit_profile/tutor/', tutor_views.edit_profile_tutor, name='edit_profile_tutor'),
     path('view_profile/tutor/', tutor_views.view_profile_tutor, name='view_profile_tutor'),
     path('create-course/', tutor_views.create_course, name='create_course'),
     path('course-list', tutor_views.course_list, name='course_list'),
-    path('admin/home/category/', tutor_views.manage_courses, name='manage_courses'),
+    path('manage-courses/', tutor_views.manage_courses, name='manage_courses'),  # for tutor course 
     path('edit-course/<int:course_id>/', tutor_views.edit_course, name='edit_course'),
 
     # Define the URL for the delete_course view with a dynamic course_id parameter
     path('delete-course/<int:course_id>/', tutor_views.delete_course, name='delete_course'),
-
     path('course/activate/<int:course_id>/', tutor_views.activate_course, name='activate_course'),
-     path('course/deactivate/<int:course_id>/', tutor_views.deactivate_course, name='deactivate_course'),
+    path('course/deactivate/<int:course_id>/', tutor_views.deactivate_course, name='deactivate_course'),
 
 
-  path('enroll/<int:course_id>/', tutor_views.enroll_course, name='enroll_course'),
-  path('enrolled-courses/', tutor_views.enrolled_courses_list, name='enrolled_courses_list'),
-  path('enrolled-course/<int:course_id>/', tutor_views.enrolled_course_details, name='enrolled_course_details'),
-  path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, {'action': 'activate'}, name='activate_course'),
+     path('enroll/<int:course_id>/', tutor_views.enroll_course, name='enroll_course'),
+     path('enrolled-courses/', tutor_views.enrolled_courses_list, name='enrolled_courses_list'),
+     path('enrolled-course/<int:course_id>/', tutor_views.enrolled_course_details, name='enrolled_course_details'),
+     path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, {'action': 'activate'}, name='activate_course'),
 
     # Deactivate a course
     path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, name='toggle_course_status'),

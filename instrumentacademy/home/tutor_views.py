@@ -65,7 +65,6 @@ def edit_profile_tutor(request):
             user_profile.gender = request.POST['gender']
             user_profile.address = request.POST['address']
             user_profile.specialist = request.POST['specialist']
-            user_profile.description = request.POST['description']
             user_profile.phoneNo = request.POST['phoneNo']
 
             # Handle teaching experience as a string with "year(s)"

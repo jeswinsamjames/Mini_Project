@@ -1,23 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Course</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block content %}
+
+
     
     <div class="container mt-5">
-        <h1 class="text-center">Create a New Course</h1>
-        <form method="post" enctype="multipart/form-data">
+        <h1 class="text-center">Create New Course</h1>
+        <form method="post" enctype="multipart/form-data" class="needs-validation shadow p-4 rounded" novalidate>
             {% csrf_token %}
             <div class="form-group">
-                <label for="name">Course Name:</label>
+                <label for="name" class="custom-label">Course Name:</label>
                 <input type="text" class="form-control" id="name" name="name" required>
+                <div class="invalid-feedback">
+                    Please enter the course name.
+                </div>
             </div>
-    
+        
             <div class="form-group">
-                <label for="instrument_name">Instrument Name:</label>
+                <label for="instrument_name" class="custom-label">Instrument Name:</label>
                 <select class="form-control" id="instrument_name" name="instrument_name" required>
                     <option value="piano">Piano</option>
                     <option value="Violin">Violin</option>
@@ -27,56 +28,197 @@
                     <option value="Tabala">Tabala</option>
                     <option value="Western Vocal">Western Vocal</option>
                 </select>
+                <div class="invalid-feedback">
+                    Please select an instrument name.
+                </div>
             </div>
             <div class="form-group">
-                <label for="years_of_experience">Years of Experience:</label>
-                <input type="number" class="form-control" id="years_of_experience" name="years_of_experience" required min='0'>
+                <label for="years_of_experience" class="custom-label">Years of Experience:</label>
+                <input type="number" class="form-control" id="years_of_experience" name="years_of_experience" required min="0">
+                <div class="invalid-feedback">
+                    Years of experience cannot be negative.
+                </div>
             </div>
             <div class="form-group">
-                <label for="description">Description:</label>
+                <label for="description" class="custom-label">Description:</label>
                 <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                <div class="invalid-feedback">
+                    Please enter a description.
+                </div>
             </div>
-    
+        
             <div class="form-group">
-                <label for="course_image">Course Image:</label>
+                <label for="course_image" class="custom-label">Course Image:</label>
                 <input type="file" class="form-control-file" id="course_image" name="course_image" accept="image/*" onchange="previewImage()" required>
+                <div class="invalid-feedback">
+                    Please select a course image.
+                </div>
             </div>
-    
-            
-    
+        
             <div class="form-group">
                 <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; display: none;">
             </div>
-    
+        
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="is_active" name="is_active">
-                <label class="form-check-label" for="is_active">Active</label>
+                <input type="checkbox" class="form-check-input custom-control-input" id="is_active" name="is_active">
+                <label class="form-check-label custom-control-label" for="is_active">Active</label>
             </div>
-    
+        
             <button type="submit" class="btn btn-primary mt-3">Create Course</button>
         </form>
+        
+        
     </div>
-    
+<style>
+    /* Custom CSS for styling the form */
+    .container {
+        max-width: 600px;
+         /* Adjust the maximum width as needed */
+        margin-bottom: 50px;
+        
+        padding: 20px;
+        box-shadow: 0px 0px 5px rgba(96, 96, 96, 0.2);
+        border-radius: 10px;
+        background-color: #ffffff;
+    }
 
+    .custom-label {
+        font-weight: lighter;
+        text-align: left;
+    }
+
+    .form-check-input:checked {
+        background-color: #f3f3f3; /* Change the color when checked */
+    }
+
+    .form-check-label.custom-control-label:before {
+        border: 2px solid #5c5c5c; /* Border color when not checked */
+    }
+
+    .form-check-label.custom-control-label:hover:before {
+        border: 2px solid #0056b3; /* Border color on hover */
+    }
+
+    .form-check-label.custom-control-label:hover {
+        color: #0056b3; /* Text color on hover */
+    }
+</style>
+       
+    {% endblock content %}
+    {% block custom_js %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function previewImage() {
-            const input = document.getElementById('course_image');
-            const imagePreview = document.getElementById('imagePreview');
-            
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", function (event) {
+                const name = document.querySelector("#name");
+                const instrumentName = document.querySelector("#instrument_name");
+                const yearsOfExperience = document.querySelector("#years_of_experience");
+                const description = document.querySelector("#description");
+                const courseImage = document.querySelector("#course_image");
+                const isActive = document.querySelector("#is_active");
+                
+                // Custom validation logic
+                let hasErrors = false;
+        
+                if (!name.value) {
+                    name.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    name.classList.remove("is-invalid");
+                }
+        
+                if (!instrumentName.value) {
+                    instrumentName.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    instrumentName.classList.remove("is-invalid");
+                }
+        
+                const yearsOfExperienceValue = parseInt(yearsOfExperience.value);
+                if (isNaN(yearsOfExperienceValue) || yearsOfExperienceValue < 0) {
+                    yearsOfExperience.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    yearsOfExperience.classList.remove("is-invalid");
+                }
+        
+                if (!description.value) {
+                    description.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    description.classList.remove("is-invalid");
+                }
+        
+                if (!courseImage.value) {
+                    courseImage.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    courseImage.classList.remove("is-invalid");
+                }
+        
+                if (!isActive.checked) {
+                    isActive.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    isActive.classList.remove("is-invalid");
+                }
+        
+                if (hasErrors) {
+                    event.preventDefault(); // Prevent form submission
+                    event.stopPropagation(); // Stop event propagation
+                }
+            });
+        
+            // Live validation for name field
+            document.querySelector("#name").addEventListener("input", function () {
+                if (this.value) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        
+            // Live validation for instrument_name field
+            document.querySelector("#instrument_name").addEventListener("change", function () {
+                if (this.value) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        
+            // Live validation for years_of_experience field
+            document.querySelector("#years_of_experience").addEventListener("input", function () {
+                const yearsOfExperienceValue = parseInt(this.value);
+                if (!isNaN(yearsOfExperienceValue) && yearsOfExperienceValue >= 0) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        
+            // Live validation for description field
+            document.querySelector("#description").addEventListener("input", function () {
+                if (this.value) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        
+            // Live validation for course_image field
+            document.querySelector("#course_image").addEventListener("change", function () {
+                if (this.value) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        
+            // Live validation for isActive field
+            document.querySelector("#is_active").addEventListener("change", function () {
+                if (this.checked) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+        });
+        </script>
+        
+        
+        
 
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
-</body>
-</html>
+    {% endblock custom_js %}
+    
