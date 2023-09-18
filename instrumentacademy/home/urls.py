@@ -66,6 +66,11 @@ urlpatterns = [
     path('view_profile/tutor/', tutor_views.view_profile_tutor, name='view_profile_tutor'),
      path('create-course/', tutor_views.create_course, name='create_course'),
     path('course-list/', tutor_views.course_list, name='course_list'),
+    path('manage-courses/', tutor_views.manage_courses, name='manage_courses'),
+      path('edit-course/<int:course_id>/', tutor_views.edit_course, name='edit_course'),
+
+    # Define the URL for the delete_course view with a dynamic course_id parameter
+    path('delete-course/<int:course_id>/', tutor_views.delete_course, name='delete_course'),
    
    
     

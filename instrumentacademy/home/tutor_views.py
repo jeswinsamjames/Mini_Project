@@ -143,6 +143,43 @@ def course_list(request):
     print(courses)
     return render(request, 'tutor_template/course_list.html', {'courses': courses})
 
+def manage_courses(request):
+    courses = CourseDetail.objects.filter(tutor=request.user)  # Retrieve all courses
+    context = {'courses': courses, 'page_title': 'Manage Courses'}
+    return render(request, 'tutor_template/manage_course.html', context)
+
+def edit_course(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    # Ensure that only the tutor who created the course can edit it
+    if request.user == course.tutor:
+        if request.method == 'POST':
+            form = CourseForm(request.POST, instance=course)
+            if form.is_valid():
+                form.save()
+                return redirect('tutor_dashboard')  # Redirect to the tutor's dashboard
+        else:
+            form = CourseForm(instance=course)
+
+        return render(request, 'edit_course.html', {'form': form, 'course': course})
+    else:
+        # Handle unauthorized access (e.g., redirect to an error page)
+        pass
+
+from django.http import HttpResponseForbidden
+def delete_course(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    # Ensure that only the tutor who created the course can delete it
+    if request.user == course.tutor:
+        course.delete()
+        messages.success(request, 'Course has been deleted successfully.')
+        return redirect('manage_courses')  # Redirect to the tutor's dashboard
+    else:
+        # Handle unauthorized access (e.g., redirect to an error page)
+        return HttpResponseForbidden("You are not authorized to delete this course.because this course is created by other tutor")
+
+
 def tutor_take_attendance(request):
     # tutor = get_object_or_404(tutor, admin=request.user)
     # subjects = Subject.objects.filter(tutor_id=tutor)

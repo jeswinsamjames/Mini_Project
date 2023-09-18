@@ -36,3 +36,18 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+
+
+
+# class CourseForm(forms.ModelForm):
+#     class Meta:
+#         model = CourseDetail
+#         fields = [
+#             'title',
+#             'description',
+#             'is_active',  # Include the is_active field in the form
+#         ]
+
+#         widgets = {
+#             'schedule': forms.Textarea(attrs={'rows': 4}),  # Customize the widget for schedule field
+#         }

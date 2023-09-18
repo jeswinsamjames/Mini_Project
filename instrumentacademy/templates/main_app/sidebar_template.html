@@ -260,7 +260,17 @@
                     <a href="{{create_course}}" class="nav-link {% if staff_take_attendance == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            Create Course
+                            Create Course   
+
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% url 'manage_courses' as manage_courses %}
+                    <a href="{{manage_courses}}" class="nav-link {% if manage_courses == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Manage Course   
 
                         </p>
                     </a>
