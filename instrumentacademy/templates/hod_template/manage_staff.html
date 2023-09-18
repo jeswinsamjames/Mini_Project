@@ -22,8 +22,9 @@
                                     <th>Email</th>
                                     <th>Gender</th>
                                     <th>Course</th>
-                                    <th>Resume</th>
                                     <th>Avatar</th>
+                                    <th>Resume</th>
+                                    
                                     <th>Edit</th>
                                 </tr>
                             </thead>
@@ -38,7 +39,7 @@
                                     <td>
                                         {% if tutor.userprofile.profile_pics  %}
                                         <img class="img img-fluid mb-2" height="100" width="100"
-                                            src="{{ tutor.userprofile.profile_picsurl }}" alt="{{ tutor.user.first_name }}'s Profile Picture">
+                                            src="{{ tutor.userprofile.profile_pics }}" alt="{{ tutor.user.first_name }}'s Profile Picture">
                                         {% else %}
                                         No Image
                                         {% endif %}

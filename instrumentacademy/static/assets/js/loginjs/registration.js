@@ -20,7 +20,8 @@ document.addEventListener("DOMContentLoaded", function() {
       message: "Phone number must be 10 digits.",
     },
     password: {
-      regex: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, // Requires 8 characters with 1 special character and 1 number
+      regex: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 
+      // Requires 8 characters with 1 special character and 1 number
       message: "Password must be at least 8 characters with one special character and one number.",
     },
     cnpassword: {
@@ -30,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
   };
 
   inputs.forEach(input => {
-    input.addEventListener("input", function() {
+    input.addEventListener("input", function () {
       const error = this.nextElementSibling;
       if (this.value.trim() === "") {
         error.textContent = "";
@@ -56,13 +57,18 @@ document.addEventListener("DOMContentLoaded", function() {
       } else {
         error.textContent = "";
         input.classList.remove("error");
+        // Check if the password field is empty and update the confirm password field accordingly
+        if (passwordInput.value.trim() === "") {
+          const passwordError = passwordInput.nextElementSibling;
+          passwordError.textContent = "This field is required.";
+          passwordInput.classList.add("error");
+        }
       }
     } else {
       error.textContent = "";
       input.classList.remove("error");
     }
   }
-
   form.addEventListener("submit", function(e) {
     inputs.forEach(input => {
       const validationRule = validationRules[input.id];
@@ -76,4 +82,14 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   });
+
+const passwordInput = form.querySelector("#password");
+passwordInput.addEventListener("input", function () {
+  const cnPasswordInput = form.querySelector("#cnpassword");
+  const cnPasswordError = cnPasswordInput.nextElementSibling;
+  if (this.value.trim() === "") {
+    cnPasswordError.textContent = "";
+    cnPasswordInput.classList.remove("error");
+  }
+});
 });

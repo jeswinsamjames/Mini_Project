@@ -55,24 +55,32 @@
     
 
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="{% url 'index' %}" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.png" alt=""> -->
        
       </a>
       <nav id="navbar" class="navbar">
+        {% comment %} {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %} {% endcomment %}
         <ul>
           {% comment %} <li><a href="">{{user.username}}</a></li> {% endcomment %}
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li class="dropdown"><a href="{% url 'view_catgories' %}"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-            <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          {% comment %} <li><a href="#about">About</a></li> {% endcomment %}
+        
+          {% comment %} <li class="dropdown"><a href="{% url 'view_catgories' %}"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a> {% endcomment %}
+            
               
           
-          <li><a href="/courses">Courses</a></li>
-          <li><a href="#resource">Resource</a></li>
+          <li><a href="{% url 'view_catgories' %}">Courses</a></li>
+          {% comment %} <li><a href="#resource">Resource</a></li>
           <li><a href="blog.html">Blog</a></li>
-          <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+          <li><a href="{% url 'mylearning' %}">My Learning</a></li> {% endcomment %}
           
            {% if user.is_authenticated %}
            <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
@@ -81,7 +89,7 @@
           <p>You are not logged in.</p>
           {% comment %} <li><a href="{% url 'login' %}">Login</a></li> {% endcomment %}
           {% endif%}
-        </ul>
+          </ul>
       </nav><!-- .navbar -->
       {% for message in messages %}
       <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
@@ -91,7 +99,6 @@
       {% endfor %}
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-
     </div>
   </header>
 
@@ -119,7 +126,7 @@
 
     <section class="courselist">
         <div class="container mt-5">
-            <h1 class="text-center" style=" margin: 50px;"> Course List</h1>
+            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Courses</h1>
             <div class="row">
                 {% for course in courses %}
                 <div class="col-md-3 course-card1">
@@ -127,7 +134,7 @@
                         <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
                         <div class="card-body">
                             <h5 class="card-title">{{ course.name }}</h5>
-                            <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}</p>
+                            <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
                             <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
                             <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
                         </div>
@@ -135,7 +142,7 @@
                             <!-- Enroll and See Details Links with Line Separator -->
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="text-center">
-                                    <a href="#" class="text-primary text-decoration-none">Enroll</a>
+                                    <a href="{% url 'enroll_course' course.id %}" class="text-primary text-decoration-none">Enroll</a>
                                 </div>
                                 <div class="separator"></div>
                                 <div class="text-center">

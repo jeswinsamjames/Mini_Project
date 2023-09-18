@@ -1,0 +1,74 @@
+{% extends 'main_app/base.html' %}
+
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{page_title}}</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>SN</th>
+                                    <th>Photo</th>
+                                    <th>Leaner Name</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                    <th>Activate/Deactivate</th>
+                                  
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for learner in enrolled_students %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td> {{ learner.learner.first_name }}{{ learner.learner.last_name }} </td>
+                                    <td> {{ learner.learner.email }} </td>
+                                    <td>
+                                        <a href="{% url 'toggle_course_status' course.id %}?action=activate" class="btn btn-success">Activate</a>
+
+<!-- Deactivate Course Link -->
+                                        <a href="{% url 'toggle_course_status' course.id %}?action=deactivate" class="btn btn-danger">Deactivate</a>
+                                    </td>
+                                    <td>
+                                        {% if course.is_active %}
+                                            <span class="text-success">Active</span>
+                                        {% else %}
+                                            <span class="text-danger">Deactivated</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+      <li>No enrolled learners for this course.</li>
+                                {% endfor %}
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+{% comment %} {% block content %}
+  <h1>Enrolled Learners for {{ enrolled_course.name }}</h1>
+  <ul>
+    {% for learner in enrolled_students %}
+      <li>{{ learner.learner.first_name }} - {{ learner.learner.email }}</li>
+      <!-- Display other learner details as needed -->
+    {% empty %}
+      <li>No enrolled learners for this course.</li>
+    {% endfor %}
+  </ul>
+{% endblock %} {% endcomment %}

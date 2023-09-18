@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Form Title</title>
+
+    <!-- Bootstrap CSS (Make sure to include the correct path) -->
+    <link rel="stylesheet" href="path/to/bootstrap.min.css">
+
+    <!-- jQuery (Make sure to include the correct path) -->
+    <script src="path/to/jquery.min.js"></script>
+
+    <!-- Bootstrap JS (Make sure to include the correct path) -->
+    <script src="path/to/bootstrap.min.js"></script>
+
+    <!-- Your Custom JavaScript (Make sure to include the correct path) -->
+    <script src="path/to/your-custom-script.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script>
+        // JavaScript function to handle the "Cancel" button click event
+        function cancelAction() {
+            // Use the window.history object to go back to the previous page
+            window.history.back();
+
+        function showSuccessMessage() {
+                // Display the success message div
+                document.getElementById("successMessage").style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Your Form</h1>
+    <form method="post" enctype="multipart/form-data" class="form-container">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+        <div class="form-group">
+            {{ form.years_of_experience.label_tag }}
+            {{ form.years_of_experience }}
+        </div>
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+        </div>
+        <div class="form-check">
+            {{ form.is_active }}
+            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Is Active</label>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" onclick="showSuccessMessage()">Save</button>
+            <a href="#" class="btn btn-secondary" onclick="cancelAction()">Cancel</a>
+            
+            {% if course.is_active %}
+            <!-- Deactivate button -->
+            <a href="{% url 'deactivate_course' course.id %}" class="btn btn-danger">Deactivate Course</a>
+        {% else %}
+            <!-- Activate button -->
+            <a href="{% url 'activate_course' course.id %}" class="btn btn-success">Activate Course</a>
+        {% endif %}
+
+        </div>
+        <div id="successMessage" class="alert alert-success" style="display: none;">
+            Course has been saved successfully.
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

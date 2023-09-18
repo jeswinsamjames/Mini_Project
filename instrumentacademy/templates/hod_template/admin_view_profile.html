@@ -68,7 +68,7 @@
                         <form id="user-profile-form" method="post" enctype="multipart/form-data" action="{% url 'edit_admin_profile' %}">
                             {% csrf_token %}
                             <div class="alert alert-danger" role="alert" style="display: none;"></div>
-                            <div class="form-group">
+                            {% comment %} <div class="form-group">
                                 <label for="id_profile_picture">Profile Picture:</label>
                                 <input type="file" class="form-control-file" id="profile_picture" name="profile_picture">
                                 <small class="form-text text-muted">Upload a professional profile picture.</small>
@@ -77,7 +77,7 @@
                                 {% else %}
                                     <p>No profile picture available</p>
                                 {% endif %}
-                            </div>
+                            </div> {% endcomment %}
                             <div class="form-group">
                                 <label for="id_first_name">First Name:</label>
                                 <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>

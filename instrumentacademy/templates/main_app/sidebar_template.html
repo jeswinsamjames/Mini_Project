@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -96,7 +97,7 @@
                 </li>
                 
                
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                     {% url 'add_student' as add_student%}
                     <a href="{{add_student}}" class="nav-link  {% if add_student == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
@@ -105,7 +106,7 @@
 
                         </p>
                     </a>
-                </li>
+                </li> {% endcomment %}
               
 
                 
@@ -114,7 +115,7 @@
                     <a href="{{manage_course}}" class="nav-link  {% if manage_course == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            Add Course
+                            Add Categories
 
                         </p>
                     </a>
@@ -126,21 +127,22 @@
                         class="nav-link  {% if edit_course == request.path or manage_course == request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            Manage Course
+                            Manage Categories
 
                         </p>
                     </a>
                 </li>
                
-                {% comment %} <li class="nav-item">
-                    <a href="{% url '' %}" class="nav-link {% if 'enrollment_requests' in request.path %} active {% endif %}">
+                <li class="nav-item">
+                    {% url 'manage_tutor_courses' as manage_tutor_courses %}
+                    <a href="{{manage_tutor_courses}}" class="nav-link {% if 'manage_tutor_courses' in request.path %} active {% endif %}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            course enroll request
+                            Tutor Course List
                         </p>
                     </a>
                 </li>
-                 {% endcomment %}
+                 
                 {% comment %}<li class="nav-item">
                     {% url 'add_session' as add_session %}
                     <a href="{{add_session}}" class="nav-link  {% if add_session == request.path %} active {% endif %}">
@@ -296,6 +298,16 @@
                         </p>
                     </a>
                 </li> {% endcomment %}
+                <li class="nav-item">
+                    {% url 'enrolled_courses_list' as enrolled_courses_list %}
+                    <a href="{% url 'enrolled_courses_list' %}" class="nav-link {% if enrolled_courses_list == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                             Enrolled Course List
+
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     {% url 'staff_take_attendance' as staff_take_attendance %}
                     <a href="{{staff_take_attendance}}" class="nav-link {% if staff_take_attendance == request.path %} active {% endif %}">

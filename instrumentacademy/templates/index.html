@@ -59,20 +59,22 @@
           <li><a href="#hero">Home</a></li>
           <li><a href="#about">About</a></li>
          
-          <li class="dropdown"><a href="/tutor_course_enroll"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+          <li ><a href="{% url 'view_catgories' %}"><span>Courses</span> </a>
             
           </li>
           {% comment %} <li><a href="blog.html">Blog</a></li> {% endcomment %}
-          <li><a href="#faculty">Faculty</a></li>
-          <li><a href="#resource">Resource</a></li>  
-          <li><a href="{% url 'login' %}">Login</a></li>
-          
+          {% if user.is_authenticated and not user.profile.isTutor %}
+  <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+{% endif %}
+          {% comment %} <li><a href="#faculty">Faculty</a></li>
+          <li><a href="#resource">Resource</a></li>   {% endcomment %}
+         
            {% if user.is_authenticated %}
            <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
           <li><a href="{% url 'logout' %}">logout</a></li>
           {% else %}
-          <p>You are not logged in.</p>
-          {% comment %} <li><a href="{% url 'login' %}">Login</a></li> {% endcomment %}
+         
+          <li><a href="{% url 'login' %}">Login</a></li> 
           {% endif%}
         </ul> 
       </nav><!-- .navbar -->
@@ -98,7 +100,7 @@
              <span></span></h2>
           <p>Setting Gold Standards since 2009</p>
           <div class="d-flex justify-content-center justify-content-lg-start">
-            <a href="#about" class="btn-get-started">Get Started</a>
+            <a href="/login" class="btn-get-started">Get Started</a>
             <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
           </div>
         </div>
@@ -204,45 +206,54 @@
 
         <div class="section-header">
           <h2>courses</h2>
-          <p>Aperiam dolorum et et wuia molestias qui eveniet numquam nihil porro incidunt dolores placeat sunt id nobis omnis tiledo stran delop</p>
+          <p>SEE ALL OUR ONLINE MUSIC COURSES AND PICK ONE OR MORE THAT INTERESTS YOU THE MOST</p>
         </div>
 
         <section class="Program-Couses-main">
           <div class="container">
-            <div class="row">
-                {% for course in courses %}
-                <div class="col-lg-4 mb-4">
-                    <div class="box">
-                        <div class="Program-Couses-main-images">
-                            <img src="{{ course.image.url }}" alt="{{ course.name }}" width="300" height="300">
-                            <script>
-                              try {
-                                  console.log("{{ course.image.url }}");
-                              } catch (e) {
-                                  console.error("Error displaying image:", e);
-                              }
-                          </script>
-                        </div>
-                        <div class="main-class-text">
-                            <h3>{{ course.title }}</h3>
-                            <p>{{ course.description|truncatechars:150 }}</p>
-                            {% comment %} <a class="btn btn-primary" href="/tutorslist/{{course.title}}" role="button">Enroll</a> {% endcomment %}
-                            <a type="button" href="/courses/{{course.name}}" class="btn btn-primary"  data-target="#enrollmentModal">
-                              Read More
-                            </a>
-                      
-                          <!-- Include the enrollment form modal -->
-                          
+              <div class="row">
+                  {% for categorie in categories %}
+                  <div class="col-lg-4 mb-4">
+                      <div class="box">
+                          <div class="Program-Couses-main-images">
+                              <img src="{{ categorie.image.url }}" alt="{{ categorie.name }}" width="300" height="300">
+                              <script>
+                                  try {
+                                      console.log("{{ categorie.image.url }}");
+                                  } catch (e) {
+                                      console.error("Error displaying image:", e);
+                                  }
+                              </script>
                           </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        </section>
-
-      </div>
-    </section>
+                          <h3>{{ categorie.name }}</h3>
+                          <div class="main-class-text">
+                              <h3>{{ categorie.title }}</h3>
+                              <p>{{ categorie.description|truncatechars:150 }}</p>
+                              <a type="button" href="/courses/{{ categorie.name }}" class="btn btn-primary" data-target="#enrollmentModal">
+                                  Read More
+                              </a>
+                          </div>
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+      </section>
+      <div class="pagination">
+        <span class="step-links">
+            {% if categories.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ categories.previous_page_number }}">previous</a>
+            {% endif %}
+            
+            <span class="current-page">{{ categories.number }}</span>
+            
+            {% if categories.has_next %}
+                <a href="?page={{ categories.next_page_number }}">next</a>
+                <a href="?page={{ categories.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     
     <style>
       /* Add styling to the course boxes */
@@ -294,7 +305,7 @@
       }
     </style>
     
-    
+  </section>
     <!-- End Our Services Section -->
 
 
@@ -479,7 +490,9 @@
 
         <div class="section-header">
           <h2>Contact</h2>
-          <p>Nulla dolorum nulla nesciunt rerum facere sed ut inventore quam porro nihil id ratione ea sunt quis dolorem dolore earum</p>
+          <h3>Get In Touch</h3>
+          <p>
+            We're here for you!</p>
         </div>
 
         <div class="row gx-lg-0 gy-4">
@@ -491,7 +504,7 @@
                 <i class="bi bi-geo-alt flex-shrink-0"></i>
                 <div>
                   <h4>Location:</h4>
-                  <p>A108 Adam Street, New York, NY 535022</p>
+                  <p>6MGH+89M, Pandalam, Kerala 689501</p>
                 </div>
               </div><!-- End Info Item -->
 
@@ -499,7 +512,7 @@
                 <i class="bi bi-envelope flex-shrink-0"></i>
                 <div>
                   <h4>Email:</h4>
-                  <p>info@example.com</p>
+                  <p>sangeethaacademy@gmail.com</p>
                 </div>
               </div><!-- End Info Item -->
 
@@ -515,7 +528,7 @@
                 <i class="bi bi-clock flex-shrink-0"></i>
                 <div>
                   <h4>Open Hours:</h4>
-                  <p>Mon-Sat: 11AM - 23PM</p>
+                  <p>Mon-Sat: 11AM - 6:00PM</p>
                 </div>
               </div><!-- End Info Item -->
             </div>
@@ -561,9 +574,9 @@
       <div class="row gy-4">
         <div class="col-lg-5 col-md-12 footer-info">
           <a href="index.html" class="logo d-flex align-items-center">
-            <span>Impact</span>
+            <span>MusciLearn Hub</span>
           </a>
-          <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
+          <p>At MusciLearn Hub, we endeavor to be the world’s most technologically advanced and credible platform for e-learning. We work towards creating a user-friendly live learning platform for hobbies.</p>
           <div class="social-links d-flex mt-4">
             <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
             <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -583,7 +596,7 @@
           </ul>
         </div>
 
-        <div class="col-lg-2 col-6 footer-links">
+        {% comment %} <div class="col-lg-2 col-6 footer-links">
           <h4>Our Services</h4>
           <ul>
             <li><a href="#">Web Design</a></li>
@@ -592,7 +605,7 @@
             <li><a href="#">Marketing</a></li>
             <li><a href="#">Graphic Design</a></li>
           </ul>
-        </div>
+        </div> {% endcomment %}
 
         <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
           <h4>Contact Us</h4>

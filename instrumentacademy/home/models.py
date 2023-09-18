@@ -55,3 +55,10 @@ class CourseDetail(models.Model):
     def __str__(self):
         return f"{self.tutor_name}'s "
 
+class Enrollment(models.Model):
+    learner = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    enrollment_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return f"{self.learner.username} enrolled in {self.course.name}"

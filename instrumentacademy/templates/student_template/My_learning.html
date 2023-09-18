@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+  {% block title %}
+  Registration
+  {% endblock title %}
+    
+
+  <body>
+    
+    {% block body %}
+    <style>
+        /* Custom styles */
+        .course-card {
+            margin-bottom: 20px;
+        }
+        .course-card img {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+        }
+    </style>
+
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">My Learning</a>
+            <!-- Add navigation links or user profile here -->
+        </nav>
+    </header>
+    
+    <section class="courselist">
+        <div class="container mt-5">
+            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Enrolled Courses</h1>
+            <div class="row">
+                {% for course in enrolled_courses %}
+                <div class="col-md-3 course-card1">
+                    <div class="card mb-4 course-card">
+                        <img class="courseimg" src="{% if course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.learner.first_name }}</h5>
+                            <p class="card-text"><strong>Tutor:</strong> {{ course.course.tutor.first_name }}  {{ course.course.tutor.last_name }}</p>
+                            <p class="card-text"><strong>Years of Experience:</strong> {{ course.course.years_of_experience }}</p>
+                            <p class="card-text"><strong>Description:</strong> {{ course.course.description }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <!-- Enroll and See Details Links with Line Separator -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-center">
+                                    <a href="{% url 'enroll_course' course.id %}" class="text-primary text-decoration-none">Enroll</a>
+                                </div>
+                                <div class="separator"></div>
+                                <div class="text-center">
+                                    <a href="#" class="text-info text-decoration-none">See Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+            
+            <!-- Additional Options -->
+            {% comment %} <div class="col-md-4">
+                <h2>Additional Options</h2>
+                <ul class="list-group">
+                    <li class="list-group-item" ><a href="#"> My Lists</a></li>
+                    <li class="list-group-item" ><a href="#">Wishlist</a></li>
+                    
+                   
+                    <!-- Add more options as needed -->
+                </ul>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Link to Bootstrap JS (jQuery required) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    
+    {% endblock body %}
+    <Style>
+    
+        .separator {
+            width: 2px;
+            height: 30px;
+            background-color: #ccc;
+        }
+    
+    .hero {
+        background-image: url('/static/assets/img/keynote.jpg'); /* Replace with your image path */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 100%;
+        height: 60vh; /* Adjust the height as needed */
+        color: #fff; /* Text color on top of the background */
+        padding: 100px 0; /* Adjust padding as needed */
+        text-align: center;
+    }
+
+    .hero h2 {
+        font-size: 2.5rem; /* Adjust the font size */
+    }
+
+    .hero p {
+        font-size: 1.5rem; /* Adjust the font size */
+    }
+
+     .courselist .container {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .course-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        height:600px;
+    }
+    .courseimg{
+        height : 170px ;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .card-text {
+        font-size: 16px;
+    }
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        height: 60px; /* Set the default height */
+        width: 100%; /* Set the default width to 100% */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+  </body> 
+
+
+    

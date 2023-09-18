@@ -7,19 +7,18 @@ from django.conf.urls.static import static
 from .hod_views import PendingTutorListView, approve_tutor
 urlpatterns = [
     
-    path('', views.index),
+    path('', views.index,name='index'),
     
-    path('leanerindex', views.leanerindex,name='learnerindex'),
+   
    
     path('login', views.login,name='login'),
     
-   
    
     
   
     path('homecontent', views.homecontent,name='homecontent'),
     path('index1', views.index1,name='index1'),
-    path('mylearning', views.mylearning,name='mylearning'),
+    
 
 
     path('logout', views.loggout,name='logout'),
@@ -45,6 +44,7 @@ urlpatterns = [
     path('student/view/result/', student_views.student_view_result,name='student_view_result'),
     path('view_profile/learner/', student_views.view_profile_learner, name='view_profile_learner'),
     path('edit_profile/learner/', student_views.edit_profile_learner, name='edit_profile_learner'),
+     path('mylearning/', student_views.enrolled_courses_list_leaner, name='mylearning'),
 
     #<<<<<<<<<<<<<<staff>>>>>>>>>>>>>>>
 
@@ -64,14 +64,27 @@ urlpatterns = [
     path("tutor/feedback/", tutor_views.tutor_feedback, name='tutor_feedback'),
     path('edit_profile/tutor/', tutor_views.edit_profile_tutor, name='edit_profile_tutor'),
     path('view_profile/tutor/', tutor_views.view_profile_tutor, name='view_profile_tutor'),
-     path('create-course/', tutor_views.create_course, name='create_course'),
-    path('course-list/', tutor_views.course_list, name='course_list'),
-    path('manage-courses/', tutor_views.manage_courses, name='manage_courses'),
-      path('edit-course/<int:course_id>/', tutor_views.edit_course, name='edit_course'),
+    path('create-course/', tutor_views.create_course, name='create_course'),
+    path('course-list', tutor_views.course_list, name='course_list'),
+    path('admin/home/category/', tutor_views.manage_courses, name='manage_courses'),
+    path('edit-course/<int:course_id>/', tutor_views.edit_course, name='edit_course'),
 
     # Define the URL for the delete_course view with a dynamic course_id parameter
     path('delete-course/<int:course_id>/', tutor_views.delete_course, name='delete_course'),
-   
+
+    path('course/activate/<int:course_id>/', tutor_views.activate_course, name='activate_course'),
+     path('course/deactivate/<int:course_id>/', tutor_views.deactivate_course, name='deactivate_course'),
+
+
+  path('enroll/<int:course_id>/', tutor_views.enroll_course, name='enroll_course'),
+  path('enrolled-courses/', tutor_views.enrolled_courses_list, name='enrolled_courses_list'),
+  path('enrolled-course/<int:course_id>/', tutor_views.enrolled_course_details, name='enrolled_course_details'),
+  path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, {'action': 'activate'}, name='activate_course'),
+
+    # Deactivate a course
+    path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, name='toggle_course_status'),
+
+
    
     
     # path("staff/get_students/", staff_views.get_students, name='get_students'),
@@ -100,9 +113,17 @@ urlpatterns = [
      path('approve-tutor/<int:tutor_id>/', approve_tutor, name='approve_tutor'),
 
     
-     path("admin/home/category/", hod_views.manage_course, name='manage_course'),
+     
      path("view_catgories", hod_views.view_catgories, name='view_catgories'),
+
      path('courses/<str:category_name>/', hod_views.filtered_course_list, name='filtered_course_list'),
+     path('manage_tutor_courses', hod_views.manage_tutor_courses, name='manage_tutor_courses'),
+#       path('activate-course/<int:course_id>/', hod_views.admin_toggle_course, {'action': 'activate'}, name='admin_activate_course'),
+
+#     path('deactivate-course/<int:course_id>/', hod_views.admin_toggle_course, {'action': 'deactivate'}, name='admin_deactivate_course'),
+
+
+
      path("subject/manage/", hod_views.manage_subject, name='manage_subject'),
      path('add_tutor/', hod_views.add_tutor, name='add_tutor'),
      path('student/edit/<int:student_id>', hod_views.edit_student, name='edit_student'),

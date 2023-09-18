@@ -8,12 +8,23 @@ from django.contrib.auth import authenticate,login as userlogin, logout
 
 from hashlib import sha256
 from .models import *
-from .forms import EditProfileForm
+from .forms import *
+from django.core.paginator import Paginator
 
 
 def index(request):
     course = category.objects.all()
     return render(request,'index.html',{'course': course})
+
+def index(request):
+    categories = category.objects.all()  
+    paginator = Paginator(categories, 6)  # Show 10 categories per page (adjust as needed)
+    page_number = request.GET.get('page')  # Get the current page number from the request
+
+    categories = paginator.get_page(page_number) 
+    context = {'categories': categories}  
+    
+    return render(request, 'index.html', context)
 
 
 def loggout(request):
@@ -22,15 +33,6 @@ def loggout(request):
 
 def base(request):
     return render(request,"base.html" )
-
-
-
-
-
-
-def leanerindex(request):
-    
-    return render(request,"learner_index.html" )
 
 def forget(request):
     return render(request,"forget.html" )
@@ -46,37 +48,7 @@ def index1(request):
 def mylearning(request):
     return render(request,"My_learning.html" )
 
-# import requests
-# from django.http import JsonResponse
-
-# def verify_recaptcha(request):
-#     if request.method == 'POST':
-#         recaptcha_response = request.POST.get('token')
-#         secret_key = 'YOUR_RECAPTCHA_SECRET_KEY'  # Replace with your reCAPTCHA secret key
-
-#         # Send a request to Google to verify the reCAPTCHA token
-#         response = requests.post('https://www.google.com/recaptcha/api/siteverify', {
-#             'secret': secret_key,
-#             'response': recaptcha_response
-#         })
-
-#         result = response.json()
-
-#         # Check if reCAPTCHA verification succeeded
-#         if result['success']:
-#             return JsonResponse({'success': True})
-#         else:
-#             return JsonResponse({'success': False})
-
-
-
-
-
-
-
-
 def registration(request):
-    
     if request.method == 'POST':
         username = request.POST['username']
         first_name = request.POST['first_name']
@@ -135,7 +107,7 @@ def login(request):
                     # Redirect learners to the learner dashboard
                     userlogin(request, user)
                     request.session['username'] = username
-                    return redirect('learnerindex')  # Use the actual URL name
+                    return redirect('index')  # Use the actual URL name
 
             elif user.is_superuser:
                 userlogin(request, user)
@@ -147,70 +119,8 @@ def login(request):
     return render(request, 'login.html')
 
 
-# def view_profile(request):
-#     user = request.user
-#     user_profile = user.userprofile  # Assuming the related name is 'userprofile'
-    
-#     context = {
-#         'user_profile': user_profile,
-#     }
-    
-#     return render(request, 'profile.html', context)
-
-# def edit_profile_tutor(request):
-#     if request.method == 'POST':
-#         form = EditProfileForm(request.POST, instance=request.user)
-#         if form.is_valid():
-#             user = form.save(commit=False)
-
-#             # Access the UserProfile object associated with the User
-#             user_profile = UserProfile.objects.get(user=user)
-
-#             # Update gender, address, first name, and last name
-#             user_profile.gender = request.POST['gender']
-#             user_profile.address = request.POST['address']
-#             user.last_name = request.POST['last_name']
-#             user.first_name = request.POST['first_name']
-            
-#             user_profile.save()  # Save the UserProfile
-#             user.save()  # Save the User
-
-#             return redirect('profile')
-#     else:
-#         form = EditProfileForm(instance=request.user)
-
-#     context = {
-#         'form': form,
-#     }
-
-#     return render(request, 'student_template/profile.html', context)
-
-# from django.contrib.admin.views.decorators import staff_member_required
-# @staff_member_required
-# def tutorslist(request):
-#     tutors = Tutor.objects.all()
-#     return render(request, 'tutorslist.html', {'tutors': tutors})
-
-
-# def tutorslist_2(request,instrument=None):
-#     tutors = Tutor.objects.filter(instrument_teaching__icontains=instrument)
-#     return render(request, 'tutorslist.html', {'tutors': tutors})
-
-
-
-
-
-
-
-
-
 def student_view_result(request):
-    # student = get_object_or_404(Student, admin=request.user)
-    # results = StudentResult.objects.filter(student=student)
-    # context = {
-    #     'results': results,
-    #     'page_title': "View Results"
-    # }
+
     return render(request, "student_template/student_view_result.html")
 
 def logout_user(request):
@@ -223,39 +133,4 @@ def user_logout(request):
 def student_fcmtoken(request):
     return render(request, "student_template/student_view_result.html")
 
-
-
-# <<<<<<<<<<<admin viewss>>>>>>>>>>>>>>>
-
-
-def webadmin(request):
-    # postcount = Post.objects.all().count()
-    # catcount = Category.objects.all().count()
-    # usercount = User.objects.all().count()
-    # orders = Order.objects.all()
-    # context = {'postcount':postcount, 'cat':catcount, 'user':usercount,"orders":orders}
-    return render(request, 'webadmin/index.html')  
-def allposts(request):
-    # posts = Post.objects.all()
-    # context = {'posts':posts}
-    return render(request, 'webadmin/allposts.html')
-def allcat(request):
-    # cat = Category.objects.filter(parent=None).order_by('hit')
-    # context = {'cat':cat}
-    return render(request, 'webadmin/allcat.html')
-def allusers(request):
-    # users = User.objects.all()
-    # customer = Customer.objects.all()
-    # context = {
-    #     # 'users':users
-    # 'customer':customer
-    # }
-    return render(request, 'webadmin/allusers.html')
-def allorders(request):
-    # orders = Order.objects.filter(ordered=True)
-    # carts = Cart.objects.all()
-    # context = {
-    # 'orders':orders, 'carts':carts,
-    # }
-    return render(request, 'webadmin/allorders.html')
 

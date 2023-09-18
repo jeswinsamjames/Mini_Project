@@ -1,0 +1,144 @@
+
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block content %}
+{% if message %}
+<div class="alert alert-success">
+    {{ message }}
+</div>
+{% endif %}
+
+<!-- Rest of your HTML content -->
+<style>
+ .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.step-links a {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border-radius: 5px;
+    margin: 0 5px;
+    text-decoration: none;
+}
+
+.step-links .current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.step-links a:hover {
+    background-color: #0056b3;
+}
+
+
+</style>
+<section class="content">
+    <div class="container-fluid">
+<h1 class="mb-4"> Tutors Courses</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Course Name</th>
+                <th>Tutor</th>
+                
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ course.name }}</td>
+                <td>{{ course.tutor.username }}</td>
+                <td>{{ course.is_active }}</td>
+                <td>
+                   
+                        <button class="btn btn-success activate-btn" data-course-id="{{ course.id }}">Activate</button>
+                        <button class="btn btn-danger deactivate-btn" data-course-id="{{ course.id }}">Deactivate</button>
+                   
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if courses.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ courses.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current-page">{{ courses.number }}</span>
+
+        {% if courses.has_next %}
+            <a href="?page={{ courses.next_page_number }}">next</a>
+            <a href="?page={{ courses.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".activate-btn").click(function() {
+            var courseID = $(this).data("course-id");
+            sendAction(courseID, "activate");
+        });
+
+        $(".deactivate-btn").click(function() {
+            var courseID = $(this).data("course-id");
+            sendAction(courseID, "deactivate");
+        });
+
+        function sendAction(courseID, action) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'manage_tutor_courses' %}",
+                data: {
+                    course_id: courseID,
+                    action: action,
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    if (response.status === "success") {
+                        // Handle success, e.g., display a success message
+                        alert(response.message);
+                        location.reload(); // Reload the page to update the course status
+                    } else {
+                        // Handle error, e.g., display an error message
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    // Handle AJAX error, e.g., display an error message
+                    alert("AJAX error: " + xhr.status + ": " + xhr.statusText);
+                }
+            });
+        }
+    });
+</script>
+
+{% endblock %}
