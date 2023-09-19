@@ -81,11 +81,9 @@
                         <label class="custom-file-label" for="resume">Choose PDF file</label>
                     </div>
                     <div id="file-name-display"></div>
-
-                    
                 </div>
-                <div id="file-name-display"></div>
             </div>
+            
             
               
               
@@ -142,15 +140,26 @@
       const isTutorCheckbox = $("#isTutor");
       const resumeUploadField = $("#resume-upload-field");
       const fileInput = $("#resume");
+      const fileChooseLabel = $("#file-choose-label");
       const fileNameDisplay = $("#file-name-display");
   
       // Function to update the file name display
       function updateFileNameDisplay() {
         const file = fileInput[0].files[0]; // Get the selected file
         if (file) {
-          // Set the text of the file name display element to the file's name
-          fileNameDisplay.text(file.name);
+          // Check if the selected file is a PDF
+          if (file.type === "application/pdf") {
+            // Set the text of the file name display element to the file's name
+            fileNameDisplay.text(file.name);
+            fileNameDisplay.text('');
+          } else {
+            // Display an error message if the selected file is not a PDF
+            fileChooseLabel.text("Choose PDF file");
+            fileNameDisplay.text("Please select a PDF file.");
+            fileInput.val(""); // Clear the file input
+          }
         } else {
+          fileChooseLabel.text("Choose PDF file");
           fileNameDisplay.text(''); // Clear the file name display if no file is selected
         }
       }
@@ -175,17 +184,18 @@
         if (isTutorCheckbox.is(":checked")) {
           // If the checkbox is checked (tutor registration), check if a file is uploaded
           const file = fileInput[0].files[0];
-          if (!file) {
-            alert("Please upload your resume.");
-            e.preventDefault(); // Prevent form submission if no resume is uploaded
+          if (!file || file.type !== "application/pdf") {
+            alert("Please upload a PDF file.");
+            e.preventDefault(); // Prevent form submission if no PDF file is uploaded
           } else {
-            // Resume is uploaded, continue with form submission
+            // PDF file is uploaded, continue with form submission
             // You can add additional validation and registration logic for tutors here.
           }
         }
       });
     });
   </script>
+  
   
   
   
@@ -238,6 +248,7 @@
 
 
 /* Style the resume file input container */
+/* Style the resume file input container */
 .custom-file {
     position: relative;
     display: inline-block;
@@ -268,12 +279,13 @@
 .custom-file-label:hover {
     background-color: #2980b9;
 }
-#file-name-display{
-  font-size: small;
+
+/* Style the file name display */
+#file-name-display {
+    font-size: small;
+    display: block;
+    margin-top: 5px;
 }
-
-
-
 
     </style>
     

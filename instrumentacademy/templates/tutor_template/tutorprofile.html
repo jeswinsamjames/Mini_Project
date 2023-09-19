@@ -166,9 +166,12 @@
     
 
     <!-- Include Bootstrap JS and other scripts here -->
+    {% endblock content %}
+    {% block custom_js %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
     <script>
         $(document).ready(function () {
             // Initially, only the Edit button is visible
@@ -210,7 +213,6 @@
                         $("#gender1").show();
                     }
                 });
-               
             }
         
             // Edit button click event
@@ -238,13 +240,14 @@
                 const lastName = $("#id_last_name").val();
                 const email = $("#id_email").val();
                 const phoneNo = $("#id_phoneNo").val();
-                const description = $("#id_description").val();
                 const teachingExperience = $("#id_teaching_experience").val();
-                const specialist = $("#id_specialist").val(); 
+                const specialist = $("#id_specialist").val();
+                const address = $("#id_address").val();
+        
                 // Validation functions
                 function validateName(name) {
                     const namePattern = /^[a-zA-Z\s]*$/;
-                    return namePattern.test(name);
+                    return namePattern.test(name) && name.trim() !== "";
                 }
         
                 function validateEmail(email) {
@@ -257,38 +260,46 @@
                     return phonePattern.test(phoneNo);
                 }
         
+                function validateExperience(teachingExperience) {
+                    return teachingExperience.trim() !== "" && parseInt(teachingExperience) >= 0;
+                }
+        
                 function validateDescription(description) {
                     const descriptionPattern = /^[a-zA-Z\s.&,!?]*$/;
                     return descriptionPattern.test(description);
                 }
         
+                function validateAddress(address) {
+                    return address.trim() !== "";
+                }
+        
                 if (!validateName(firstName)) {
-                    $("#id_first_name").after('<div class="validation-error">Invalid first name.</div>');
+                    $("#id_first_name").after('<div class="validation-error text-danger">First Name cannot be empty.</div>');
                     return;
                 }
         
                 if (!validateName(lastName)) {
-                    $("#id_last_name").after('<div class="validation-error">Invalid last name.</div>');
+                    $("#id_last_name").after('<div class="validation-error text-danger">Last Name cannot be empty.</div>');
                     return;
                 }
         
                 if (!validateEmail(email)) {
-                    $("#id_email").after('<div class="validation-error">Invalid email address.</div>');
+                    $("#id_email").after('<div class="validation-error text-danger">Invalid email address.</div>');
                     return;
                 }
         
                 if (!validatePhoneNumber(phoneNo)) {
-                    $("#id_phoneNo").after('<div class="validation-error">Invalid phone number (10 digits required).</div>');
+                    $("#id_phoneNo").after('<div class="validation-error text-danger">Invalid phone number (10 digits required).</div>');
                     return;
                 }
         
-                if (!validateDescription(description)) {
-                    $("#id_description").after('<div class="validation-error">Description can only contain letters, spaces, and punctuation.</div>');
+                if (!validateExperience(teachingExperience)) {
+                    $("#id_teaching_experience").after('<div class="validation-error text-danger">Teaching Experience cannot be empty or negative.</div>');
                     return;
                 }
         
-                if (!teachingExperience) {
-                    $("#id_teaching_experience").after('<div class="validation-error">Teaching Experience is required.</div>');
+                if (!validateAddress(address)) {
+                    $("#id_address").after('<div class="validation-error text-danger">Address is required.</div>');
                     return;
                 }
         
@@ -302,8 +313,9 @@
         });
         </script>
         
+           
+            
+
         
-    
-    
-    
-    {% endblock content %}
+
+    {% endblock custom_js %}

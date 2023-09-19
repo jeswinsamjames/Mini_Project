@@ -151,13 +151,14 @@ def manage_courses(request):
     context = {'courses': courses, 'page_title': 'Manage Courses'}
     return render(request, 'tutor_template/manage_course.html', context)
 
+@login_required
 def edit_course(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
 
     # Ensure that only the tutor who created the course can edit it
     if request.user == course.tutor:
         if request.method == 'POST':
-            form = CourseForm(request.POST, instance=course)
+            form = CourseForm(request.POST, request.FILES, instance=course)
             if form.is_valid():
                 form.save()
                 return redirect('manage_courses')  # Redirect to the tutor's dashboard
