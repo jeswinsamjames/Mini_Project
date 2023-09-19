@@ -11,7 +11,15 @@ class EditProfileForm(UserChangeForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['gender', 'address','specialist', 'description','phoneNo']
+        fields = ['gender', 'address','specialist', 'description','phoneNo','profile_picture']
+        # widgets = {
+        #     'gender': forms.Select(attrs={'class': 'form-control'}),
+        #     'address': forms.TextInput(attrs={'class': 'form-control'}),
+        #     'specialist': forms.TextInput(attrs={'class': 'form-control'}),
+        #     'description': forms.Textarea(attrs={'class': 'form-control'}),
+        #     'phoneNo': forms.TextInput(attrs={'class': 'form-control'}),
+        #     'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        # }
 
 
 class TutorForm(forms.ModelForm):

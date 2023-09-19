@@ -63,8 +63,16 @@
                 <div class="card">
                     <div class="card-header">User Profile</div>
                     <div class="card-body">
-                        <form id="user-profile-form" method="post" action="{% url 'edit_profile_learner' %}">
-                            {% csrf_token %}
+                        <form method="post" action="{% url 'edit_profile_learner' %}" enctype="multipart/form-data">                            {% csrf_token %}
+                            <div class="profile-picture-tile text-center mb-4">
+                                {% if user.userprofile.profile_picture %}
+                                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle border border-secondary" style="max-width:120px;">
+                                <input type="file" class="form-control-file mt-2" id="id_profile_picture" name="profile_picture" >
+                                <small class="form-text text-muted">Upload a professional profile picture.</small>
+                                
+
+                                {% endif %}
+                            </div>
                             <div class="form-group">
                                 <label for="id_first_name">First Name:</label>
                                 <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>

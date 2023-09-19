@@ -42,8 +42,10 @@ def view_profile_learner(request):
 def edit_profile_learner(request):
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid():
             user = form.save(commit=False)
+            profile = profile_form.save(commit=False)
             # Access the UserProfile object associated with the User
             user_profile = UserProfile.objects.get(user=user)
 
@@ -52,18 +54,22 @@ def edit_profile_learner(request):
             user_profile.address = request.POST['address']
             user.last_name = request.POST['last_name']
             user.first_name = request.POST['first_name']
-            
+            profile_form.profile_picture=request.FILES['profile_picture']
             user_profile.save()  # Save the UserProfile
-            user.save()  # Save the User
+            user.save()
+            profile.save()  # Save the User
 
             return render(request, 'student_template/studentprofile.html')
         else:
             print(form.errors)
     else:
         form = EditProfileForm(instance=request.user)
+        prof=UserProfile.objects.filter(user=request.user)
+        profile_form = UserProfileForm(instance=prof[0])
 
     context = {
         'form': form,
+        'profile_form': profile_form,
     }
 
     return render(request, 'student_template/studentprofile.html', context)

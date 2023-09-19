@@ -80,13 +80,13 @@
                             <!-- User Information -->
                             <div class="form-group">
                                 <label for="id_first_name">First Name:</label>
-                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>
+                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.user_profile.first_name }}" readonly>
                                 <!-- Validation Message for First Name -->
                                 <div class="validation-error" id="first-name-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="id_last_name">Last Name:</label>
-                                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.last_name }}" readonly>
+                                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.user_profile.last_name }}" readonly>
                                 <!-- Validation Message for Last Name -->
                                 <div class="validation-error" id="last-name-error"></div>
                             </div>
