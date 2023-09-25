@@ -142,7 +142,12 @@
                             <!-- Enroll and See Details Links with Line Separator -->
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="text-center">
+                                  {% if user in course.course.enrolled_learners.all %}
+                                    <span class="text-success">Enrolled</span>
+                                  {% else %}
                                     <a href="{% url 'enroll_course' course.id %}" class="text-primary text-decoration-none">Enroll</a>
+                                  {% endif %}
+                                    
                                 </div>
                                 <div class="separator"></div>
                                 <div class="text-center">

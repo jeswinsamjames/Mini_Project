@@ -61,7 +61,7 @@
       <nav id="navbar" class="navbar">
         <ul>
           {% comment %} <li><a href="">{{user.username}}</a></li> {% endcomment %}
-          <li><a href="#hero">Home</a></li>
+          <li><a href="/">Home</a></li>
          <li><a href="#about">About</a></li>
         
           {% comment %} <li class="dropdown"><a href="{% url 'view_catgories' %}"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a> 
@@ -72,7 +72,11 @@
           <li><a href="#resource">Resource</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="{% url 'mylearning' %}">My Learning</a></li> {% endcomment %}
-          
+      {% if user.is_authenticated %}
+          {% if user.userprofile.isTutor == 0 %}
+              <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+          {% endif %}
+      {% endif %}
            {% if user.is_authenticated %}
            <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
           <li><a href="{% url 'logout' %}">logout</a></li>

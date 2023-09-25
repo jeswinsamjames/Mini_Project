@@ -8,32 +8,24 @@ from .hod_views import PendingTutorListView, approve_tutor
 urlpatterns = [
     
     path('', views.index,name='index'),
-    
-   
-   
+     path('custom-login/', views.custom_login, name='custom_login'),
     path('login', views.login,name='login'),
-    
-   
-    
-  
     path('homecontent', views.homecontent,name='homecontent'),
     path('index1', views.index1,name='index1'),
-    
-
-
     path('logout', views.loggout,name='logout'),
     path('base', views.base),
     path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
     path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done'),
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete'),
-    path('registration', views.registration,name="registration"),
-    
-    
+    path('registration', views.registration,name="registration"), 
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('course_material', views.course_material, name='course_material'),
    
 
+
  #<<<<<<<<<<<<<<Student>>>>>>>>>>>>>>>
+
     
     path("logout_user/", views.logout_user, name='user_logout'),
     path("student/home/", student_views.student_home, name='student_home'),
@@ -78,9 +70,12 @@ urlpatterns = [
     path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, name='toggle_course_status'),
 
 
-   
+    path('add_module_and_lesson_material/<int:course_id>/', tutor_views.add_module_and_lesson_material, name='add_module_and_lesson_material'),
+
+    path('tutor_course_content/<int:course_id>/', tutor_views.tutor_course_content, name='tutor_course_content'),
+
     
-    # path("staff/get_students/", staff_views.get_students, name='get_students'),
+    # path("staff/get_students/", staff_views.get_ students, name='get_students'),
     # path("staff/attendance/fetch/", staff_views.get_student_attendance,
     #      name='get_student_attendance'),
     # path("staff/attendance/save/",
@@ -99,6 +94,7 @@ urlpatterns = [
      path("admin_view_profile", hod_views.admin_view_profile,name='admin_view_profile'),
      path('edit_admin_profile/', hod_views.edit_admin_profile, name='edit_admin_profile'),
      path("student/manage/", hod_views.manage_student, name='manage_student'),
+     path('delete_student/<int:student_id>/', hod_views.delete_student, name='delete_student'),
      path("staff/manage/", hod_views.manage_staff, name='manage_staff'),
      path('edit_tutor/<int:tutor_id>/', hod_views.edit_tutor, name='edit_tutor'),
      path("tutor/delete/<int:tutor_id>", hod_views.delete_tutor, name='delete_tutor'),

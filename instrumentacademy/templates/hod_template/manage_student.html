@@ -21,7 +21,7 @@
                                     <th>Full Name</th>
                                     <th>Email</th>
                                     {% comment %} <th>Gender</th> {% endcomment %}
-                                    <th>Course</th>
+                                   
                                     <th>Avatar</th>
                                     <th>Edit</th>
                                 </tr>
@@ -33,7 +33,7 @@
                                     <td>{{student.first_name}}{{student.last_name}} </td>
                                     <td>{{student.email}}</td>
                                     {% comment %} <td>{{student.gender}}</td> {% endcomment %}
-                                    <td>{{student.student.course.name}}</td>
+                                   
                                     <td>
                                         {% if student.profile_pic == ""  %}
                                         No Image
@@ -44,8 +44,11 @@
                                     </td>
                                     
                                     <td>
-                                         <a href="#" class="btn btn-primary">Edit</a> -
-                                        {% comment %}{% url 'edit_student' student.student.id %} <a href="{% url 'delete_student' student.student.id %}" 
+                                         <a href="#" class="btn btn-primary">Edit</a> 
+                                             <a href="{% url 'delete_student' student.pk %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Delete</a>
+
+                                        {% comment %}{% url 'edit_student' student.student.id %} 
+                                        
                                         class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Delete</a> {% endcomment %}
 
                                     </td>

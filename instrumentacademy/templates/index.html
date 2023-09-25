@@ -63,11 +63,12 @@
             
           </li>
           {% comment %} <li><a href="blog.html">Blog</a></li> {% endcomment %}
-          {% if user.is_authenticated and user.isTutor %}
-          <li ><a> jknjnn</a></li>
-          {% else %}
-              <li><a href="{% url 'mylearning' %}">My Learning</a></li>
-{% endif %}
+        {% if user.is_authenticated %}
+            {% if user.userprofile.isTutor == 0 %}
+                <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+            {% endif %}
+        {% endif %}
+
           {% comment %} <li><a href="#faculty">Faculty</a></li>
           <li><a href="#resource">Resource</a></li>   {% endcomment %}
          

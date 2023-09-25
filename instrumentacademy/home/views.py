@@ -134,3 +134,19 @@ def student_fcmtoken(request):
     return render(request, "student_template/student_view_result.html")
 
 
+def course_material(request):
+    return render(request,"tutor_template/course_material.html" )
+
+def custom_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')  # Redirect to your desired page after login
+        else:
+            # Handle invalid login credentials
+            return render(request, 'login.html', {'error_message': 'Invalid credentials'})
+    else:
+        return render(request, 'login.html')

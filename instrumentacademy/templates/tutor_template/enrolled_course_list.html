@@ -21,6 +21,7 @@
                                     <th>SN</th>
                                     <th>Course Name</th>
                                     <th>Action</th>
+                                    <th>Add resources</th>
                                   
                                 </tr>
                             </thead>
@@ -30,6 +31,7 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td> {{ course.name }} </td>
                                     <td> <li><a href="{% url 'enrolled_course_details' course.id %}">view Lists</a></li></td>
+                                    <td> <li><a href="{% url 'add_module_and_lesson_material' course.id %}">upload</a></li></td>
                                     
                                 </tr>
                                 {% endfor %}

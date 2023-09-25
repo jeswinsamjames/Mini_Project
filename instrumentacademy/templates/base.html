@@ -85,7 +85,22 @@
           {% comment %} <li><a href="#resource">Resource</a></li> {% endcomment %}
           {% comment %} <li><a href="blog.html">Blog</a></li> {% endcomment %}
           
-          <li><a href="/login">Login</a></li>
+          {% if user.is_authenticated %}
+            {% if user.userprofile.isTutor == 0 %}
+                <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+            {% endif %}
+        {% endif %}
+
+          {% comment %} <li><a href="#faculty">Faculty</a></li>
+          <li><a href="#resource">Resource</a></li>   {% endcomment %}
+         
+           {% if user.is_authenticated %}
+           <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
+          <li><a href="{% url 'logout' %}">logout</a></li>
+          {% else %}
+         
+          <li><a href="{% url 'login' %}">Login</a></li> 
+          {% endif%}
         </ul>
       </nav><!-- .navbar -->
 

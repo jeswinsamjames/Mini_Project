@@ -1,0 +1,116 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block content %}
+<body>
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #000000; /* Faded background color */
+        }
+        .sidebar {
+            background-color: #343a40; /* Sidebar background color */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Sidebar shadow */
+        }
+        .tab-content {
+            background-color: #ffffff; /* Form background color */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Form shadow */
+            padding: 20px; /* Add some padding for better spacing */
+            border-radius: 10px; /* Rounded corners */
+            width: 70%; /* Medium form width */
+        }
+      
+    </style>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="module-tab" data-toggle="tab" href="#module" role="tab" aria-controls="module" aria-selected="true">Add Module</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="material-tab" data-toggle="tab" href="#material" role="tab" aria-controls="material" aria-selected="false">Add Lesson Material</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="tab-content" id="myTabsContent">
+                    <div class="tab-pane fade show active" id="module" role="tabpanel" aria-labelledby="module-tab">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ module_form.title.label_tag }}
+                                {{ module_form.title }}
+                            </div>
+                            <div class="form-group">
+                                {{ module_form.module_number.label_tag }}
+                                {{ module_form.module_number }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Module</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="material" role="tabpanel" aria-labelledby="material-tab">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ lesson_material_form.title.label_tag }}
+                                {{ lesson_material_form.title }}
+                            </div>
+                            <div class="form-group">
+                                {{ lesson_material_form.course.label_tag }}
+                                {{ lesson_material_form.course }}
+                            </div>
+                            <div class="form-group">
+                                {{ lesson_material_form.module.label_tag }}
+                                {{ lesson_material_form.module }}
+                            </div>
+                            <div class="form-group">
+                                {{ lesson_material_form.description.label_tag }}
+                                {{ lesson_material_form.description }}
+                            </div>
+                            <div class="form-group">
+                                {{ lesson_material_form.material_file.label_tag }}
+                                {{ lesson_material_form.material_file }}
+                            </div>
+                            <div class="form-group">
+                                {{ lesson_material_form.material_number.label_tag }}
+                                {{ lesson_material_form.material_number }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Lesson Material</button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+  
+</body>
+{% endblock content %}
+{% block custom_js %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    const moduleForm = document.getElementById('moduleForm');
+    const lessonMaterialForm = document.getElementById('lessonMaterialForm');
+    const showModuleFormButton = document.getElementById('showModuleForm');
+    const showMaterialFormButton = document.getElementById('showMaterialForm');
+
+    showModuleFormButton.addEventListener('click', function() {
+        moduleForm.style.display = 'block';
+        lessonMaterialForm.style.display = 'none';
+    });
+
+    showMaterialFormButton.addEventListener('click', function() {
+        lessonMaterialForm.style.display = 'block';
+        moduleForm.style.display = 'none';
+    });
+</script>
+    {% endblock custom_js %}

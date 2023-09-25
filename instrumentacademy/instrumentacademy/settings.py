@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+   
     
 ]
 
@@ -189,3 +190,4 @@ EMAIL_HOST_USER = 'mailtoshowvalidationok@gmail.com'
 EMAIL_HOST_PASSWORD = 'qtwpnirvgsxzhtdo'  
 DEFAULT_FROM_EMAIL = 'mailtoshowvalidationok@gmail.com'
 
+LOGIN_URL = 'custom_login'  # Replace 'custom_login' with the URL name of your custom login view

@@ -19,73 +19,6 @@
             max-height: 150px;
             object-fit: cover;
         }
-    </style>
-
-
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">My Learning</a>
-            <!-- Add navigation links or user profile here -->
-        </nav>
-    </header>
-    
-    <section class="courselist">
-        <div class="container mt-5">
-            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Enrolled Courses</h1>
-            <div class="row">
-                {% for course in enrolled_courses %}
-                <div class="col-md-3 course-card1">
-                    <div class="card mb-4 course-card">
-                        <img class="courseimg" src="{% if course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ course.learner.first_name }}</h5>
-                            <p class="card-text"><strong>Tutor:</strong> {{ course.course.tutor.first_name }}  {{ course.course.tutor.last_name }}</p>
-                            <p class="card-text"><strong>Years of Experience:</strong> {{ course.course.years_of_experience }}</p>
-                            <p class="card-text"><strong>Description:</strong> {{ course.course.description }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <!-- Enroll and See Details Links with Line Separator -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="text-center">
-                                    <a href="{% url 'enroll_course' course.id %}" class="text-primary text-decoration-none">Enroll</a>
-                                </div>
-                                <div class="separator"></div>
-                                <div class="text-center">
-                                    <a href="#" class="text-info text-decoration-none">See Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-            
-            <!-- Additional Options -->
-            {% comment %} <div class="col-md-4">
-                <h2>Additional Options</h2>
-                <ul class="list-group">
-                    <li class="list-group-item" ><a href="#"> My Lists</a></li>
-                    <li class="list-group-item" ><a href="#">Wishlist</a></li>
-                    
-                   
-                    <!-- Add more options as needed -->
-                </ul>
-            </div>
-        </div>
-    </div> {% endcomment %}
-
-    <!-- Link to Bootstrap JS (jQuery required) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-    
-    {% endblock body %}
-    <Style>
-    
         .separator {
             width: 2px;
             height: 30px;
@@ -151,6 +84,85 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+    </style>
+
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">My Learning</a>
+            <!-- Add navigation links or user profile here -->
+        </nav>
+    </header>
+    
+    <section class="courselist">
+        <div class="container mt-5">
+            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Enrolled Courses</h1>
+            <div class="row">
+                {% for course in enrolled_courses %}
+                <div class="col-md-3 course-card1">
+                    <div class="card mb-4 course-card">
+                        <img class="courseimg" src="{% if course.course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.course.name }}</h5>
+                            
+                            <p class="card-text"><strong>Tutor:</strong> {{ course.course.tutor.first_name }}  {{ course.course.tutor.last_name }}</p>
+                            <p class="card-text"><strong>Years of Experience:</strong> {{ course.course.years_of_experience }}</p>
+                            <p class="card-text"><strong>Description:</strong> {{ course.course.description }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <!-- Enroll and See Details Links with Line Separator -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-center">
+                                   
+                                    {% if user in course.course.enrolled_learners.all %}
+                                        <span class="text-success">Enrolled</span>
+                                    {% else %}
+                                        <a href="{% url 'enroll_course' course.course.id %}" class="text-primary text-decoration-none">Enroll</a>
+                                    {% endif %}
+                                </div>
+                                <div class="separator"></div>
+                                <div class="text-center">
+                                   {% if user in course.course.enrolled_learners.all %}
+                                        <a href="{% url 'tutor_course_content' course.course.pk   %}" class="text-info text-decoration-none">Start Learn</a>
+                                    {% else %}
+                                        <a href="#" class="text-info text-decoration-none">See Details</a>
+                                    {% endif %} 
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+            
+            <!-- Additional Options -->
+            {% comment %} <div class="col-md-4">
+                <h2>Additional Options</h2>
+                <ul class="list-group">
+                    <li class="list-group-item" ><a href="#"> My Lists</a></li>
+                    <li class="list-group-item" ><a href="#">Wishlist</a></li>
+                    
+                   
+                    <!-- Add more options as needed -->
+                </ul>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Link to Bootstrap JS (jQuery required) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    
+    {% endblock body %}
+    <Style>
+    
+       
   </body> 
 
 

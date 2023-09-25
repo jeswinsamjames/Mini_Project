@@ -66,3 +66,33 @@ class CourseForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': 'required'}),  # Add 'required' here
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+
+class ModuleForm(forms.ModelForm):
+    class Meta:
+        model = Module
+        fields = ['title', 'module_number']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'module_number': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+class LessonMaterialForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        course_id = kwargs.pop('course_id', None)
+        super(LessonMaterialForm, self).__init__(*args, **kwargs)
+        
+        if course_id:
+            # Filter the modules based on the selected course
+            self.fields['module'].queryset = Module.objects.filter(course_id=course_id)
+
+    class Meta:
+        model = LessonMaterial
+        fields = ['title', 'module', 'description', 'material_file', 'material_number']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'module': forms.Select(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'material_file': forms.FileInput(attrs={'class': 'form-control'}),
+            'material_number': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

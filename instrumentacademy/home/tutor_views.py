@@ -8,7 +8,7 @@ from django.shortcuts import render, Http404
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Count
 from .forms import *
 from .models import *
 
@@ -16,27 +16,15 @@ from .models import *
 def tutor_home(request):
     # tutor = get_object_or_404(tutor, admin=request.user)
     # total_students = Student.objects.filter(course=tutor.course).count()
-    # total_leave = LeaveReporttutor.objects.filter(tutor=tutor).count()
-    # subjects = Subject.objects.filter(tutor=tutor)
-    # total_subject = subjects.count()
-    # attendance_list = Attendance.objects.filter(subject__in=subjects)
-    # total_attendance = attendance_list.count()
-    # attendance_list = []
-    # subject_list = []
-    # for subject in subjects:
-    #     attendance_count = Attendance.objects.filter(subject=subject).count()
-    #     subject_list.append(subject.name)
-    #     attendance_list.append(attendance_count)
-    # context = {
-    #     'page_title': 'tutor Panel - ' + str(tutor.admin.last_name) + ' (' + str(tutor.course) + ')',
-    #     'total_students': total_students,
-    #     'total_attendance': total_attendance,
-    #     'total_leave': total_leave,
-    #     'total_subject': total_subject,
-    #     'subject_list': subject_list,
-    #     'attendance_list': attendance_list
-    # }
-    return render(request, 'tutor_template/home_content.html')
+    tutors_with_learner_and_course_count = UserProfile.objects.filter(isTutor=0).annotate(
+    learner_count=Count('user__enrollment__learner', distinct=True),
+    course_count=Count('user__courses', distinct=True)
+    )
+
+    context = {
+        'tutors_with_learner_and_course_count': tutors_with_learner_and_course_count,
+    }
+    return render(request, 'tutor_template/home_content.html',context)
 
 @login_required
 def view_profile_tutor(request):
@@ -210,7 +198,7 @@ def deactivate_course(request, course_id):
 
             # ........... COURSE Enroll.............
 
-
+@login_required
 def enroll_course(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     learner = request.user
@@ -264,8 +252,60 @@ def toggle_course_status(request, course_id):
 
  # ........... END COURSE Enroll.............
 
+def add_module_and_lesson_material(request, course_id):
+    # Retrieve the course based on the provided course_id
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    if request.method == 'POST':
+        module_form = ModuleForm(request.POST)
+        lesson_material_form = LessonMaterialForm(request.POST, request.FILES,course_id=course_id)
+
+        if module_form.is_valid():
+            # Set the course for the module before saving
+            module = module_form.save(commit=False)
+            module.course = course
+            module.save()
+            messages.success(request, 'Module created successfully.')
+            return redirect('add_module_and_lesson_material', course_id=course.id)
+
+        if lesson_material_form.is_valid():
+            # Set the course for the lesson material before saving
+            lesson_material = lesson_material_form.save(commit=False)
+            lesson_material.course = course
+            lesson_material.save()
+            messages.success(request, 'Lesson created successfully.')
+
+            return redirect('add_module_and_lesson_material',course_id=course.id)
+
+    else:
+        module_form = ModuleForm()
+        lesson_material_form = LessonMaterialForm(course_id=course_id)
+
+    return render(request, 'tutor_template/upload_lesson_material.html', {
+        'course': course,  # Pass the course to the template
+        'module_form': module_form,
+        'lesson_material_form': lesson_material_form,
+    })
+def tutor_course_content(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+    modules = Module.objects.filter(course=course)
+    lesson_materials = LessonMaterial.objects.filter(course=course)
+
+    video_lesson_materials = lesson_materials.filter(
+        material_file__icontains='.mp4')  # You can customize the condition based on your file naming convention
+    print(modules)
+    # Render the course content template with the course, modules, and video lesson materials
+    return render(request, 'tutor_template/view_lesson_materials.html', {
+        'course': course,
+        'modules': modules,
+        'video_lesson_materials': video_lesson_materials,  # Pass video lesson materials to the template
+    })
 
 
+
+
+
+#////////////////////////////
 def tutor_take_attendance(request):
    
     return render(request, 'tutor_template/tutor_take_attendance.html')

@@ -29,6 +29,8 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Courses)
 admin.site.register(CourseDetail)
 admin.site.register(Enrollment)
+admin.site.register(Module)
+admin.site.register(LessonMaterial)
 
 
 

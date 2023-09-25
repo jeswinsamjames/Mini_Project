@@ -50,10 +50,11 @@ class CourseDetail(models.Model):
     years_of_experience = models.PositiveIntegerField()
     description = models.TextField()
     is_active = models.BooleanField(default=True)
+    enrolled_learners = models.ManyToManyField(User, through='Enrollment', related_name='enrolled_courses')
 
 
     def __str__(self):
-        return f"{self.tutor_name}'s "
+        return f"{self.name}"
 
 class Enrollment(models.Model):
     learner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -62,3 +63,24 @@ class Enrollment(models.Model):
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return f"{self.learner.username} enrolled in {self.course.name}"
+    
+
+class Module(models.Model):
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    module_number = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Module {self.module_number}: {self.title}"
+
+class LessonMaterial(models.Model):
+    title = models.CharField(max_length=255)
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE,related_name='courses',blank=True,null=True)  # Link the material to a specific course 
+    module = models.ForeignKey(Module, on_delete=models.CASCADE,related_name='modules',blank=True,null=True)  # Link the material to a specific module
+    description = models.TextField(blank=True, null=True)
+    material_file = models.FileField(upload_to='lesson_materials/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    material_number = models.PositiveIntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Material {self.material_number}: {self.title}"

@@ -191,7 +191,21 @@ def manage_student(request):
     print(students)
     return render(request, "hod_template/manage_student.html", context)
 
+def delete_student(request, student_id):
+    # Retrieve the student object to be deleted
+    student = get_object_or_404(User, id=student_id)
+    # print(student)
 
+    
+    print("sdfsd")
+        # Check if the student is not a tutor (isTutor=0) before deleting
+    student.delete()
+            
+        # Redirect to a success page or another appropriate view
+      # Change 'students_list' to the URL name of the page you want to redirect to
+
+    # Render a confirmation page (optional)
+    return render(request, 'hod_template/manage_student.html', {'student': student})
 
 
 def view_catgories(request):
@@ -302,12 +316,12 @@ def edit_admin_profile(request):
     return render(request, 'hod_template/admin_view_profile.html', {'user': user})
 
 
-def delete_student(request, learner_id):
-    student = get_object_or_404(UserProfile, id=learner_id, isTutor=0)
+# def delete_student(request, learner_id):
+#     student = get_object_or_404(UserProfile, id=learner_id, isTutor=0)
    
-    if request.method == 'POST':
-        student.user.delete()  # Delete the associated User object
+#     if request.method == 'POST':
+#         student.user.delete()  # Delete the associated User object
         
-        return redirect('success_page')  # Replace 'success_page' with the actual URL
+#         return redirect('success_page')  # Replace 'success_page' with the actual URL
     
-    return render(request, 'confirm_student_deletion.html', {'student': student})
+#     return render(request, 'confirm_student_deletion.html', {'student': student})
