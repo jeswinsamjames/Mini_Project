@@ -95,7 +95,7 @@
           <li><a href="#resource">Resource</a></li>   {% endcomment %}
          
            {% if user.is_authenticated %}
-           <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
+           <li><a href="/homecontent">Welcome, {{ user.username }}</a></li>
           <li><a href="{% url 'logout' %}">logout</a></li>
           {% else %}
          
@@ -194,4 +194,7 @@
 
 
 </html>
+{% block js %}
+            
+{% endblock js %}
 

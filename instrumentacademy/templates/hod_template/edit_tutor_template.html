@@ -24,7 +24,7 @@
                                             {% csrf_token %}
                                             <div class="form-group">
                                                 <label for="id_first_name">First Name:</label>
-                                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{form.first_name}}" readonly>
+                                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{user.first_name}}" readonly>
                                             </div>
                                             <div class="form-group">
                                                 <label for="id_last_name">Last Name:</label>
@@ -77,18 +77,11 @@
                                                 </select>
                                                 <input type="text" class="form-control" id="id_specialist" name="specialist" value="{{ user.userprofile.specialist }}" readonly>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="id_description">Description:</label>
-                                                <textarea class="form-control" id="id_description" name="description" readonly>{{ user.userprofile.description }}</textarea>
-                                            </div>
+                                           
                                             
                                            
                                            
-                                            <!-- Qualifications -->
-                                            <div class="form-group">
-                                                <label for="id_qualifications">Qualifications:</label>
-                                                <textarea class="form-control" id="id_qualifications" name="qualifications" rows="4" readonly>{{ user.userprofile.qualifications }}</textarea>
-                                            </div>
+                                            
                     
                                             <!-- Teaching Experience -->
                                             <div class="form-group">
@@ -96,10 +89,10 @@
                                                 <textarea class="form-control" id="id_teaching_experience" name="teaching_experience" rows="4" readonly>{{ user.userprofile.teaching_experience }}</textarea>
                                             </div>
                     
-                                            <button type="button" class="btn btn-primary" id="edit-button">Edit Profile</button>
-                                            <button type="button" class="btn btn-success" id="save-button" style="display: none;">Save</button>
-                                            <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;">Cancel</button>
-                                        </form> 
+                                            <button type="button" class="btn btn-primary" id="edit-button" onclick="editProfile()">Edit Profile</button>
+                                            <button type="submit" class="btn btn-success" id="save-button" style="display: none;">Save</button>
+                                            <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;" onclick="cancelEdit()">Cancel</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -113,3 +106,40 @@
     </div>
 </section>
 {% endblock content %}
+{% block custom_js %}
+<script>
+    let editing = false;  // Variable to track if editing mode is on
+
+    // Function to enable editing
+    function editProfile() {
+        editing = true;
+        // Show save and cancel buttons, hide edit button
+        document.getElementById('edit-button').style.display = 'none';
+        document.getElementById('save-button').style.display = 'inline-block';
+        document.getElementById('cancel-button').style.display = 'inline-block';
+
+        // Enable input fields for editing
+        document.getElementById('id_first_name').readOnly = false;
+        document.getElementById('id_last_name').readOnly = false;
+        document.getElementById('id_email').readOnly = false;
+        document.getElementById('id_description').readOnly = false;
+        // Enable other input fields as needed
+    }
+
+    // Function to cancel editing
+    function cancelEdit() {
+        editing = false;
+        // Hide save and cancel buttons, show edit button
+        document.getElementById('edit-button').style.display = 'inline-block';
+        document.getElementById('save-button').style.display = 'none';
+        document.getElementById('cancel-button').style.display = 'none';
+
+        // Disable input fields
+        document.getElementById('id_first_name').readOnly = true;
+        document.getElementById('id_last_name').readOnly = true;
+        document.getElementById('id_email').readOnly = true;
+        document.getElementById('id_description').readOnly = true;
+        // Disable other input fields as needed
+    }
+</script>
+{% endblock custom_js %}

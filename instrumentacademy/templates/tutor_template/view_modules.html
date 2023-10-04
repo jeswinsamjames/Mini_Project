@@ -1,0 +1,152 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block content %}
+<body>
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #000000; /* Faded background color */
+        }
+        .sidebar {
+            background-color: #343a40; /* Sidebar background color */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Sidebar shadow */
+        }
+        .tab-content {
+            background-color: #ffffff; /* Form background color */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Form shadow */
+            padding: 20px; /* Add some padding for better spacing */
+            border-radius: 10px; /* Rounded corners */
+            width: 70%; /* Medium form width */
+        }
+      
+    </style>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+         
+
+
+        
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="tab-content" id="myTabsContent">
+                
+                    <ul id="module-list" class="list-group">
+                        {% for module in modules %}
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-link module-button" data-module-id="{{ module.id }}">
+                                {{ module.title }}
+                            </button>
+                            <ul class="list-group lesson-list" data-module-id="{{ module.id }}" style="display: none;">
+                                {% for lesson in lessons %}
+                                {% if lesson.module.title == module.title %}
+                                <li class="list-group-item">
+                                    {{ lesson.title }}
+                                    <a href="{% url 'lesson_edit_page' lesson.id %}" class="btn btn-sm btn-primary float-right">Edit</a>
+                                    <a href="#" class="btn btn-sm btn-danger float-right delete-lesson" data-lesson-id="{{ lesson.id }}">Delete</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </main>
+            
+            
+            
+            
+            
+            
+        </div>
+
+
+        <!-- Modal for Editing Lesson -->
+
+    </div>
+  
+</body>
+{% endblock content %}
+{% block custom_js %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+<script>
+    $(document).ready(function() {
+        // Add click event listeners to module buttons to toggle lesson lists
+        $('.module-button').on('click', function() {
+            const moduleId = $(this).data('module-id');
+            const lessonList = $(`.lesson-list[data-module-id="${moduleId}"]`);
+    
+            // Hide all lesson lists
+            $('.lesson-list').hide();
+    
+            lessonList.toggle();
+        });
+    
+        // Delete Lesson
+        $('.delete-lesson').on('click', function() {
+            const lessonId = $(this).data('lesson-id');
+            const confirmation = confirm('Are you sure you want to delete this lesson?');
+            const deleteButton = $(this); // Store the button element
+    
+            if (confirmation) {
+                $.ajax({
+                    type: 'POST',
+                    url: `/delete_lesson/${lessonId}/`,
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            // Remove the deleted lesson from the list
+                            deleteButton.closest('li').remove();
+                        } else {
+                            alert('Failed to delete the lesson: ' + data.error);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Failed to delete the lesson. Please try again later.');
+                    }
+                });
+            }
+        });
+    
+        // Edit Lesson
+        $('.edit-lesson').on('click', function() {
+            const lessonId = $(this).data('lesson-id');
+            const editLessonModal = $('#editLessonModal');
+        
+            // Fetch the lesson edit form via AJAX
+            $.ajax({
+                type: 'GET',
+                url: `/fetch_lesson_details/${lessonId}/`,
+                success: function(data) {
+                    if (data.success) {
+                        // Insert the form HTML into the modal
+                        editLessonModal.find('.modal-body').html(data.form_html);
+                        // Show the modal
+                        editLessonModal.modal('show');
+                    } else {
+                        alert('Failed to fetch lesson details.');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Failed to fetch lesson details. Please try again later.');
+                }
+            });
+        });
+        
+    });
+    
+</script>
+
+    {% endblock custom_js %}

@@ -21,6 +21,7 @@
         }
       
     </style>
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
@@ -33,10 +34,13 @@
                         <li class="nav-item">
                             <a class="nav-link" id="material-tab" data-toggle="tab" href="#material" role="tab" aria-controls="material" aria-selected="false">Add Lesson Material</a>
                         </li>
+                        
                     </ul>
                 </div>
             </nav>
 
+
+        
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="tab-content" id="myTabsContent">
@@ -85,6 +89,8 @@
                         </form>
                     </div>
                 </div>
+
+
             </main>
         </div>
     </div>
@@ -102,6 +108,8 @@
     const lessonMaterialForm = document.getElementById('lessonMaterialForm');
     const showModuleFormButton = document.getElementById('showModuleForm');
     const showMaterialFormButton = document.getElementById('showMaterialForm');
+    const moduleListContainer = document.getElementById('module-list-container');
+    const listModulesButton = document.getElementById('list-modules-button');
 
     showModuleFormButton.addEventListener('click', function() {
         moduleForm.style.display = 'block';
@@ -112,5 +120,17 @@
         lessonMaterialForm.style.display = 'block';
         moduleForm.style.display = 'none';
     });
+    listModulesButton.addEventListener('click', function () {
+        if (moduleListContainer.style.display === 'none' || moduleListContainer.style.display === '') {
+            moduleListContainer.style.display = 'block';
+        } else {
+            moduleListContainer.style.display = 'none';
+        }
+
+        // Hide the other forms when displaying the module list
+        moduleForm.style.display = 'none';
+        lessonMaterialForm.style.display = 'none';
+    });
+
 </script>
     {% endblock custom_js %}

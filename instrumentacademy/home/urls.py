@@ -36,7 +36,9 @@ urlpatterns = [
     path('student/view/result/', student_views.student_view_result,name='student_view_result'),
     path('view_profile/learner/', student_views.view_profile_learner, name='view_profile_learner'),
     path('edit_profile/learner/', student_views.edit_profile_learner, name='edit_profile_learner'),
-     path('mylearning/', student_views.enrolled_courses_list_leaner, name='mylearning'),
+    path('mylearning/', student_views.enrolled_courses_list_leaner, name='mylearning'),
+    path('tutor_course_content/<int:course_id>/', student_views.tutor_course_content, name='tutor_course_content'),
+
 
     #<<<<<<<<<<<<<<staff>>>>>>>>>>>>>>>
 
@@ -64,7 +66,9 @@ urlpatterns = [
      path('enroll/<int:course_id>/', tutor_views.enroll_course, name='enroll_course'),
      path('enrolled-courses/', tutor_views.enrolled_courses_list, name='enrolled_courses_list'),
      path('enrolled-course/<int:course_id>/', tutor_views.enrolled_course_details, name='enrolled_course_details'),
-     path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, {'action': 'activate'}, name='activate_course'),
+    # Activate a course
+path('activate-course/<int:course_id>/', tutor_views.activate_course, name='activate_course'),
+
 
     # Deactivate a course
     path('toggle-course-status/<int:course_id>/', tutor_views.toggle_course_status, name='toggle_course_status'),
@@ -72,7 +76,15 @@ urlpatterns = [
 
     path('add_module_and_lesson_material/<int:course_id>/', tutor_views.add_module_and_lesson_material, name='add_module_and_lesson_material'),
 
-    path('tutor_course_content/<int:course_id>/', tutor_views.tutor_course_content, name='tutor_course_content'),
+    path('list_modules/', tutor_views.list_modules, name='list_modules'),
+    path('module_list_view/<int:course_id>/', tutor_views.module_list_view, name='module_list_view'),
+
+    path('edit_lesson/<int:lesson_id>/', tutor_views.lesson_edit_page, name='lesson_edit_page'),
+
+
+    # Delete lesson URL
+    path('delete_lesson/<int:lesson_id>/', tutor_views.delete_lesson, name='delete_lesson'),
+
 
     
     # path("staff/get_students/", staff_views.get_ students, name='get_students'),

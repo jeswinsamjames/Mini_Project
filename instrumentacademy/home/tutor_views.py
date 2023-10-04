@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.template.loader import render_to_string
 from .forms import *
 from .models import *
 
@@ -249,12 +250,21 @@ def toggle_course_status(request, course_id):
     course.save()
     
     return redirect('course_list')
+def activate_course(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+    course.is_active = True
+    course.save()
+    return redirect('/manage-courses/')
 
  # ........... END COURSE Enroll.............
 
+ # ........... LESSON MATERIAL.............
+
 def add_module_and_lesson_material(request, course_id):
-    # Retrieve the course based on the provided course_id
+    # Retrieve the course based on the provided course_id4
+    print(course_id)
     course = get_object_or_404(CourseDetail, pk=course_id)
+    
 
     if request.method == 'POST':
         module_form = ModuleForm(request.POST)
@@ -285,23 +295,69 @@ def add_module_and_lesson_material(request, course_id):
         'course': course,  # Pass the course to the template
         'module_form': module_form,
         'lesson_material_form': lesson_material_form,
+        
     })
-def tutor_course_content(request, course_id):
-    course = get_object_or_404(CourseDetail, pk=course_id)
-    modules = Module.objects.filter(course=course)
-    lesson_materials = LessonMaterial.objects.filter(course=course)
 
-    video_lesson_materials = lesson_materials.filter(
-        material_file__icontains='.mp4')  # You can customize the condition based on your file naming convention
-    print(modules)
-    # Render the course content template with the course, modules, and video lesson materials
-    return render(request, 'tutor_template/view_lesson_materials.html', {
+
+def list_modules(request):
+    courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)
+ 
+    return render(request, 'tutor_template/manage_modules_lessons.html', {'courses':courses})
+
+def module_list_view(request, course_id):
+    # Get the course object or return a 404 error if it doesn't exist
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    # Retrieve modules and lessons related to the course
+    modules = Module.objects.filter(course=course)
+   
+    lessons = LessonMaterial.objects.filter(module__course=course)
+    print(lessons)
+
+    context = {
         'course': course,
         'modules': modules,
-        'video_lesson_materials': video_lesson_materials,  # Pass video lesson materials to the template
-    })
+        'lessons': lessons,
+    }
+
+    return render(request, 'tutor_template/view_modules.html', context)
 
 
+def lesson_edit_page(request, lesson_id):
+    try:
+        lesson = LessonMaterial.objects.get(pk=lesson_id)
+    except LessonMaterial.DoesNotExist:
+        return redirect('some_error_view')
+
+    if request.method == 'POST':
+        form = LessonMaterialForm(request.POST, request.FILES, instance=lesson)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('module_list_view', args=[lesson.course.id]))  # Redirect to module_list_view with course_id
+    else:
+        form = LessonMaterialForm(instance=lesson)
+        form.fields['module'].queryset = Module.objects.filter(course=lesson.module.course)
+
+
+    context = {
+        'form': form,
+        'lesson': lesson,
+    }
+
+    return render(request, 'tutor_template/lesson_edit_form.html', context)
+# Delete lesson view
+def delete_lesson(request, lesson_id):
+    try:
+        lesson = LessonMaterial.objects.get(pk=lesson_id)
+        lesson.delete()
+        return JsonResponse({'success': True})
+    except LessonMaterial.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Lesson not found'})
+
+
+
+
+ # ...........END LESSON MATERIAL.............
 
 
 

@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+{% block title %}
+{{ course.name }} - Course Overview
+{% endblock title %}
+
+<body>
+    {% block body %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var videoList = document.querySelectorAll('.section-list li');
+    
+            videoList.forEach(function (videoItem) {
+                videoItem.addEventListener('click', function () {
+                    var videoUrl = videoItem.getAttribute('data-video-url');
+                    var videoContainer = document.getElementById('videoContainer');
+                    videoContainer.innerHTML = `
+                        <video controls width="100%">
+                            <source src="${videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        `;
+                    });
+                });
+    
+                var moduleList = document.querySelectorAll('.module-item');
+        var courseContent = document.querySelector('.course-content');
+
+        moduleList.forEach(function (moduleItem) {
+            var moduleHeader = moduleItem.querySelector('.module-header');
+            var sectionList = moduleItem.querySelector('.section-list');
+
+            moduleHeader.addEventListener('click', function (event) {
+                sectionList.classList.toggle('active');
+                moduleItem.classList.toggle('active');
+                moduleList.forEach(function (otherModule) {
+                    if (otherModule !== moduleItem) {
+                        otherModule.querySelector('.section-list').classList.remove('active');
+                        otherModule.classList.remove('active');
+                    }
+                });
+
+                // Add or remove a class to set a fixed height for the course content div
+                if (moduleItem.classList.contains('active')) {
+                    courseContent.classList.add('fixed-height');
+                } else {
+                    courseContent.classList.remove('fixed-height');
+                }
+                
+                event.stopPropagation(); // Prevent the click from reaching the document
+            });
+
+            // Prevent clicks inside the section list from closing the module dropdown
+            sectionList.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+            // Trigger click on the first video item in the first module
+            var firstVideoItem = document.querySelector('.module-list .module-item:first-child .section-list li');
+            if (firstVideoItem) {
+                firstVideoItem.click();
+            }
+        });
+    </script>
+    
+    
+    
+    
+
+    
+       
+
+    <div class="main_container_lesson">
+        <div class="lessonheader">
+            <h1>{{ course.name }}</h1>
+        </div>
+   
+        <div class="container">
+            <div class="video-lessons">
+                <section>
+                    <div class="video-container" id="videoContainer">
+                        <!-- Video will be displayed here -->
+                    </div>
+                </section>
+            </div>
+
+            <div class="course-content content-left">
+                <h2>Course Content</h2>
+                <ul class="module-list">
+                    {% for module in modules %}
+                    <li class="module-item">
+                        <div class="module-header">
+                            <span class="module-title">{{ module.title }}</span>
+                            <div class="module-toggle">&#9662;</div>
+                        </div>
+                        <ul class="section-list">
+                            {% for lesson in video_lesson_materials %}
+                            {% if lesson.module == module %}
+                            <li class="videodiv" id="defaultVideo" data-video-url="{{ lesson.material_file.url }}">
+                                {{ lesson.title }}
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Header styles */
+        .main_container_lesson{
+            padding: 150px;
+
+        }
+        .lessonheader {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            max-height: 280px;
+            
+        }
+
+        .lessonheader h1 {
+            font-size: 40px;
+            
+        }
+
+        /* Main container styles */
+        .container {
+            padding: 20px;
+            display: flex;
+        }
+
+        /* Video lessons section styles */
+        .video-lessons {
+            width: 95%;
+            background-color: #222222;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio for responsive video */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Course content section styles */
+        .course-content {
+            
+            background-color: rgb(255, 255, 255);
+            
+            border-left: 2px solid #ddd; /* Add a left border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a shadow for a professional look */
+            width: 36%;
+    
+            display: flex;
+            flex-direction: column;
+           
+            height: 600px; /* Set a fixed height for the course content div */
+            overflow-y: auto; 
+        }
+
+        .course-content h2 {
+            font-size: 26px;
+            cursor: pointer;
+            padding-bottom: 20px;
+        }
+
+        .module-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .module-item {
+            
+            border-top: 2px solid #ddd; /* Add a top border to separate modules */
+    
+
+        }
+
+        .module-header {
+            background-color: #f8f8f8e6;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            height: 60px;
+        }
+
+        .module-title {
+            font-size: 22px;
+            margin: 10px;
+        }
+
+        .module-toggle {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+        .videodiv {
+     /* Adjust font size as needed */
+    margin: 10px;
+    padding: 12px;
+    width: 300px;
+    height: 50px;
+    cursor: pointer;
+    position: relative;
+    text-align: left; /* Align text to the left */
+}
+
+        .module-item.active .module-toggle {
+            transform: rotate(90deg);
+        }
+        .module-item.active {
+    height: auto; /* Set to auto to allow dynamic content height */
+    overflow: visible; /* Show overflowing content */
+}
+
+
+        .section-list {
+            list-style: none;
+            margin-left: 25px;
+            display: none;
+        }
+
+        .section-list.active {
+            display: contents;
+            
+            padding-right:150px ;
+        }
+
+        .section-list li {
+            font-size: 18px;
+            
+            cursor: pointer;
+            position: relative;
+        }
+        .section-list li:hover{
+            background-color: rgb(222, 222, 222);
+        }
+       
+    </style>
+
+    {% endblock body %}
+</body>

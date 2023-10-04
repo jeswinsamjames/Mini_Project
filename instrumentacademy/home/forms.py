@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 from .models import *
 
 class EditProfileForm(UserChangeForm):
@@ -96,3 +97,14 @@ class LessonMaterialForm(forms.ModelForm):
             'material_file': forms.FileInput(attrs={'class': 'form-control'}),
             'material_number': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+    def clean_material_number(self):
+        material_number = self.cleaned_data['material_number']
+        if material_number < 0:
+            raise ValidationError("Material number cannot be negative.")
+        return material_number
+
+    def clean_material_file(self):
+        material_file = self.cleaned_data['material_file']
+        if not material_file.name.endswith('.mp4'):
+            raise ValidationError("Please upload a valid video file (MP4 format).")
+        return material_file
