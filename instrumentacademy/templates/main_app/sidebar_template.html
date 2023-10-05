@@ -318,6 +318,16 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    {% url 'course_schedule_class' as course_schedule_class %}
+                    <a href="{% url 'course_schedule_class' %}" class="nav-link {% if course_schedule_class == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                             Schedule Class
+
+                        </p>
+                    </a>
+                </li>
                 {% comment %} <li class="nav-item">
                     {% url 'staff_take_attendance' as staff_take_attendance %}
                     <a href="{{staff_take_attendance}}" class="nav-link {% if staff_take_attendance == request.path %} active {% endif %}">
@@ -428,6 +438,14 @@
                         </p>
                     </a>
                 </li> {% endcomment %}
+                
+                <li class="nav-item">
+                    {% url 'view_scheduled_classess' as view_scheduled_classes %}
+                    <a href="{{view_scheduled_classess}}" class="nav-link {% if view_scheduled_classess == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>View Schedule</p>
+                    </a>
+                </li>
           
                 <li class="nav-item">
                     {% url 'student_view_attendance' as student_view_attendance %}

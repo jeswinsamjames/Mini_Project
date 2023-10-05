@@ -1,0 +1,89 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block content %}
+<style>
+    /* Custom styles for the form */
+    .module-form {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        max-width: 500px; /* Set the maximum width to 500px */
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    /* Style the submit button */
+    .btn-primary {
+        width: 100%;
+    }
+    .btn-cancel {
+        background-color: #ccc;
+        width: 100%;
+
+    }
+
+    .btn-cancel:hover {
+        background-color: #999;
+    }
+</style>
+<form method="post" enctype="multipart/form-data" id="editModuleForm" class="module-form">
+    {% csrf_token %}
+    <input type="hidden" id="module_id" name="module_id" value="">
+    <div class="form-group">
+        {{ module_form.title.label_tag }}
+        {{ module_form.title }}
+        <span id="title-error" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        {{ module_form.module_number.label_tag }}
+        {{ module_form.module_number }}
+        <span id="module-number-error" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Module</button>
+    <button type="button" class="btn btn-secondary btn-cancel" onclick="history.back()">Cancel</button>
+</form>
+{% endblock content %}
+{% block custom_js %}
+<script>
+    // Function to validate the title field
+    function validateTitle() {
+        var title = document.getElementById('id_title').value;
+        if (!title) {
+            document.getElementById('title-error').textContent = 'Title is required.';
+        } else {
+            document.getElementById('title-error').textContent = '';
+        }
+    }
+
+    // Function to validate the module number field
+    function validateModuleNumber() {
+        var moduleNumber = document.getElementById('id_module_number').value;
+        if (isNaN(moduleNumber) || moduleNumber < 0) {
+            document.getElementById('module-number-error').textContent = 'Module number must be a non-negative number.';
+        } else {
+            document.getElementById('module-number-error').textContent = '';
+        }
+    }
+    function validateMaterialNumber() {
+        var materialNumber = document.getElementById('id_material_number').value;
+        if (!materialNumber) {
+            document.getElementById('material-number-error').textContent = 'Material number is required.';
+        } else if (isNaN(materialNumber) || materialNumber < 0) {
+            document.getElementById('material-number-error').textContent = 'Material number must be a non-negative number.';
+        } else {
+            document.getElementById('material-number-error').textContent = '';
+        }
+    }
+
+    // Add event listeners for live validation
+    document.getElementById('id_title').addEventListener('input', validateTitle);
+    document.getElementById('id_module_number').addEventListener('input', validateModuleNumber);
+    document.getElementById('id_material_number').addEventListener('input', validateMaterialNumber);
+
+</script>
+{% endblock custom_js %}

@@ -84,3 +84,15 @@ class LessonMaterial(models.Model):
 
     def __str__(self):
         return f"Material {self.material_number}: {self.title}"
+    
+class ClassSchedule(models.Model):
+        
+        course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+        start_datetime = models.DateTimeField()
+        meeting_link = models.URLField()
+        description = models.TextField(blank=True, null=True)
+        duration = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+
+        def __str__(self):
+            return f"{self.course.name} - {self.start_datetime.strftime('%Y-%m-%d %H:%M')}"

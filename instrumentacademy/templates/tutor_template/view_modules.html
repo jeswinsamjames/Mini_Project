@@ -4,22 +4,22 @@
 {% block content %}
 <body>
     <style>
-        /* Custom styles */
-        body {
-            background-color: #000000; /* Faded background color */
-        }
-        .sidebar {
-            background-color: #343a40; /* Sidebar background color */
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Sidebar shadow */
-        }
-        .tab-content {
-            background-color: #ffffff; /* Form background color */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Form shadow */
-            padding: 20px; /* Add some padding for better spacing */
-            border-radius: 10px; /* Rounded corners */
-            width: 70%; /* Medium form width */
-        }
-      
+            /* Custom styles */
+            body {
+                background-color: #000000; /* Faded background color */
+            }
+            .sidebar {
+                background-color: #343a40; /* Sidebar background color */
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Sidebar shadow */
+            }
+            .tab-content {
+                background-color: #ffffff; /* Form background color */
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Form shadow */
+                padding: 20px; /* Add some padding for better spacing */
+                border-radius: 10px; /* Rounded corners */
+                width: 70%; /* Medium form width */
+            }
+        
     </style>
     
     <div class="container-fluid">
@@ -32,29 +32,44 @@
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="tab-content" id="myTabsContent">
-                
                     <ul id="module-list" class="list-group">
+                        
                         {% for module in modules %}
+                        <h5>Module</h5>
                         <li class="list-group-item">
-                            <button type="button" class="btn btn-link module-button" data-module-id="{{ module.id }}">
-                                {{ module.title }}
-                            </button>
+                            <div class="module-header">
+                                <button type="button" class="btn btn-link module-button" data-module-id="{{ module.id }}">
+                                    {{ module.title }}
+                                </button>
+                                <div class="module-actions">
+                                    <a href="{% url 'edit_module' module.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="{% url 'delete_module' module.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a>
+                                </div>
+                            </div>
                             <ul class="list-group lesson-list" data-module-id="{{ module.id }}" style="display: none;">
+                                <h5>Lessons</h5>
                                 {% for lesson in lessons %}
+                                
                                 {% if lesson.module.title == module.title %}
-                                <li class="list-group-item">
+                                <li class="list-group-item lesson-item">
                                     {{ lesson.title }}
-                                    <a href="{% url 'lesson_edit_page' lesson.id %}" class="btn btn-sm btn-primary float-right">Edit</a>
-                                    <a href="#" class="btn btn-sm btn-danger float-right delete-lesson" data-lesson-id="{{ lesson.id }}">Delete</a>
+                                    <div class="lesson-actions">
+                                        <a href="{% url 'lesson_edit_page' lesson.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="#" class="btn btn-sm btn-danger delete-lesson" data-lesson-id="{{ lesson.id }}">Delete</a>
+                                    </div>
                                 </li>
                                 {% endif %}
                                 {% endfor %}
                             </ul>
                         </li>
+                        {% if not forloop.last %}
+                        <hr class="module-separator">
+                        {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
             </main>
+            
             
             
             
@@ -146,6 +161,43 @@
         });
         
     });
+    $('.edit-module').on('click', function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+        const moduleId = $(this).data('module-id');
+
+        // Create a popup (you can customize this as needed)
+        const popup = `
+            <div class="module-edit-popup">
+                <!-- You can include your edit module form here -->
+                <h3>Edit Module</h3>
+                <!-- Example form fields (customize as needed) -->
+                <input type="text" id="module-title" placeholder="Module Title">
+                <button class="btn btn-primary" id="save-module">Save</button>
+                <button class="btn btn-secondary" id="cancel-edit">Cancel</button>
+            </div>
+        `;
+
+        // Append the popup to the body
+        $('body').append(popup);
+
+        // Handle "Save" button click (customize this for your form)
+        $('#save-module').on('click', function() {
+            // Perform the save/update action here
+            // You can make an AJAX request to save the module data
+            // After saving, you can close the popup and update the module in the list
+            // ...
+
+            // Close the popup
+            $('.module-edit-popup').remove();
+        });
+
+        // Handle "Cancel" button click
+        $('#cancel-edit').on('click', function() {
+            // Close the popup without making any changes
+            $('.module-edit-popup').remove();
+        });
+    });
+    
     
 </script>
 

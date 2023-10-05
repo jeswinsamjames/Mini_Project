@@ -31,6 +31,7 @@ admin.site.register(CourseDetail)
 admin.site.register(Enrollment)
 admin.site.register(Module)
 admin.site.register(LessonMaterial)
+admin.site.register(ClassSchedule)
 
 
 

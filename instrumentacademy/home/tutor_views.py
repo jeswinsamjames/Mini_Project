@@ -10,6 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.template.loader import render_to_string
+from datetime import timedelta, datetime,timezone
+from django.utils import timezone
+
+
 from .forms import *
 from .models import *
 
@@ -322,6 +326,34 @@ def module_list_view(request, course_id):
 
     return render(request, 'tutor_template/view_modules.html', context)
 
+def edit_module(request, module_id):
+    module = get_object_or_404(Module, pk=module_id)
+
+    if request.method == 'POST':
+        module_form = ModuleForm(request.POST, instance=module)
+        if module_form.is_valid():
+            module_form.save()
+            messages.success(request, 'updated successfully.')
+
+            return redirect(reverse('module_list_view', args=[module.course.id]))  # Redirect to module_list_view with course_id
+    else:
+        module_form = ModuleForm(instance=module)
+
+    return render(request, 'tutor_template/module_edit_form.html', {'module_form': module_form, 'module': module})
+
+def delete_module(request, module_id):
+
+    try:
+        module = get_object_or_404(Module, pk=module_id)
+        module.delete()
+        messages.success(request, 'deleted successfully.')
+
+        return HttpResponseRedirect(reverse('module_list_view', args=[module.course.id]))
+    except LessonMaterial.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Lesson not found'})
+
+
+
 
 def lesson_edit_page(request, lesson_id):
     try:
@@ -333,6 +365,8 @@ def lesson_edit_page(request, lesson_id):
         form = LessonMaterialForm(request.POST, request.FILES, instance=lesson)
         if form.is_valid():
             form.save()
+            messages.success(request, 'updated successfully.')
+
             return redirect(reverse('module_list_view', args=[lesson.course.id]))  # Redirect to module_list_view with course_id
     else:
         form = LessonMaterialForm(instance=lesson)
@@ -350,9 +384,12 @@ def delete_lesson(request, lesson_id):
     try:
         lesson = LessonMaterial.objects.get(pk=lesson_id)
         lesson.delete()
+        messages.success(request, 'deleted successfully.')
+
         return JsonResponse({'success': True})
     except LessonMaterial.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Lesson not found'})
+    return render()
 
 
 
@@ -360,6 +397,73 @@ def delete_lesson(request, lesson_id):
  # ...........END LESSON MATERIAL.............
 
 
+ # ...........class Scheduling.............
+
+
+
+def course_schedule_class(request):
+    courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)
+ 
+    return render(request, 'tutor_template/manage_schedule_class.html', {'courses':courses})
+def upcoming_classes(request):
+    upcoming_classes = ClassSchedule.objects.filter(start_datetime__gte=timezone.now()).order_by('start_datetime')
+    return render(request, 'upcoming_classes.html', {'upcoming_classes': upcoming_classes})
+
+
+@login_required
+def tutor_schedule_class(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    if request.method == 'POST':
+        form = ScheduleClassForm(request.POST)
+        if form.is_valid():
+            start_datetime = form.cleaned_data['start_datetime']
+            meeting_link = form.cleaned_data['meeting_link']
+            description = form.cleaned_data['description']
+            duration = form.cleaned_data['duration']
+
+            if duration is not None:
+                # Calculate the end time based on the start time and user-specified duration
+                duration_hours = float(duration)
+                duration_minutes = duration_hours * 60  # Convert to minutes
+
+                # Check if the current time is before or equal to the calculated end time
+                current_datetime = timezone.now()
+                if current_datetime <= start_datetime:
+                    # Handle the case where no end time is stored in the model
+                    # You can add your logic here or simply create a new class schedule
+                    # associated with the specific course without an end time
+                    ClassSchedule.objects.create(
+                        course=course,
+                        start_datetime=start_datetime,
+                        meeting_link=meeting_link,
+                        description=description,
+                        duration=duration, 
+                    )
+                    messages.success(request,'succesfully scheduled')
+
+                    return redirect('course_schedule_class')
+                else:
+                    # The schedule has already ended, handle as needed
+                    return redirect('expired_schedule_page')
+            else:
+                # Handle the case where no duration is provided
+                # Create a new class schedule without an end time
+                ClassSchedule.objects.create(
+                    course=course,
+                    start_datetime=start_datetime,
+                    meeting_link=meeting_link,
+                    description=description,
+                     duration=duration, 
+                )
+
+                return redirect('course_schedule_class')
+    else:
+        form = ScheduleClassForm()
+
+    return render(request, 'tutor_template/tutor_schedule_class.html', {'form': form, 'course': course})
+
+ # ...........End class Scheduling.............
 
 #////////////////////////////
 def tutor_take_attendance(request):

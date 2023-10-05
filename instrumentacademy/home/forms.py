@@ -108,3 +108,34 @@ class LessonMaterialForm(forms.ModelForm):
         if not material_file.name.endswith('.mp4'):
             raise ValidationError("Please upload a valid video file (MP4 format).")
         return material_file
+
+
+
+class ScheduleClassForm(forms.Form):
+    start_datetime = forms.DateTimeField(
+        label="Class Date and Time",
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        required=True,
+        help_text="Select the date and time for the class."
+    )
+    
+    meeting_link = forms.URLField(
+        label="Meeting Link",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=True,
+        help_text="Enter the link to the online meeting platform (e.g., https://zoom.us/)."
+    )
+    duration = forms.DecimalField(
+        label="Duration (in hours)",
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        required=False,
+        help_text="Optional: Enter the duration of the class in hours (e.g., 1.5 for 1 hour and 30 minutes)."
+    )
+    
+    
+    description = forms.CharField(
+        label="Description",
+        widget=forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+        required=False,
+        help_text="Optional: Provide additional information about the class."
+    )

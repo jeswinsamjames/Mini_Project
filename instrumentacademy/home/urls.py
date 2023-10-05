@@ -38,6 +38,8 @@ urlpatterns = [
     path('edit_profile/learner/', student_views.edit_profile_learner, name='edit_profile_learner'),
     path('mylearning/', student_views.enrolled_courses_list_leaner, name='mylearning'),
     path('tutor_course_content/<int:course_id>/', student_views.tutor_course_content, name='tutor_course_content'),
+    path('scheduled-classes/<int:course_id>/', student_views.view_scheduled_classes, name='view_scheduled_classes'),
+
 
 
     #<<<<<<<<<<<<<<staff>>>>>>>>>>>>>>>
@@ -78,15 +80,16 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
 
     path('list_modules/', tutor_views.list_modules, name='list_modules'),
     path('module_list_view/<int:course_id>/', tutor_views.module_list_view, name='module_list_view'),
-
+    path('edit_module/<int:module_id>/', tutor_views.edit_module, name='edit_module'),
+    path('delete_module/<int:module_id>/', tutor_views.delete_module, name='delete_module'),
     path('edit_lesson/<int:lesson_id>/', tutor_views.lesson_edit_page, name='lesson_edit_page'),
-
-
-    # Delete lesson URL
     path('delete_lesson/<int:lesson_id>/', tutor_views.delete_lesson, name='delete_lesson'),
 
 
-    
+    path('course_schedule_class/', tutor_views.course_schedule_class, name='course_schedule_class'),
+    path('upcoming-classes/', tutor_views.upcoming_classes, name='upcoming_classes'),
+    path('tutor/schedule-class/<int:course_id>/', tutor_views.tutor_schedule_class, name='tutor_schedule_class'),
+
     # path("staff/get_students/", staff_views.get_ students, name='get_students'),
     # path("staff/attendance/fetch/", staff_views.get_student_attendance,
     #      name='get_student_attendance'),
