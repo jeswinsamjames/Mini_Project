@@ -1,0 +1,52 @@
+<!-- learner_template/view_scheduled_classes.html -->
+
+{% extends "main_app/base.html" %}
+{% load static %}
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" >Class schedule</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>SN</th>
+                                <th>Date and Time</th>
+                                <th>course</th>
+                                <th>Meeting Link</th>
+                                <th>Description</th>
+                                <th>Duration</th>
+                                <th>Tutor</th>
+                            </tr>
+        </thead>
+        <tbody>
+            {% for class_schedule in scheduled_classes %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ class_schedule.start_datetime }}</td>
+                <td>{{ class_schedule.course.name }}</td>
+                <td><a href="{{ class_schedule.meeting_link }}" target="_blank">{{ class_schedule.meeting_link }}</a></td>
+                <td>{{ class_schedule.description }}</td>
+                <td>{{ class_schedule.duration }} hours</td>
+                <td>{{ class_schedule.course.tutor }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No scheduled classes for this course.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}

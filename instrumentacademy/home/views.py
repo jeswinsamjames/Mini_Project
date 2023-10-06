@@ -10,6 +10,8 @@ from hashlib import sha256
 from .models import *
 from .forms import *
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
 
 
 def index(request):

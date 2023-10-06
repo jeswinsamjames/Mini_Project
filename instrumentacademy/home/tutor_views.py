@@ -12,6 +12,8 @@ from django.db.models import Count
 from django.template.loader import render_to_string
 from datetime import timedelta, datetime,timezone
 from django.utils import timezone
+from django.views.decorators.cache import cache_control
+
 
 
 from .forms import *
@@ -31,7 +33,9 @@ def tutor_home(request):
     }
     return render(request, 'tutor_template/home_content.html',context)
 
+
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def view_profile_tutor(request):
     user = request.user
     try:
@@ -403,11 +407,11 @@ def delete_lesson(request, lesson_id):
 
 def course_schedule_class(request):
     courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)
- 
     return render(request, 'tutor_template/manage_schedule_class.html', {'courses':courses})
 def upcoming_classes(request):
     upcoming_classes = ClassSchedule.objects.filter(start_datetime__gte=timezone.now()).order_by('start_datetime')
     return render(request, 'upcoming_classes.html', {'upcoming_classes': upcoming_classes})
+
 
 
 @login_required
@@ -426,21 +430,21 @@ def tutor_schedule_class(request, course_id):
                 # Calculate the end time based on the start time and user-specified duration
                 duration_hours = float(duration)
                 duration_minutes = duration_hours * 60  # Convert to minutes
+                end_datetime = start_datetime + timedelta(minutes=duration_minutes)  # Calculate end_datetime
 
                 # Check if the current time is before or equal to the calculated end time
                 current_datetime = timezone.now()
-                if current_datetime <= start_datetime:
-                    # Handle the case where no end time is stored in the model
-                    # You can add your logic here or simply create a new class schedule
-                    # associated with the specific course without an end time
+
+                if current_datetime <= end_datetime:
+                    # Create a new class schedule associated with the specific course
                     ClassSchedule.objects.create(
                         course=course,
                         start_datetime=start_datetime,
                         meeting_link=meeting_link,
                         description=description,
-                        duration=duration, 
+                        duration=duration,
                     )
-                    messages.success(request,'succesfully scheduled')
+                    messages.success(request, 'Successfully scheduled')
 
                     return redirect('course_schedule_class')
                 else:
@@ -454,7 +458,6 @@ def tutor_schedule_class(request, course_id):
                     start_datetime=start_datetime,
                     meeting_link=meeting_link,
                     description=description,
-                     duration=duration, 
                 )
 
                 return redirect('course_schedule_class')
@@ -462,6 +465,37 @@ def tutor_schedule_class(request, course_id):
         form = ScheduleClassForm()
 
     return render(request, 'tutor_template/tutor_schedule_class.html', {'form': form, 'course': course})
+
+@login_required
+def view_scheduled_classes(request):
+    current_datetime = datetime.now()
+    tutor = request.user  # Get the currently logged-in tutor
+
+    # Get upcoming classes for the logged-in tutor
+    upcoming_classes = ClassSchedule.objects.filter(
+        course__tutor=tutor,
+        start_datetime__gt=current_datetime
+    ).order_by('start_datetime')
+
+    # Get ended classes for the logged-in tutor
+    ended_classes = ClassSchedule.objects.filter(
+        course__tutor=tutor,
+        start_datetime__lte=current_datetime
+    ).order_by('start_datetime')
+
+    return render(request, 'tutor_template/view_scheduled_classes.html', {
+        'upcoming_classes': upcoming_classes,
+        'ended_classes': ended_classes,
+    })
+
+
+def delete_class_schedule(request, class_schedule_id):
+    class_schedule = get_object_or_404(ClassSchedule, pk=class_schedule_id)
+
+    class_schedule.delete()
+    messages.success(request, 'Class schedule deleted successfully.')
+    
+    return redirect('view_scheduled_classes')
 
  # ...........End class Scheduling.............
 

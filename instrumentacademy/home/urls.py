@@ -38,7 +38,7 @@ urlpatterns = [
     path('edit_profile/learner/', student_views.edit_profile_learner, name='edit_profile_learner'),
     path('mylearning/', student_views.enrolled_courses_list_leaner, name='mylearning'),
     path('tutor_course_content/<int:course_id>/', student_views.tutor_course_content, name='tutor_course_content'),
-    path('scheduled-classes/<int:course_id>/', student_views.view_scheduled_classes, name='view_scheduled_classes'),
+    path('scheduled-classes/', student_views.view_scheduled_classes_leaner, name='view_scheduled_classes_leaner'),
 
 
 
@@ -89,6 +89,10 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
     path('course_schedule_class/', tutor_views.course_schedule_class, name='course_schedule_class'),
     path('upcoming-classes/', tutor_views.upcoming_classes, name='upcoming_classes'),
     path('tutor/schedule-class/<int:course_id>/', tutor_views.tutor_schedule_class, name='tutor_schedule_class'),
+    path('view-scheduled-classes/', tutor_views.view_scheduled_classes, name='view_scheduled_classes'),
+    path('delete-class-schedule/<int:class_schedule_id>/', tutor_views.delete_class_schedule, name='delete_class_schedule'),
+
+
 
     # path("staff/get_students/", staff_views.get_ students, name='get_students'),
     # path("staff/attendance/fetch/", staff_views.get_student_attendance,

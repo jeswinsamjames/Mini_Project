@@ -47,6 +47,58 @@
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('form').submit(function(event) {
+            var form = $(this);
+
+            // Reset any previous validation errors
+            form.find('.is-invalid').removeClass('is-invalid');
+            form.find('.invalid-feedback').remove();
+
+            var startDatetime = form.find('#id_start_datetime').val();
+            var meetingLink = form.find('#id_meeting_link').val();
+            var duration = parseFloat(form.find('#id_duration').val());
+            var description = form.find('#id_description').val();
+
+            var currentDatetime = new Date();
+            var selectedDatetime = new Date(startDatetime);
+
+            // Check if the startDatetime is in the past
+            if (selectedDatetime <= currentDatetime) {
+                event.preventDefault();
+                form.find('#id_start_datetime').addClass('is-invalid');
+                form.find('#id_start_datetime').after('<div class="invalid-feedback">Please select a future date and time.</div>');
+            }
+
+            // Check if any field is empty
+            if (startDatetime === '' || meetingLink === '' || description === '' || isNaN(duration) || duration < 0) {
+                event.preventDefault();
+                if (startDatetime === '') {
+                    form.find('#id_start_datetime').addClass('is-invalid');
+                    form.find('#id_start_datetime').after('<div class="invalid-feedback">This field is required.</div>');
+                }
+                if (meetingLink === '') {
+                    form.find('#id_meeting_link').addClass('is-invalid');
+                    form.find('#id_meeting_link').after('<div class="invalid-feedback">This field is required.</div>');
+                }
+                if (description === '') {
+                    form.find('#id_description').addClass('is-invalid');
+                    form.find('#id_description').after('<div class="invalid-feedback">This field is required.</div>');
+                }
+                if (isNaN(duration) || duration < 0) {
+                    form.find('#id_duration').addClass('is-invalid');
+                    form.find('#id_duration').after('<div class="invalid-feedback">Please enter a valid duration (cant be negative).</div>');
+                }
+            }
+        });
+    });
+</script>
+
+
 {% endblock custom_js %}
 
 

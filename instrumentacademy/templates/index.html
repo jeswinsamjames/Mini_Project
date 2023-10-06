@@ -30,6 +30,9 @@
 
    <link href="{% static 'assets/css/main.css'%}" rel="stylesheet">
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
 
   <!--Template Main CSS File -->
   
@@ -59,15 +62,20 @@
           <li><a href="#hero">Home</a></li>
           <li><a href="#about">About</a></li>
          
-          <li ><a href="{% url 'view_catgories' %}"><span>Courses</span> </a>
-            
-          </li>
+          <li ><a href="{% url 'view_catgories' %}"><span>Courses</span> </a></li>
           {% comment %} <li><a href="blog.html">Blog</a></li> {% endcomment %}
         {% if user.is_authenticated %}
             {% if user.userprofile.isTutor == 0 %}
                 <li><a href="{% url 'mylearning' %}">My Learning</a></li>
             {% endif %}
         {% endif %}
+
+          
+
+
+        <li ><i class="fa fa-thin fa-bell" style="color: #ffffff;"></i> </a></li>
+
+      
 
           {% comment %} <li><a href="#faculty">Faculty</a></li>
           <li><a href="#resource">Resource</a></li>   {% endcomment %}

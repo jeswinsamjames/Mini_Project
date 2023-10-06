@@ -140,13 +140,19 @@ def tutor_course_content(request, course_id):
 # views.py
 
 
+@login_required
+def view_scheduled_classes_leaner(request):
+    user = request.user
+    enrolled_courses = CourseDetail.objects.filter(enrollment__learner=user)
+    current_datetime = datetime.now()
 
-def view_scheduled_classes(request, course_id):
-    course = get_object_or_404(CourseDetail, pk=course_id)
-    scheduled_classes = ClassSchedule.objects.filter(course=course).order_by('start_datetime')
+    # Filter scheduled classes where start_datetime is in the future (upcoming classes)
+    scheduled_classes = ClassSchedule.objects.filter(
+        course__in=enrolled_courses,
+        start_datetime__gt=current_datetime
+    ).order_by('start_datetime')
 
-    return render(request, 'student_template/view_scheduled_classes.html', {'course': course, 'scheduled_classes': scheduled_classes})
-
+    return render(request, 'student_template/view_scheduled_classes_leaner.html', {'enrolled_courses': enrolled_courses, 'scheduled_classes': scheduled_classes})
 
 def student_view_attendance(request):
    

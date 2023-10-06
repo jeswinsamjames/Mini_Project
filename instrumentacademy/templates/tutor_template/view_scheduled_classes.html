@@ -1,0 +1,94 @@
+<!-- your_template/view_scheduled_classes.html -->
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Upcoming Classes</h2>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                       
+                        <table id="example2" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>course</th>
+        <th>Date and Time</th>
+        <th>Duration</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for class_schedule in upcoming_classes %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ class_schedule.course.name }}</td>
+          <td>{{ class_schedule.start_datetime }}</td>
+          <td>{{ class_schedule.duration }} hours</td>
+          <td><a class="btn btn-sm btn-danger" href="{% url 'delete_class_schedule' class_schedule.id %}" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No upcoming classes.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Ended Classes</h2>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                       
+                        <table id="example2" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>course</th>
+        <th>Date and Time</th>
+        <th>Duration</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for class_schedule in ended_classes %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ class_schedule.course.name }}</td>
+          <td>{{ class_schedule.start_datetime }}</td>
+          <td>{{ class_schedule.duration }} hours</td>
+          <td><a class="btn btn-sm btn-danger delete-lesson" href="{% url 'delete_class_schedule' class_schedule.id %}" onclick="return confirm('Are you sure you want to delete this course?')" >Delete</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No ended classes.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}

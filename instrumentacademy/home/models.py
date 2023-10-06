@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 # Create your models here.
 
 
@@ -94,5 +96,7 @@ class ClassSchedule(models.Model):
         duration = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
 
+
         def __str__(self):
             return f"{self.course.name} - {self.start_datetime.strftime('%Y-%m-%d %H:%M')}"
+      
