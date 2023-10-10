@@ -49,10 +49,20 @@
             {{ form.description.label_tag }}
             {{ form.description }}
         </div>
+       
         <div class="form-group">
             {{ form.image.label_tag }}
             {{ form.image }}
         </div>
+        <div class="form-group">
+            <label for="{{ form.amount.id_for_label }}">Amount:</label>
+            {{ form.amount }}
+            <div class="invalid-feedback">
+                Enter the amount(cannot be negative)
+            </div>
+        </div>
+        
+        
         <div class="form-check">
             {{ form.is_active }}
             <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Is Active</label>
@@ -77,4 +87,36 @@
 </div>
 
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        form.addEventListener("submit", function (event) {
+            // Other field validations (name, instrument_name, years_of_experience, etc.)
+
+            const amount = document.querySelector("#id_amount");
+            const amountValue = parseFloat(amount.value);
+            
+            if (isNaN(amountValue) || amountValue < 0) {
+                amount.classList.add("is-invalid");
+                event.preventDefault(); // Prevent form submission
+                event.stopPropagation(); // Stop event propagation
+            } else {
+                amount.classList.remove("is-invalid");
+            }
+        });
+
+        // Live validation for other fields (name, instrument_name, years_of_experience, etc.)
+
+        const amount = document.querySelector("#id_amount");
+        amount.addEventListener("input", function () {
+            const amountValue = parseFloat(this.value);
+            if (!isNaN(amountValue) && amountValue >= 0) {
+                this.classList.remove("is-invalid");
+            } else {
+                this.classList.add("is-invalid");
+            }
+        });
+    });
+</script>
+
 </html>

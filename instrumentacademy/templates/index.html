@@ -36,7 +36,66 @@
 
   <!--Template Main CSS File -->
   
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+      $(document).ready(function () {
+          const notificationIcon = $("#notification-icon");
+          const notificationPanel = $("#notification-panel");
+  
+          // Function to toggle the visibility of the notification panel
+          function toggleNotificationPanel() {
+              if (notificationPanel.css("display") === "none") {
+                  notificationPanel.css("display", "block");
+              } else {
+                  notificationPanel.css("display", "none");
+              }
+          }
+  
+          // Function to make the AJAX request and update the notification panel with upcoming classes
+          function updateNotificationPanel() {
+              $.ajax({
+                  url: "{% url 'upcoming_classes_view' %}", // Replace with your Django view URL for upcoming classes
+                  type: "GET",
+                  success: function (data) {
+                      // Clear existing notifications
+                      notificationPanel.html("");
+  
+                      // Check if there are upcoming classes
+                      if (data.upcomingClasses.length > 0) {
+                          // Iterate over the upcoming classes and generate HTML for each
+                          data.upcomingClasses.forEach(function (upcomingClass) {
+                              const notificationHTML = `
+                                  <li><a href="#">Upcoming Class: ${upcomingClass.title} on ${upcomingClass.start_datetime}</a></li>
+                              `;
+                              notificationPanel.append(notificationHTML);
+                          });
+                      } else {
+                          // Display a message when there are no upcoming classes
+                          const noClassesMessage = `<li><a href="#">No upcoming classes</a></li>`;
+                          notificationPanel.append(noClassesMessage);
+                      }
+                  }
+              });
+          }
+  
+          // Add a click event listener to the notification icon link
+          notificationIcon.click(function (event) {
+              event.stopPropagation(); // Prevent the click event from propagating to the document
+              toggleNotificationPanel();
+              updateNotificationPanel();
+          });
+  
+          // Close the notification panel if the user clicks outside of it
+          $(document).click(function (event) {
+              if (notificationPanel.css("display") !== "none" && !notificationIcon.is(event.target) && notificationPanel.has(event.target).length === 0) {
+                  notificationPanel.css("display", "none");
+              }
+          });
+      });
+  </script>
+  
+  
+  
   
 </head>
 
@@ -70,10 +129,20 @@
             {% endif %}
         {% endif %}
 
-          
 
-
-        <li ><i class="fa fa-thin fa-bell" style="color: #ffffff;"></i> </a></li>
+        
+        <li class="dropdown">
+          <a href="#" id="notification-icon" class="dropdown-toggle" style="padding-right: 0; padding-left: 0;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-thin fa-bell" style="color: #ffffff;"></i>
+          </a>
+          <ul class="dropdown-menu" id="notification-panel">
+              <!-- Notifications will be dynamically added here via JavaScript -->
+          </ul>
+      </li>
+      
+      
+      
+      
 
       
 

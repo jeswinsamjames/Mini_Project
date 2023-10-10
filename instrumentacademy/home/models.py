@@ -53,6 +53,7 @@ class CourseDetail(models.Model):
     description = models.TextField()
     is_active = models.BooleanField(default=True)
     enrolled_learners = models.ManyToManyField(User, through='Enrollment', related_name='enrolled_courses')
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 
     def __str__(self):
@@ -100,3 +101,14 @@ class ClassSchedule(models.Model):
         def __str__(self):
             return f"{self.course.name} - {self.start_datetime.strftime('%Y-%m-%d %H:%M')}"
       
+class Notification(models.Model):
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20)
+    content = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('-timestamp',)
+
+

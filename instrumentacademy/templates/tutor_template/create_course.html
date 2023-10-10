@@ -46,6 +46,15 @@
                     Please enter a description.
                 </div>
             </div>
+            <div class="form-group">
+                <label for="amount" class="custom-label">Amount:</label>
+                <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+                <div class="invalid-feedback">
+                    Please enter the amount(cannot be negative).
+                </div>
+            </div>
+            
+            
         
             <div class="form-group">
                 <label for="course_image" class="custom-label">Course Image:</label>
@@ -119,6 +128,8 @@
                 const description = document.querySelector("#description");
                 const courseImage = document.querySelector("#course_image");
                 const isActive = document.querySelector("#is_active");
+                const amount = document.querySelector("#amount"); // Add this line
+
                 
                 // Custom validation logic
                 let hasErrors = false;
@@ -164,6 +175,14 @@
                     hasErrors = true;
                 } else {
                     isActive.classList.remove("is-invalid");
+                }
+
+                const amountValue = parseFloat(amount.value);
+                if (isNaN(amountValue) || amountValue < 0) {
+                    amount.classList.add("is-invalid");
+                    hasErrors = true;
+                } else {
+                    amount.classList.remove("is-invalid");
                 }
         
                 if (hasErrors) {
@@ -211,6 +230,12 @@
             // Live validation for isActive field
             document.querySelector("#is_active").addEventListener("change", function () {
                 if (this.checked) {
+                    this.classList.remove("is-invalid");
+                }
+            });
+            document.querySelector("#amount").addEventListener("input", function () {
+                const amountValue = parseFloat(this.value);
+                if (!isNaN(amountValue) && amountValue >= 0) {
                     this.classList.remove("is-invalid");
                 }
             });

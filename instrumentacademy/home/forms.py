@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from .models import *
 
 class EditProfileForm(UserChangeForm):
@@ -56,6 +57,7 @@ class CourseForm(forms.ModelForm):
             'name',
             'years_of_experience',
             'description',
+            'amount',
             'image',
             'is_active',  # Include the is_active field in the form
         ]
@@ -64,7 +66,8 @@ class CourseForm(forms.ModelForm):
          'name': forms.TextInput(attrs={'class': 'form-control'}),
             'years_of_experience': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': 'required'}),  # Add 'required' here
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),  # Add 'required' here
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 

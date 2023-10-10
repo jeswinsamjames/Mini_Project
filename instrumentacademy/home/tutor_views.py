@@ -16,6 +16,8 @@ from django.views.decorators.cache import cache_control
 
 
 
+
+
 from .forms import *
 from .models import *
 
@@ -95,6 +97,8 @@ def create_course(request):
         instrument_name = request.POST['instrument_name']
         description = request.POST['description']
         years_of_experience = request.POST['years_of_experience']
+        amount = request.POST['amount']
+
         is_active = True if request.POST.get('is_active') else False
 
         # Handle the uploaded course image
@@ -118,6 +122,7 @@ def create_course(request):
             years_of_experience=years_of_experience,
             is_active=is_active,
             image=course_image,
+            amount=amount,
             tutor=request.user
         )
 

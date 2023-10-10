@@ -21,6 +21,10 @@ urlpatterns = [
     path('registration', views.registration,name="registration"), 
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('course_material', views.course_material, name='course_material'),
+    path('notifications/', views.notifications_view, name='notifications_view'),
+    path('upcoming-classes/', views.upcoming_classes_view, name='upcoming_classes_view'),
+
+
    
 
 

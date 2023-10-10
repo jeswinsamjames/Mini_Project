@@ -10,7 +10,10 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-
+import razorpay
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest
 
 from .forms import *
 from .models import *
@@ -153,6 +156,15 @@ def view_scheduled_classes_leaner(request):
     ).order_by('start_datetime')
 
     return render(request, 'student_template/view_scheduled_classes_leaner.html', {'enrolled_courses': enrolled_courses, 'scheduled_classes': scheduled_classes})
+
+
+
+
+
+
+
+
+
 
 def student_view_attendance(request):
    

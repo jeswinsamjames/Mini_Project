@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'payment',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -189,5 +190,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mailtoshowvalidationok@gmail.com'  
 EMAIL_HOST_PASSWORD = 'qtwpnirvgsxzhtdo'  
 DEFAULT_FROM_EMAIL = 'mailtoshowvalidationok@gmail.com'
+
+RAZOR_KEY_ID = 'rzp_test_cNVyoaHhdX2eSa'
+RAZOR_KEY_SECRET = 'mPs9oIn4tXgUpzCtlJ8p7zFv'
 
 LOGIN_URL = 'custom_login'  # Replace 'custom_login' with the URL name of your custom login view

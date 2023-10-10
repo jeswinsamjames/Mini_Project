@@ -10,6 +10,8 @@ from hashlib import sha256
 from .models import *
 from .forms import *
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
@@ -152,3 +154,43 @@ def custom_login(request):
             return render(request, 'login.html', {'error_message': 'Invalid credentials'})
     else:
         return render(request, 'login.html')
+    
+
+def notifications_view(request):
+    user = request.user
+
+    # Fetch unread notifications for the user
+    unread_notifications = Notification.objects.filter(recipient=user, is_read=False).order_by('-timestamp')
+
+    # Fetch upcoming class schedules for the user
+    current_datetime = timezone.now()
+    upcoming_class_schedules = ClassSchedule.objects.filter(
+        course__enrolled_learners=user,
+        start_datetime__gt=current_datetime
+    ).order_by('start_datetime')
+
+    # Combine notification and class schedule messages
+    messages = []
+
+    if unread_notifications:
+        messages.extend([notification.content for notification in unread_notifications])
+
+    if upcoming_class_schedules:
+        class_schedule_messages = [f'Upcoming class: {schedule.course.name} on {schedule.start_datetime}' for schedule in upcoming_class_schedules]
+        messages.extend(class_schedule_messages)
+
+    # Mark notifications as read when the user views them
+    unread_notifications.update(is_read=True)
+
+    # Return the combined messages as a JSON response
+    return JsonResponse({'messages': messages})
+
+def upcoming_classes_view(request):
+    # Retrieve upcoming classes from the database
+    current_datetime = timezone.now()
+    upcoming_classes = ClassSchedule.objects.filter(
+        start_datetime__gt=current_datetime
+    ).order_by('start_datetime')
+
+    # Pass the upcoming_classes data to a template
+    return render(request, 'upcoming_classes.html', {'upcoming_classes': upcoming_classes})

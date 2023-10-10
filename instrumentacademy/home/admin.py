@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import *
-
+from payment.models import *
 
 
 
@@ -32,6 +32,8 @@ admin.site.register(Enrollment)
 admin.site.register(Module)
 admin.site.register(LessonMaterial)
 admin.site.register(ClassSchedule)
+admin.site.register(Order)
+
 
 
 
