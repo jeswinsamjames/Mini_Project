@@ -420,6 +420,7 @@ def upcoming_classes(request):
 
 
 @login_required
+
 def tutor_schedule_class(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
 
@@ -442,7 +443,7 @@ def tutor_schedule_class(request, course_id):
 
                 if current_datetime <= end_datetime:
                     # Create a new class schedule associated with the specific course
-                    ClassSchedule.objects.create(
+                    class_schedule = ClassSchedule.objects.create(
                         course=course,
                         start_datetime=start_datetime,
                         meeting_link=meeting_link,
@@ -451,6 +452,15 @@ def tutor_schedule_class(request, course_id):
                     )
                     messages.success(request, 'Successfully scheduled')
 
+                    # Create a notification for learners enrolled in the course
+                    enrolled_learners = course.enrolled_learners.all()
+                    for learner in enrolled_learners:
+                        Notification.objects.create(
+                            recipient=learner,
+                            notification_type="Class Scheduled",
+                            content=f'A new class for {course.name} has been scheduled.',
+                        )
+
                     return redirect('course_schedule_class')
                 else:
                     # The schedule has already ended, handle as needed
@@ -458,18 +468,28 @@ def tutor_schedule_class(request, course_id):
             else:
                 # Handle the case where no duration is provided
                 # Create a new class schedule without an end time
-                ClassSchedule.objects.create(
+                class_schedule = ClassSchedule.objects.create(
                     course=course,
                     start_datetime=start_datetime,
                     meeting_link=meeting_link,
                     description=description,
                 )
 
+                # Create a notification for learners enrolled in the course
+                enrolled_learners = course.enrolled_learners.all()
+                for learner in enrolled_learners:
+                    Notification.objects.create(
+                        recipient=learner,
+                        notification_type="Class Scheduled",
+                        content=f'A new class for {course.name} has been scheduled.',
+                    )
+
                 return redirect('course_schedule_class')
     else:
         form = ScheduleClassForm()
 
     return render(request, 'tutor_template/tutor_schedule_class.html', {'form': form, 'course': course})
+
 
 @login_required
 def view_scheduled_classes(request):
@@ -504,40 +524,77 @@ def delete_class_schedule(request, class_schedule_id):
 
  # ...........End class Scheduling.............
 
+
+ # ...........Attendence class Scheduling.............
+
+
+
+def tutor_courses(request):
+    # Retrieve courses associated with the currently logged-in tutor
+    tutor = request.user
+    courses = CourseDetail.objects.filter(tutor=tutor)
+
+    return render(request, 'tutor_template/tutor_courses_attendence.html', {'courses': courses})
+
+def view_course_sessions(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    # Retrieve class sessions for the selected course
+    class_sessions = ClassSchedule.objects.filter(course=course)
+
+    return render(request, 'tutor_template/view_course_sessions_attendece.html', {'course': course, 'class_sessions': class_sessions})
+
+
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def take_attendance(request, session_id):
+    class_session = get_object_or_404(ClassSchedule, pk=session_id)
+    learners = class_session.course.enrolled_learners.all()
+
+    # Get the IDs of learners marked as present in the database for this session
+    present_learner_ids = list(
+        Attendance.objects.filter(class_schedule=class_session, is_present=True).values_list('learner__id', flat=True)
+    )
+
+    if request.method == 'POST':
+        present_learner_ids = request.POST.getlist('attendance')
+
+        for learner in learners:
+            learner_id = str(learner.id)
+            is_present = learner_id in present_learner_ids
+
+            # Check if attendance record already exists for this learner and session
+            attendance_record, created = Attendance.objects.get_or_create(
+                learner=learner,
+                class_schedule=class_session,
+                course=class_session.course
+            )
+
+            # Handle the case where 'is_present' field can be null
+            if is_present:
+                attendance_record.is_present = True
+            elif is_present is False:
+                attendance_record.is_present = False
+            attendance_record.save()
+
+        messages.success(request, "Attendance successfully marked")
+        return redirect('take_attendance', session_id)
+
+    return render(
+        request,
+        'tutor_template/mark_attendance.html',
+        {'class_session': class_session, 'learners': learners, 'present_learner_ids': present_learner_ids}
+    )
+ # ...........Attendence class Scheduling.............
+
 #////////////////////////////
-def tutor_take_attendance(request):
-   
-    return render(request, 'tutor_template/tutor_take_attendance.html')
 
-
-
-
-def tutor_update_attendance(request):
-
-    return render(request, 'tutor_template/tutor_update_attendance.html')
 
 
 def tutor_feedback(request):
     return render(request, "tutor_template/tutor_feedback.html")
 
 
-def tutor_view_profile(request):
-
- return render(request, "tutor_template/tutor_view_profile.html")
-  
 
 
-
-
-def tutor_view_notification(request):
-    
-    return render(request, "tutor_template/tutor_view_notification.html")
-
-
-def tutor_add_result(request):
-   
-    return render(request, "tutor_template/tutor_add_result.html")
-
-def EditResultView(request):
-    return render(request,'edit_student_result.html')
 

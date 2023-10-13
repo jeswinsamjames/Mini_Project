@@ -1,0 +1,88 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+
+{% block content %}
+<style>
+    .present {
+        color: green;
+    }
+    
+    .absent {
+        color: red;
+    }
+</style>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ page_title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'student_view_attendance' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Select Course</label>
+                                <select name="course" class="form-control" required>
+                                    <option value="">----</option>
+                                    {% for course in courses %}
+                                        <option value="{{ course.id }}">{{ course.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Date</label>
+                                <input type="date" class="form-control" placeholder="Select Date" name="start_date" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Fetch Attendance Data</button>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <div id="attendance-data">
+                            <div class="card-footer">
+                                <div id="attendance-data">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Topic</th>
+                                                <th>Attendance Status</th>
+                                                <th>Tutor Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if attendance_data %}
+                                                {% for attendance in attendance_data %}
+                                                    <tr>
+                                                        <td>{{ attendance.class_schedule.start_datetime }}</td>
+                                                        <td>{{ attendance.class_schedule.description }}</td>
+                                                        <td>
+                                                            {% if attendance.is_present %}
+                                                            <span class="present">Present</span>
+
+                                                            {% else %}
+                                                            <span class="absent">Absent</span>
+                                                            {% endif %}
+                                                        </td>              
+                                                        <td>{{ attendance.class_schedule.course.tutor }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="4">No attendance data available for the selected course and date.</td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                                                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

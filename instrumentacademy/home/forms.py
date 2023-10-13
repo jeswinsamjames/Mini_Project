@@ -137,8 +137,9 @@ class ScheduleClassForm(forms.Form):
     
     
     description = forms.CharField(
-        label="Description",
+        label="Topics",
         widget=forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
         required=False,
         help_text="Optional: Provide additional information about the class."
     )
+

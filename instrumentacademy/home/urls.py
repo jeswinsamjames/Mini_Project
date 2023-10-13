@@ -21,8 +21,9 @@ urlpatterns = [
     path('registration', views.registration,name="registration"), 
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('course_material', views.course_material, name='course_material'),
-    path('notifications/', views.notifications_view, name='notifications_view'),
-    path('upcoming-classes/', views.upcoming_classes_view, name='upcoming_classes_view'),
+    path('get_notifications/', views.get_notifications, name='get_notifications'),
+    path('mark-notifications-as-read/', views.mark_notifications_as_read, name='mark_notifications_as_read'),
+
 
 
    
@@ -33,7 +34,7 @@ urlpatterns = [
     
     path("logout_user/", views.logout_user, name='user_logout'),
     path("student/home/", student_views.student_home, name='student_home'),
-    path("student/view/attendance/", student_views.student_view_attendance, name='student_view_attendance'),
+    path('student/view/attendance/', student_views.student_view_attendance, name='student_view_attendance'),
     path("student/feedback/", student_views.student_feedback, name='student_feedback'),
 #     path("student/fcmtoken/", student_views.student_fcmtoken,name='student_fcmtoken'),
     path("student/view/notification/", student_views.student_view_notification, name="student_view_notification"),
@@ -49,12 +50,6 @@ urlpatterns = [
     #<<<<<<<<<<<<<<staff>>>>>>>>>>>>>>>
 
     path("tutor/home/", tutor_views.tutor_home, name='tutor_home'),
-    path("tutor/view/profile/", tutor_views.tutor_view_profile, name='tutor_view_profile'),
-    path("tutor/result/add/", tutor_views.tutor_add_result, name='tutor_add_result'),
-    path("tutor/result/edit/", tutor_views.EditResultView,name='edit_student_result'),
-    path("tutor/attendance/take/", tutor_views.tutor_take_attendance, name='tutor_take_attendance'),
-    path("tutor/attendance/update/", tutor_views.tutor_update_attendance,name='tutor_update_attendance'),
-    path("tutor/view/notification/", tutor_views.tutor_view_notification, name="tutor_view_notification"),
     path("tutor/feedback/", tutor_views.tutor_feedback, name='tutor_feedback'),
     path('edit_profile/tutor/', tutor_views.edit_profile_tutor, name='edit_profile_tutor'),
     path('view_profile/tutor/', tutor_views.view_profile_tutor, name='view_profile_tutor'),
@@ -95,6 +90,11 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
     path('tutor/schedule-class/<int:course_id>/', tutor_views.tutor_schedule_class, name='tutor_schedule_class'),
     path('view-scheduled-classes/', tutor_views.view_scheduled_classes, name='view_scheduled_classes'),
     path('delete-class-schedule/<int:class_schedule_id>/', tutor_views.delete_class_schedule, name='delete_class_schedule'),
+
+    path('tutor-courses/', tutor_views.tutor_courses, name='tutor_courses'),
+    path('view-course-sessions/<int:course_id>/', tutor_views.view_course_sessions, name='view_course_sessions'),
+    path('take-attendance/<int:session_id>/', tutor_views.take_attendance, name='take_attendance'),
+
 
 
 

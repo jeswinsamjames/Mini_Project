@@ -32,7 +32,9 @@ admin.site.register(Enrollment)
 admin.site.register(Module)
 admin.site.register(LessonMaterial)
 admin.site.register(ClassSchedule)
+admin.site.register(Attendance)
 admin.site.register(Order)
+admin.site.register(Notification)
 
 
 

@@ -1,0 +1,94 @@
+{% extends 'main_app/base.html' %}
+
+{% load static %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ page_title }}</h3>
+                    </div>
+
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <div class="card-body">
+                        <div class="form-group">
+                            <h2>{{ class_session.start_datetime }}</h2>
+                            <p>Meeting Link: <a href="{{ class_session.meeting_link }}">{{ class_session.meeting_link }}</a></p>
+                        </div>
+                        <form method="post" action="{% url 'take_attendance' class_session.id %}">
+                            {% csrf_token %}
+                            <h3>Mark Attendance:</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Learner</th>
+                                        <th>Attendance <br>
+                                            
+                                       
+                                            <label for="select_all_learners">Select All Learners:</label>
+                                            <input type="checkbox" id="select_all_learners" class="select-all-checkbox">
+                                            
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for learner in learners %}
+                                        <tr>
+                                            <td>{{ learner.username }}</td>
+                                            <td>
+                                                <input type="checkbox" name="attendance" class="learner-checkbox" value="{{ learner.id }}" id="id_{{ learner.id }}"
+                                                    {% if learner.id in present_learner_ids %}
+                                                    checked
+                                                    {% endif %}>
+                                                <label for="id_{{ learner.id }}">Present</label>
+                                            </td>
+                                            
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn btn-primary">Submit Attendance</button>
+                        </form>
+                        
+                    </div>
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // JavaScript code to handle the "Select All" checkbox and individual learner checkboxes
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectAllCheckbox = document.querySelector('.select-all-checkbox');
+        const learnerCheckboxes = document.querySelectorAll('.learner-checkbox');
+
+        // Function to update "Select All" checkbox based on individual checkboxes
+        function updateSelectAll() {
+            const allChecked = Array.from(learnerCheckboxes).every(checkbox => checkbox.checked);
+            selectAllCheckbox.checked = allChecked;
+        }
+
+        // Event listener for "Select All" checkbox
+        selectAllCheckbox.addEventListener('change', function() {
+            for (const checkbox of learnerCheckboxes) {
+                checkbox.checked = this.checked;
+            }
+        });
+
+        // Event listeners for individual learner checkboxes
+        for (const checkbox of learnerCheckboxes) {
+            checkbox.addEventListener('change', function() {
+                updateSelectAll();
+            });
+        }
+    });
+</script>
+{% endblock content %}

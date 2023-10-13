@@ -35,65 +35,145 @@
 
 
   <!--Template Main CSS File -->
+
+  <!--notification -->
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-      $(document).ready(function () {
-          const notificationIcon = $("#notification-icon");
-          const notificationPanel = $("#notification-panel");
-  
-          // Function to toggle the visibility of the notification panel
-          function toggleNotificationPanel() {
-              if (notificationPanel.css("display") === "none") {
-                  notificationPanel.css("display", "block");
+    function updateNotifications() {
+        $.ajax({
+            url: '{% url "get_notifications" %}',
+            dataType: 'json',
+            success: function(data) {
+                var notificationPanel = $('#notification-panel');
+                var notificationBadge = $('#notification-badge');
+
+                notificationPanel.empty();
+                var unreadCount = 0; // Count the number of unread notifications
+
+                data.forEach(function(notification) {
+                    var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
+                    var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+                    var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
+                    notificationItem.find('a').append(notificationContent + notificationTimestamp);
+
+                    if (!notification.is_read) {
+                        // Check if the notification is unread
+                        notificationItem.addClass('unread');
+                        unreadCount++; // Increment the unread count
+                    }
+
+                    notificationPanel.append(notificationItem);
+                    notificationPanel.append('<hr>'); // Add a horizontal line between notifications
+                });
+
+                var count = data.length;
+                notificationBadge.text(unreadCount); // Update the notification badge with the count of unread notifications
+
+                if (count === 0) {
+                  notificationPanel.hide();
+                  noNotificationsMessage.show();
               } else {
-                  notificationPanel.css("display", "none");
+                  notificationPanel.show();
+                  noNotificationsMessage.hide();
               }
           }
+        });
+    }
+
+    // Periodically update notifications (e.g., every 30 seconds)
+    setInterval(updateNotifications, 30000);
+
+    // Initial update when the page loads
+    updateNotifications();
+</script>
+<script>
+  // Toggle unread notifications when the notification icon is clicked
   
-          // Function to make the AJAX request and update the notification panel with upcoming classes
-          function updateNotificationPanel() {
-              $.ajax({
-                  url: "{% url 'upcoming_classes_view' %}", // Replace with your Django view URL for upcoming classes
-                  type: "GET",
-                  success: function (data) {
-                      // Clear existing notifications
-                      notificationPanel.html("");
-  
-                      // Check if there are upcoming classes
-                      if (data.upcomingClasses.length > 0) {
-                          // Iterate over the upcoming classes and generate HTML for each
-                          data.upcomingClasses.forEach(function (upcomingClass) {
-                              const notificationHTML = `
-                                  <li><a href="#">Upcoming Class: ${upcomingClass.title} on ${upcomingClass.start_datetime}</a></li>
-                              `;
-                              notificationPanel.append(notificationHTML);
-                          });
-                      } else {
-                          // Display a message when there are no upcoming classes
-                          const noClassesMessage = `<li><a href="#">No upcoming classes</a></li>`;
-                          notificationPanel.append(noClassesMessage);
-                      }
-                  }
-              });
+
+  function markNotificationsAsRead() {
+    console.log('markNotificationsAsRead function is running.');
+
+    $.ajax({
+      url: {% url "mark_notifications_as_read" %},
+      type: 'POST',
+      dataType: 'json',
+      success: function(data) {
+        if (data.success) {
+          updateNotifications(); // Refresh the notifications panel
+        }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        console.log("Error:", errorThrown);
+      }
+    });
+  }
+
+  function updateNotifications() {
+    console.log('updateNotifications function is running.');
+
+    $.ajax({
+      url: '{% url "get_notifications" %}',
+      dataType: 'json',
+      success: function(data) {
+        var notificationPanel = $('#notification-panel');
+        var notificationBadge = $('#notification-badge');
+        var unreadCount = 0; // Count the number of unread notifications
+
+        notificationPanel.empty();
+
+        data.forEach(function(notification) {
+          var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
+          var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+          var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
+          notificationItem.find('a').append(notificationContent + notificationTimestamp);
+
+          if (!notification.is_read) {
+            notificationItem.addClass('unread');
+            unreadCount++; // Increment the unread count
           }
+
+          notificationPanel.append(notificationItem);
+          notificationPanel.append('<hr>'); // Add a horizontal line between notifications
+        });
+
+        var count = data.length;
+        notificationBadge.text(unreadCount); // Update the notification badge with the count of unread notifications
+
+        if (count === 0) {
+          notificationPanel.hide();
+          noNotificationsMessage.show();
+      } else {
+          notificationPanel.show();
+          noNotificationsMessage.hide();
+      }
+  }
+    });
+  }
+
+  // Periodically update notifications (e.g., every 30 seconds)
+  setInterval(updateNotifications, 30000);
+
+  // Initial update when the page loads
+  updateNotifications();
+  $(document).ready(function(){
+    $('#notification-icon').click(function() {
+      console.log('Notification icon clicked. Calling markNotificationsAsRead.');
   
-          // Add a click event listener to the notification icon link
-          notificationIcon.click(function (event) {
-              event.stopPropagation(); // Prevent the click event from propagating to the document
-              toggleNotificationPanel();
-              updateNotificationPanel();
-          });
-  
-          // Close the notification panel if the user clicks outside of it
-          $(document).click(function (event) {
-              if (notificationPanel.css("display") !== "none" && !notificationIcon.is(event.target) && notificationPanel.has(event.target).length === 0) {
-                  notificationPanel.css("display", "none");
-              }
-          });
-      });
-  </script>
-  
+      markNotificationsAsRead();
+    });
+  })
+</script>
+
+
+
+
+
+
+
+
+    <!--........ notification ..........-->
+
   
   
   
@@ -131,17 +211,49 @@
 
 
         
-        <li class="dropdown">
-          <a href="#" id="notification-icon" class="dropdown-toggle" style="padding-right: 0; padding-left: 0;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fa fa-thin fa-bell" style="color: #ffffff;"></i>
-          </a>
-          <ul class="dropdown-menu" id="notification-panel">
-              <!-- Notifications will be dynamically added here via JavaScript -->
-          </ul>
-      </li>
+            <!--........ notification ..........-->
+
+            <li class="dropdown"  >
+              <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
+                  <div id="notification-badge-container">
+                      <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
+                  </div>
+              </a>
+              <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
+                <p id="no-notifications-message" style="display: none;">No notifications</p>
+
+                  <!-- Customize the appearance of notifications here -->
+              </ul>
+             
+          </li>
+    <style>
+      /* Customize the width of the notification panel */
+  
+      #notification-panel {
+          max-width: 400px; /* Adjust the width as needed */
+      }
+  
+      /* Customize the appearance of notifications */
+    
+      #notification-badge-container {
+        position: absolute;
+        top: -10px; /* Adjust the top position as needed */
+        left: 20px; /* Adjust the left position as needed */
+    }
+
+    /* Resize the icon */
+    #custom-notification-icon {
+        font-size: 20px; /* Adjust the font size to resize the icon */
+    }
+
+    /* Customize the appearance of the badge */
+  
+  </style>
       
       
-      
+          <!--........ notification ..........-->
+
       
 
       

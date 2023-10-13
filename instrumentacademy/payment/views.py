@@ -102,10 +102,11 @@ def paymenthandler(request,course_id):
             amount = int(amt*100)  # Rs. 200
             print(amount)
             # capture the payemt
-            # razorpay_client.payment.capture(payment_id, amount)
+            razorpay_client.payment.capture(payment_id, amount)
 
             # render success page on successful caputre of payment
             order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+            order.payment_id=payment_id
             order.payment_status = 'completed'
             order.save()
                 # Handle the case where the order doesn't exist

@@ -22,7 +22,8 @@ class Order(models.Model):
     items = models.ManyToManyField(CourseDetail)
 
     def __str__(self):
-        return f'Order {self.pk} - {self.user.username}'
+        course_names = ', '.join([course.name for course in self.items.all()])
+        return f'Order {self.pk} - {self.user.username} - Courses: {course_names} '
 
     class Meta:
         verbose_name_plural = 'Orders'

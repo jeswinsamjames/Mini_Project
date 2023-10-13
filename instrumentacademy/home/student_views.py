@@ -157,30 +157,52 @@ def view_scheduled_classes_leaner(request):
 
     return render(request, 'student_template/view_scheduled_classes_leaner.html', {'enrolled_courses': enrolled_courses, 'scheduled_classes': scheduled_classes})
 
+from django.db.models import Q
 
 
-
-
-
-
-
-
-
+@csrf_exempt
 def student_view_attendance(request):
-   
-        return render(request, 'student_template/student_view_attendance.html')
-   
+    if request.method == 'POST':
+        course_id = request.POST.get('course')
+        start_date = request.POST.get('start_date')
+        
+        # Ensure course_id is a valid integer
+        if course_id and course_id.isdigit():
+            # Convert course_id to an integer
+            course_id = int(course_id)
+            
+            # Filter the Attendance queryset based on course_id and start_date
+            attendances = Attendance.objects.filter(
+                Q(learner=request.user) & Q(class_schedule__course__id=course_id) & Q(class_schedule__start_datetime__date=start_date)
+            )
+
+            context = {
+                'page_title': 'View Attendance',
+                'courses': CourseDetail.objects.all(),  # Replace with your course model
+                'attendance_data': attendances,
+            }
+            return render(request, 'student_template/attendance_view.html', context)
+        else:
+            # Handle the case where course_id is not a valid integer
+            return HttpResponse("Invalid course ID provided.")
+    
+    context = {
+        'page_title': 'View Attendance',
+        'courses': CourseDetail.objects.all(),  # Replace with your course model
+        'attendance_data': None,
+    }
+    return render(request, 'student_template/attendance_view.html', context)
+
+
+
 
 def student_feedback(request):
    
     return render(request, "student_template/student_feedback.html")
 
-
-
 def student_view_notification(request):
   
     return render(request, "student_template/student_view_notification.html")
-
 
 def student_view_result(request):
    

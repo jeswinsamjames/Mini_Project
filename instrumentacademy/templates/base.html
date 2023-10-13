@@ -62,6 +62,56 @@
  
    <!-- Template Main JS File -->
    <script src="{%static 'assets/js/main.js'%}"></script>
+
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+    {% comment %} function updateNotifications() {
+        $.ajax({
+            url: '{% url "get_notifications" %}',
+            dataType: 'json',
+            success: function(data) {
+                var notificationPanel = $('#notification-panel');
+                var notificationBadge = $('#notification-badge');
+
+                notificationPanel.empty();
+                var unreadCount = 0; // Count the number of unread notifications
+
+                data.forEach(function(notification) {
+                    var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
+                    var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+                    var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
+                    notificationItem.find('a').append(notificationContent + notificationTimestamp);
+
+                    if (!notification.is_read) {
+                        // Check if the notification is unread
+                        notificationItem.addClass('unread');
+                        unreadCount++; // Increment the unread count
+                    }
+
+                    notificationPanel.append(notificationItem);
+                    notificationPanel.append('<hr>'); // Add a horizontal line between notifications
+                });
+
+                var count = data.length;
+                notificationBadge.text(unreadCount); // Update the notification badge with the count of unread notifications
+
+                if (unreadCount === 0) {
+                    notificationBadge.hide(); // Hide the badge when there are no unread notifications
+                } else {
+                    notificationBadge.show(); // Show the badge when there are unread notifications
+                }
+            }
+        });
+    }
+
+    // Periodically update notifications (e.g., every 30 seconds)
+    setInterval(updateNotifications, 30000);
+
+    // Initial update when the page loads
+    updateNotifications(); {% endcomment %}
+</script>
+
+
 </head>
 
 
@@ -91,6 +141,40 @@
             {% endif %}
         {% endif %}
 
+        {% comment %} <li class="dropdown"  >
+          <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
+              <div id="notification-badge-container">
+                  <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
+              </div>
+          </a>
+          <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
+              <!-- Customize the appearance of notifications here -->
+          </ul>
+      </li>
+<style>
+  /* Customize the width of the notification panel */
+
+  #notification-panel {
+      max-width: 400px; /* Adjust the width as needed */
+  }
+
+  /* Customize the appearance of notifications */
+
+  #notification-badge-container {
+    position: absolute;
+    top: -10px; /* Adjust the top position as needed */
+    left: 20px; /* Adjust the left position as needed */
+}
+
+/* Resize the icon */
+#custom-notification-icon {
+    font-size: 20px; /* Adjust the font size to resize the icon */
+}
+
+/* Customize the appearance of the badge */
+
+</style> {% endcomment %}
           {% comment %} <li><a href="#faculty">Faculty</a></li>
           <li><a href="#resource">Resource</a></li>   {% endcomment %}
          

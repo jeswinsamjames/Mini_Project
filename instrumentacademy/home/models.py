@@ -5,8 +5,6 @@ from django.utils import timezone
 # Create your models here.
 
 
-    
-
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -96,10 +94,9 @@ class ClassSchedule(models.Model):
         description = models.TextField(blank=True, null=True)
         duration = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
-
-
         def __str__(self):
             return f"{self.course.name} - {self.start_datetime.strftime('%Y-%m-%d %H:%M')}"
+        
       
 class Notification(models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
@@ -110,5 +107,12 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ('-timestamp',)
+  
+class Attendance(models.Model):
+    learner = models.ForeignKey(User, on_delete=models.CASCADE)
+    class_schedule = models.ForeignKey(ClassSchedule, on_delete=models.CASCADE)
+    is_present = models.BooleanField(null=True)
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)  # Add the course field
 
-
+    def __str__(self):
+        return f"{self.learner.username} - {self.class_schedule.course.name} "

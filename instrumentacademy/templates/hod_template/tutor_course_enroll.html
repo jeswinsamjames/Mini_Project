@@ -35,7 +35,46 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function updateNotifications() {
+        $.ajax({
+            url: '{% url "get_notifications" %}',
+            dataType: 'json',
+            success: function(data) {
+                var notificationPanel = $('#notification-panel');
+                var notificationBadge = $('#notification-badge');
 
+                notificationPanel.empty();
+                data.forEach(function(notification) {
+                    var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
+                    var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+                    var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
+                    notificationItem.find('a').append(notificationContent + notificationTimestamp);
+                    notificationPanel.append(notificationItem);
+
+                    // Add a horizontal line between notifications
+                    notificationPanel.append('<hr>');
+                });
+
+                var count = data.length;
+                notificationBadge.text(count); // Update the notification badge
+
+                if (count === 0) {
+                    notificationBadge.hide(); // Hide the badge when there are no notifications
+                } else {
+                    notificationBadge.show(); // Show the badge when there are notifications
+                }
+            }
+        });
+    }
+
+    // Periodically update notifications (e.g., every 30 seconds)
+    setInterval(updateNotifications, 30000);
+
+    // Initial update when the page loads
+    updateNotifications();
+</script>
 </head>
 
   
@@ -63,7 +102,42 @@
           {% comment %} <li><a href="">{{user.username}}</a></li> {% endcomment %}
           <li><a href="/">Home</a></li>
          <li><a href="#about">About</a></li>
-        
+
+         
+         <li class="dropdown"  >
+          <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
+              <div id="notification-badge-container">
+                  <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
+              </div>
+          </a>
+          <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
+              <!-- Customize the appearance of notifications here -->
+          </ul>
+      </li>
+<style>
+  /* Customize the width of the notification panel */
+
+  #notification-panel {
+      max-width: 400px; /* Adjust the width as needed */
+  }
+
+  /* Customize the appearance of notifications */
+
+  #notification-badge-container {
+    position: absolute;
+    top: -10px; /* Adjust the top position as needed */
+    left: 20px; /* Adjust the left position as needed */
+}
+
+/* Resize the icon */
+#custom-notification-icon {
+    font-size: 20px; /* Adjust the font size to resize the icon */
+}
+
+/* Customize the appearance of the badge */
+
+</style>
           {% comment %} <li class="dropdown"><a href="{% url 'view_catgories' %}"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a> 
             
               
