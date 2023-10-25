@@ -11,7 +11,7 @@
                 <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">{{ page_title }}</h3>
+                        <h3 class="card-title">{{ class_session.course.name }}</h3>
                     </div>
 
                     <!-- /.card-header -->
@@ -19,6 +19,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <h2>{{ class_session.start_datetime }}</h2>
+                            
                             <p>Meeting Link: <a href="{{ class_session.meeting_link }}">{{ class_session.meeting_link }}</a></p>
                         </div>
                         <form method="post" action="{% url 'take_attendance' class_session.id %}">

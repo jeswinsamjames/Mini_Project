@@ -74,7 +74,11 @@ def edit_profile_tutor(request):
             # Handle profile picture
             if 'profile_picture' in request.FILES:
                 user_profile.profile_picture = request.FILES['profile_picture']
-            
+                user_profile.save()
+                user.save()
+                
+            if 'resume' in request.FILES:
+                user_profile.resume = request.FILES['resume']
             user_profile.save()  # Save the UserProfile
             user.save()  # Save the User
 

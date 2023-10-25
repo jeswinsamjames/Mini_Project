@@ -6,8 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import logging
+
 
 from datetime import datetime
+logging.basicConfig(level=logging.INFO)
 
 class Hosttest(TestCase):
     
@@ -38,6 +41,7 @@ class Hosttest(TestCase):
         logincl=driver.find_element(By.CSS_SELECTOR,"#submit")
         logincl.click()
         time.sleep(1)
+        logging.info(" Leaner Login Success")
         course=driver.find_element(By.CSS_SELECTOR,"a[href='/view_catgories']")
         course.click()
         time.sleep(1)
@@ -49,9 +53,12 @@ class Hosttest(TestCase):
         action.click()
         category.click()
         time.sleep(1)
+        logging.info("The category has been viewed")
         course=driver.find_element(By.CSS_SELECTOR,"a[href='/logout']")
         course.click()
         time.sleep(1)
+        logging.info("Leaner Logout Successfull")
+
 
     def test_02_login_page(self):
         driver = self.driver
@@ -70,6 +77,7 @@ class Hosttest(TestCase):
         logincl=driver.find_element(By.CSS_SELECTOR,"#submit")
         logincl.click()
         time.sleep(2)
+        logging.info("Tutor login Sucessfull")
         createcourse=driver.find_element(By.CSS_SELECTOR,"a[href='/enrolled-courses/']")
         createcourse.click()
         time.sleep(2)
@@ -88,6 +96,8 @@ class Hosttest(TestCase):
         module=driver.find_element(By.CSS_SELECTOR,"button[type='submit']")
         module.click()
         time.sleep(2)
+        logging.info("Module added success  ")
+
         macourse=driver.find_element(By.CSS_SELECTOR,"a[href='/manage-courses/']")
         macourse.click()
         time.sleep(2)
@@ -100,23 +110,27 @@ class Hosttest(TestCase):
         save=driver.find_element(By.CSS_SELECTOR,"button[type='submit']")
         save.click()
         time.sleep(2)
+        logging.info("The course name had sucessfully changed")
         mnmo=driver.find_element(By.CSS_SELECTOR,"a[href='/list_modules/']")
         mnmo.click()
         time.sleep(2)
         mnmovi=driver.find_element(By.CSS_SELECTOR,"a[href='/module_list_view/3/']")
         mnmovi.click()
         time.sleep(2)
-        mnmovidl=driver.find_element(By.CSS_SELECTOR,"a[href='/delete_module/20/']")
+        mnmovidl=driver.find_element(By.CSS_SELECTOR,"a[href='/delete_module/48/']")
         mnmovidl.click()
         alert = driver.switch_to.alert
         alert.accept()
         time.sleep(2)
+        logging.info("Module deleted sucessfully")
         dlt=driver.find_element(By.CSS_SELECTOR,"a[href='/logout']")
         dlt.click()
         time.sleep(2)
         alert = driver.switch_to.alert
         alert.accept()
         time.sleep(2)
+        logging.info("Tutor Logout Successfull")
+
 
     def test_03_login_page(self):
             driver = self.driver
@@ -135,6 +149,8 @@ class Hosttest(TestCase):
             logincl=driver.find_element(By.CSS_SELECTOR,"#submit")
             logincl.click()
             time.sleep(2)
+            logging.info("Admin login Sucessfull")
+
             viewp=driver.find_element(By.CSS_SELECTOR,"a[href='/admin_view_profile']")
             viewp.click()
             time.sleep(2)
@@ -146,13 +162,17 @@ class Hosttest(TestCase):
             time.sleep(2)
             first=driver.find_element(By.CSS_SELECTOR,"#save-button")
             first.click()
-            time.sleep(2)    
+            time.sleep(2) 
+            logging.info("Admin profile had Sucessfully changed")
+   
             dlt=driver.find_element(By.CSS_SELECTOR,"a[href='/logout']")
             dlt.click()
             time.sleep(2)
             alert = driver.switch_to.alert
             alert.accept()
             time.sleep(2)
+            logging.info("Admin Logout Successfull")
+
 
 
 

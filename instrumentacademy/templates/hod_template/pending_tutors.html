@@ -33,9 +33,9 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'approve_tutor' tutor.user.id %}" class="btn btn-success">Approve</a>
+                    <a href="{% url 'approve_tutor' tutor.user.id %}" class="btn btn-success" style="color:white"; >Approve</a>
 
-                    <a href="{% url 'reject_and_delete_tutor' tutor.user.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Reject</a> 
+                    <a href="{% url 'reject_and_delete_tutor' tutor.user.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')" style="color:white";>Reject</a> 
                             
                 </td>
             </tr>

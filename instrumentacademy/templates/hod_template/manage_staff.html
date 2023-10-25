@@ -37,9 +37,10 @@
                                     <td>{{ tutor.gender }}</td>
                                     <td>{{ tutor.specialist }}</td>  {# Assuming you want to display the specialist field for tutors #}
                                     <td>
-                                        {% if tutor.userprofile.profile_pics  %}
-                                        <img class="img img-fluid mb-2" height="100" width="100"
-                                            src="{{ tutor.userprofile.profile_pics }}" alt="{{ tutor.user.first_name }}'s Profile Picture">
+                                        {% if tutor.profile_picture  %}
+                                        <img class="rounded-circle img img-fluid mb-2" height="80" width="60"
+                                        src="{{ tutor.profile_picture.url }}" alt="{{ tutor.user.first_name }}">
+                                   
                                         {% else %}
                                         No Image
                                         {% endif %}

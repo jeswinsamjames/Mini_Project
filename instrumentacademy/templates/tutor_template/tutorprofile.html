@@ -141,6 +141,11 @@
                                     <option value="piano">Piano</option>
                                     <option value="violin">Violin</option>
                                     <option value="guitar">Guitar</option>
+                                    <option value="electric keyboard">Electric keyboard</option>
+                                    <option value="western vocal">Western vocal</option>
+                                    <option value="indian vocal">Indian vocal</option>
+                                    <option value="tabala">Tabala</option>
+                                    <option value="flute">Flute</option>
                                 </select>
                             </div>
                            
@@ -153,6 +158,13 @@
                                 <!-- Validation Message for Teaching Experience -->
                                 <div class="validation-error" id="teaching-experience-error"></div>
                             </div>
+                            <div id="file-name-display">
+                                {% if user_profile.resume %}
+                                    <label for="id_resume">Resume:</label>
+                                    <p>Uploaded Resume: {{ user_profile.resume.name }}</p>
+                                {% endif %}
+                            </div>
+                            
                             <div id="resume-upload-field" style="display: none;">
                                 <label for="resume">Upload Resume (PDF only)</label>
                                 <div class="form-group">
@@ -325,7 +337,39 @@
         });
         </script>
         
-           
+        <script>
+            $(document).ready(function() {
+                // When the "Edit Profile" button is clicked
+                $("#edit-button").click(function() {
+                    $("#resume-upload-field").show();
+                    $("#file-name-display").hide();
+                });
+            
+                // When the "Save" or "Cancel" button is clicked
+                $("#save-button, #cancel-button").click(function() {
+                    $("#resume-upload-field").hide();
+                    $("#file-name-display").show();
+                });
+            
+                // Validate file type when selecting a file
+                $("#resume").change(function() {
+                    var fileName = $(this).val().split("\\").pop(); // Extract file name from the input value
+                     $(".custom-file-label").text(fileName);
+                    var fileInput = $(this)[0];
+                    if (fileInput.files.length > 0) {
+                        var fileName = fileInput.files[0].name;
+                        var allowedExtensions = /(\.pdf)$/i;
+                        if (!allowedExtensions.exec(fileName)) {
+                            alert("Only PDF files are allowed.");
+                            $("#resume").val(""); // Clear the file input
+                        } else {
+                            $("#file-name-display p").text("Uploaded Resume: " + fileName);
+                        }
+                    }
+                });
+            });
+            </script>
+            
             
 
         
