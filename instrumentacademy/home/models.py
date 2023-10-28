@@ -24,7 +24,7 @@ class UserProfile(models.Model):
 
 class category(models.Model): 
    
-    name = models.CharField(max_length=120)
+    name = models.CharField(max_length=120,unique=True)
     image = models.ImageField(upload_to='course_images', null=True, blank=True)
     instrument_name = models.CharField(max_length=100)
     description = models.TextField()

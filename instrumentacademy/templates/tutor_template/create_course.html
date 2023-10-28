@@ -20,13 +20,16 @@
             <div class="form-group">
                 <label for="instrument_name" class="custom-label">Instrument Name:</label>
                 <select class="form-control" id="instrument_name" name="instrument_name" required>
-                    <option value="piano">Piano</option>
+                    {% for i in categories %}
+                    <option value="{{i.instrument_name}}">{{i.name}}</option>
+                    {% endfor %}
+                    {% comment %} <option value="piano">Piano</option>
                     <option value="Violin">Violin</option>
                     <option value="Guitar">Guitar</option>
                     <option value="Flute">Flute</option>
                     <option value="Indian Vocal">Indian Vocal</option>
                     <option value="Tabala">Tabala</option>
-                    <option value="Western Vocal">Western Vocal</option>
+                    <option value="Western Vocal">Western Vocal</option> {% endcomment %}
                 </select>
                 <div class="invalid-feedback">
                     Please select an instrument name.

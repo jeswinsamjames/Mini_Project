@@ -53,6 +53,8 @@ def index1(request):
 def mylearning(request):
     return render(request,"My_learning.html" )
 
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def registration(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -87,7 +89,7 @@ def registration(request):
             return redirect('registration')
     return render(request, 'registration.html')
 
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')

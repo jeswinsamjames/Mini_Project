@@ -159,9 +159,12 @@
                                 <div class="validation-error" id="teaching-experience-error"></div>
                             </div>
                             <div id="file-name-display">
+                                <label for="id_resume">Resume:</label>
+
                                 {% if user_profile.resume %}
-                                    <label for="id_resume">Resume:</label>
                                     <p>Uploaded Resume: {{ user_profile.resume.name }}</p>
+                                    {% else %}
+                                    <p> NO resume uploaded  </p>
                                 {% endif %}
                             </div>
                             
@@ -169,8 +172,9 @@
                                 <label for="resume">Upload Resume (PDF only)</label>
                                 <div class="form-group">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="resume" id="resume" accept=".pdf">
+                                        <input type="file" class="custom-file-input" name="resume" id="resume" accept=".pdf" required >
                                         <label class="custom-file-label" for="resume">Choose PDF file</label>
+                                        
                                     </div>
                                     <div id="file-name-display"></div>
                                 </div>

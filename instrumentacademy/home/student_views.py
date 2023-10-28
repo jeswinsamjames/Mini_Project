@@ -57,18 +57,19 @@ def edit_profile_learner(request):
             user_profile.address = request.POST['address']
             user.last_name = request.POST['last_name']
             user.first_name = request.POST['first_name']
-            profile_form.profile_picture=request.FILES['profile_picture']
+            # profile_form.profile_picture=request.FILES['profile_picture']
             user_profile.save()  # Save the UserProfile
+            
             user.save()
             profile.save()  # Save the User
-
+            
             return render(request, 'student_template/studentprofile.html')
         else:
             print(form.errors)
     else:
         form = EditProfileForm(instance=request.user)
-        prof=UserProfile.objects.filter(user=request.user)
-        profile_form = UserProfileForm(instance=prof[0])
+        profile_form = UserProfileForm(instance=request.user.userprofile)
+
 
     context = {
         'form': form,
@@ -180,6 +181,8 @@ def student_view_attendance(request):
                 'page_title': 'View Attendance',
                 'courses': CourseDetail.objects.all(),  # Replace with your course model
                 'attendance_data': attendances,
+                  'selected_course_id': course_id,
+            'selected_start_date': start_date,
             }
             return render(request, 'student_template/attendance_view.html', context)
         else:

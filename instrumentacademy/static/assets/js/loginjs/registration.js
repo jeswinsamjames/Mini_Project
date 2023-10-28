@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
       message: "Last name must be valid (no numbers or special characters).",
     },
     email: {
-      regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      regex: /^[^\s@]+@[^\s@]+\.[^\s@]+(?!.*\.{2,})$/,
       message: "Email must be valid.",
     },
     phone: {
@@ -92,4 +92,6 @@ passwordInput.addEventListener("input", function () {
     cnPasswordInput.classList.remove("error");
   }
 });
+
+
 });

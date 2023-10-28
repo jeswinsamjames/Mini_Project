@@ -22,7 +22,7 @@
                                     <th>Email</th>
                                     {% comment %} <th>Gender</th> {% endcomment %}
                                    
-                                    <th>Avatar</th>
+                                    {% comment %} <th>Avatar</th> {% endcomment %}
                                     <th>Edit</th>
                                 </tr>
                             </thead>
@@ -34,14 +34,14 @@
                                     <td>{{student.email}}</td>
                                     {% comment %} <td>{{student.gender}}</td> {% endcomment %}
                                    
-                                    <td>
+                                    {% comment %} <td>
                                         {% if student.profile_pic == ""  %}
                                         No Image
                                         {% else %}
                                         <img class="img img-fluid mb-2" height="100" width="100"
                                             src="{{student.profile_pic}}" alt="">
                                         {% endif %}
-                                    </td>
+                                    </td> {% endcomment %}
                                     
                                     <td>
                                          <a href="#" class="btn btn-primary">Edit</a> 

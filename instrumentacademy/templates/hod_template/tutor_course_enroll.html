@@ -36,6 +36,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     function updateNotifications() {
         $.ajax({
@@ -46,26 +47,35 @@
                 var notificationBadge = $('#notification-badge');
 
                 notificationPanel.empty();
+                var unreadCount = 0; // Count the number of unread notifications
+
                 data.forEach(function(notification) {
                     var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
                     var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
                     var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
                     notificationItem.find('a').append(notificationContent + notificationTimestamp);
-                    notificationPanel.append(notificationItem);
 
-                    // Add a horizontal line between notifications
-                    notificationPanel.append('<hr>');
+                    if (!notification.is_read) {
+                        // Check if the notification is unread
+                        notificationItem.addClass('unread');
+                        unreadCount++; // Increment the unread count
+                    }
+
+                    notificationPanel.append(notificationItem);
+                    notificationPanel.append('<hr>'); // Add a horizontal line between notifications
                 });
 
                 var count = data.length;
-                notificationBadge.text(count); // Update the notification badge
+                notificationBadge.text(unreadCount); // Update the notification badge with the count of unread notifications
 
                 if (count === 0) {
-                    notificationBadge.hide(); // Hide the badge when there are no notifications
-                } else {
-                    notificationBadge.show(); // Show the badge when there are notifications
-                }
-            }
+                  notificationPanel.hide();
+                  noNotificationsMessage.show();
+              } else {
+                  notificationPanel.show();
+                  noNotificationsMessage.hide();
+              }
+          }
         });
     }
 
@@ -74,6 +84,83 @@
 
     // Initial update when the page loads
     updateNotifications();
+</script>
+<script>
+  // Toggle unread notifications when the notification icon is clicked
+  
+
+  function markNotificationsAsRead() {
+    console.log('markNotificationsAsRead function is running.');
+
+    $.ajax({
+      url: {% url "mark_notifications_as_read" %},
+      type: 'POST',
+      dataType: 'json',
+      success: function(data) {
+        if (data.success) {
+          updateNotifications(); // Refresh the notifications panel
+        }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        console.log("Error:", errorThrown);
+      }
+    });
+  }
+
+  function updateNotifications() {
+    console.log('updateNotifications function is running.');
+
+    $.ajax({
+      url: '{% url "get_notifications" %}',
+      dataType: 'json',
+      success: function(data) {
+        var notificationPanel = $('#notification-panel');
+        var notificationBadge = $('#notification-badge');
+        var unreadCount = 0; // Count the number of unread notifications
+
+        notificationPanel.empty();
+
+        data.forEach(function(notification) {
+          var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
+          var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+          var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
+          notificationItem.find('a').append(notificationContent + notificationTimestamp);
+
+          if (!notification.is_read) {
+            notificationItem.addClass('unread');
+            unreadCount++; // Increment the unread count
+          }
+
+          notificationPanel.append(notificationItem);
+          notificationPanel.append('<hr>'); // Add a horizontal line between notifications
+        });
+
+        var count = data.length;
+        notificationBadge.text(unreadCount); // Update the notification badge with the count of unread notifications
+
+        if (count === 0) {
+          notificationPanel.hide();
+          noNotificationsMessage.show();
+      } else {
+          notificationPanel.show();
+          noNotificationsMessage.hide();
+      }
+  }
+    });
+  }
+
+  // Periodically update notifications (e.g., every 30 seconds)
+  setInterval(updateNotifications, 30000);
+
+  // Initial update when the page loads
+  updateNotifications();
+  $(document).ready(function(){
+    $('#notification-icon').click(function() {
+      console.log('Notification icon clicked. Calling markNotificationsAsRead.');
+  
+      markNotificationsAsRead();
+    });
+  })
 </script>
 </head>
 
@@ -104,17 +191,54 @@
          <li><a href="#about">About</a></li>
 
          
-         <li class="dropdown"  >
+         {% if user.is_authenticated %}
+        <li class="dropdown"  >
+          
           <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
               <div id="notification-badge-container">
                   <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
               </div>
           </a>
+          
           <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
+            <p id="no-notifications-message" style="display: none;">No notifications</p>
+
               <!-- Customize the appearance of notifications here -->
           </ul>
+         
       </li>
+      {% endif %}
+<style>
+  /* Customize the width of the notification panel */
+
+  #notification-panel {
+      max-width: 400px; /* Adjust the width as needed */
+  }
+
+  /* Customize the appearance of notifications */
+
+  #notification-badge-container {
+    position: absolute;
+    top: -10px; /* Adjust the top position as needed */
+    left: 20px; /* Adjust the left position as needed */
+}
+
+/* Resize the icon */
+#custom-notification-icon {
+    font-size: 20px; /* Adjust the font size to resize the icon */
+}
+
+/* Customize the appearance of the badge */
+
+</style>
+          {% if user.is_authenticated %}
+          <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
+         <li><a href="{% url 'logout' %}">logout</a></li>
+         {% else %}
+        
+         <li><a href="{% url 'login' %}">Login</a></li> 
+         {% endif%}
 <style>
   /* Customize the width of the notification panel */
 
@@ -151,13 +275,7 @@
               <li><a href="{% url 'mylearning' %}">My Learning</a></li>
           {% endif %}
       {% endif %}
-           {% if user.is_authenticated %}
-           <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
-          <li><a href="{% url 'logout' %}">logout</a></li>
-          {% else %}
-          <p>You are not logged in.</p>
-          {% comment %} <li><a href="{% url 'login' %}">Login</a></li> {% endcomment %}
-          {% endif%}
+          
           </ul>
       </nav><!-- .navbar -->
       {% for message in messages %}
@@ -231,29 +349,7 @@
           {% endfor %}
       </div>
   </div>
-{% comment %}   
-            <!-- Modal for Course Details -->
-            <div class="modal fade" id="courseModal{{ course.id }}" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel{{ course.id }}" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="courseModalLabel{{ course.id }}">Course Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <h3>{{ course.name }}</h3>
-                    <p>{{ course.description }}</p>
-                    <!-- Include additional course details here -->
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <a href="/enroll/{{ course.id }}" class="btn btn-primary">Enroll</a>
-                  </div>
-                </div>
-              </div>
-            </div> {% endcomment %}
+
 </section>
   
 
@@ -288,16 +384,7 @@
 </ul>
 </div>
 
-<div class="col-lg-2 col-6 footer-links">
-<h4>Our Services</h4>
-<ul>
-  <li><a href="#">Web Design</a></li>
-  <li><a href="#">Web Development</a></li>
-  <li><a href="#">Product Management</a></li>
-  <li><a href="#">Marketing</a></li>
-  <li><a href="#">Graphic Design</a></li>
-</ul>
-</div>
+
 
 <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
 <h4>Contact Us</h4>

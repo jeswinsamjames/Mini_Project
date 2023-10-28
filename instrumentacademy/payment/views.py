@@ -26,7 +26,7 @@ razorpay_client = razorpay.Client(
 
 from decimal import Decimal
 
- 
+@login_required
 def homepage(request, course_id):
     # Retrieve the course details including its price based on the course_id
     # Replace this with your actual logic to fetch the course details

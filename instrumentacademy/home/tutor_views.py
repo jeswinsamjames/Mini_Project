@@ -137,8 +137,11 @@ def create_course(request):
         messages.success(request, 'Course created successfully!')
         return redirect('course_list')
 
-    
-     return render(request, 'tutor_template/create_course.html')
+     c=category.objects.all()
+     context={
+         'categories':c
+     }
+     return render(request, 'tutor_template/create_course.html',context)
 
 
 

@@ -212,14 +212,16 @@
 
         
             <!--........ notification ..........-->
-
+            {% if user.is_authenticated %}
             <li class="dropdown"  >
+              
               <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
                   <div id="notification-badge-container">
                       <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
                   </div>
               </a>
+              
               <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
                 <p id="no-notifications-message" style="display: none;">No notifications</p>
 
@@ -227,6 +229,7 @@
               </ul>
              
           </li>
+          {% endif %}
     <style>
       /* Customize the width of the notification panel */
   

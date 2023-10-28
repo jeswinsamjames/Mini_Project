@@ -63,52 +63,61 @@
                 <div class="card">
                     <div class="card-header">User Profile</div>
                     <div class="card-body">
-                        <form method="post" action="{% url 'edit_profile_learner' %}" enctype="multipart/form-data">                            {% csrf_token %}
+                        <form method="post" action="{% url 'edit_profile_learner' %}" enctype="multipart/form-data" id="user-profile-form">
+                            {% csrf_token %}
                             <div class="profile-picture-tile text-center mb-4">
-                                {% if user.userprofile.profile_picture %}
-                                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle border border-secondary" style="max-width:120px;">
-                                <input type="file" class="form-control-file mt-2" id="id_profile_picture" name="profile_picture" >
-                                <small class="form-text text-muted">Upload a professional profile picture.</small>
-                                
-
-                                {% endif %}
+                              {% if user.userprofile.profile_picture %}
+                              <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle border border-secondary" style="max-width:120px;">
+                              <input type="file" class="form-control-file mt-2" id="id_profile_picture" name="profile_picture">
+                              <small class="form-text text-muted">Upload a professional profile picture.</small>
+                              {% endif %}
                             </div>
                             <div class="form-group">
-                                <label for="id_first_name">First Name:</label>
-                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>
+                              <label for="id_first_name">First Name:</label>
+                              <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}" readonly>
+                              <h3 id="first-name-error" class="error-message"></h3>
                             </div>
                             <div class="form-group">
-                                <label for="id_last_name">Last Name:</label>
-                                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.last_name }}" readonly>
+                              <label for="id_last_name">Last Name:</label>
+                              <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.last_name }}" readonly>
+                              <p id="last-name-error" class="error-message"></p>
                             </div>
                             <div class="form-group">
-                                <label for="id_email">Email:</label>
-                                <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}" readonly>
+                              <label for="id_email">Email:</label>
+                              <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}" readonly>
+                              <p id="email-error" class="error-message"></p>
                             </div>
                             <div class="form-group">
-                                <label>Gender:</label><p id="gender1">{% if user.userprofile.gender == 'M' %} Male{% endif %}{% if user.userprofile.gender == 'F' %} Female{% endif %}{% if user.userprofile.gender == 'O' %} Others{% endif %}</p>
-                                <div class="form-check">
-                                    <input type="radio" id="male" name="gender" value="M" class="form-check-input"  readonly {% if user.userprofile.gender == 'M' %}checked{% endif %}>
-                                    <label class="form-check-label" for="male">Male</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" id="female" name="gender" value="F" class="form-check-input" readonly {% if user.userprofile.gender == 'F' %}checked{% endif %}>
-                                    <label class="form-check-label" for="female">Female</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" id="other" name="gender" value="O" class="form-check-input" readonly {% if user.userprofile.gender == 'O' %}checked{% endif %}>
-                                    <label class="form-check-label" for="other">Other</label>
-                                </div>
+                              <label>Gender:</label>
+                              <p id="gender1">
+                                {% if user.userprofile.gender == 'M' %} Male{% endif %}
+                                {% if user.userprofile.gender == 'F' %} Female{% endif %}
+                                {% if user.userprofile.gender == 'O' %} Others{% endif %}
+                              </p>
+                              <div class="form-check">
+                                <input type="radio" id="male" name="gender" value="M" class="form-check-input" readonly {% if user.userprofile.gender == 'M' %}checked{% endif %}>
+                                <label class="form-check-label" for="male">Male</label>
+                              </div>
+                              <div class="form-check">
+                                <input type="radio" id="female" name="gender" value="F" class="form-check-input" readonly {% if user.userprofile.gender == 'F' %}checked{% endif %}>
+                                <label class="form-check-label" for="female">Female</label>
+                              </div>
+                              <div class="form-check">
+                                <input type="radio" id="other" name="gender" value="O" class="form-check-input" readonly {% if user.userprofile.gender == 'O' %}checked{% endif %}>
+                                <label class="form-check-label" for="other">Other</label>
+                              </div>
                             </div>
                             <div class="form-group">
-                                <label for="id_address">Address:</label>
-                                <input type="text" class="form-control" id="id_address" name="address" value="{{ user.userprofile.address }}" readonly>
+                              <label for="id_address">Address:</label>
+                              <input type="text" class="form-control" id="id_address" name="address" value="{{ user.userprofile.address }}" readonly>
+                              <p id="address-error" class="error-message"></p>
                             </div>
                             <button type="button" class="btn btn-primary" id="edit-button">Edit Profile</button>
-                            <button type="button" class="btn btn-success" id="save-button" style="display: none;">Save</button>
+                            <input type="submit" class="btn btn-success" id="save-button" style="display: none;">
                             <button type="button" class="btn btn-secondary" id="cancel-button" style="display: none;">Cancel</button>
-                        </form>
+                          </form>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -154,7 +163,6 @@
                     } else {
                         $(this).closest(".form-check").hide();
                         $("#gender1").show();
-
                     }
                 });
             }
@@ -169,17 +177,74 @@
                 toggleEditMode();
                 // Reset form to original values
                 $("#user-profile-form")[0].reset();
+                validateForm(); // Perform validation on reset
             });
     
             // Save button click event
             $("#save-button").click(function () {
-                toggleEditMode();
-                // Submit the form for saving changes
-                $("#user-profile-form").submit();
+                // Perform validation before submitting the form
+                if (validateForm()) {
+                    toggleEditMode();
+                    // Submit the form for saving changes
+                    $("#user-profile-form").submit();
+                }
             });
     
             // Initial setup of gender options visibility
             toggleGenderOptions();
+        });
+    
+        const firstNameField = document.getElementById("id_first_name");
+        const lastNameField = document.getElementById("id_last_name");
+        const emailField = document.getElementById("id_email");
+        const addressField = document.getElementById("id_address");
+    
+        const firstNameError = document.getElementById("first-name-error");
+        const lastNameError = document.getElementById("last-name-error");
+        const emailError = document.getElementById("email-error");
+        const addressError = document.getElementById("address-error");
+    
+        // Function to validate the form
+        function validateForm() {
+            const isFirstNameValid = /^[a-zA-Z\s]*$/.test(firstNameField.value);
+            const isLastNameValid = /^[a-zA-Z\s]*$/.test(lastNameField.value);
+            const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value);
+            const isAddressValid = addressField.value !== "";
+    
+            if (!isFirstNameValid) {
+                firstNameError.textContent = "First name cannot contain special characters or numbers.";
+            } else {
+                firstNameError.textContent = "";
+            }
+    
+            if (!isLastNameValid) {
+                lastNameError.textContent = "Last name cannot contain special characters or numbers.";
+            } else {
+                lastNameError.textContent = "";
+            }
+    
+            if (!isEmailValid) {
+                emailError.textContent = "Email must be valid.";
+            } else {
+                emailError.textContent = "";
+            }
+    
+            if (!isAddressValid) {
+                addressError.textContent = "Address is required.";
+            } else {
+                addressError.textContent = "";
+            }
+    
+            return isFirstNameValid && isLastNameValid && isEmailValid && isAddressValid;
+        }
+    
+        // Listen for form submission
+        $("#user-profile-form").submit(function (event) {
+            const isValid = validateForm();
+    
+            if (!isValid) {
+                event.preventDefault();
+            }
         });
     </script>
     

@@ -96,12 +96,15 @@
                         </div>
                         <ul class="section-list">
                             {% for lesson in video_lesson_materials %}
-                            {% if lesson.module == module %}
-                            <li class="videodiv" id="defaultVideo" data-video-url="{{ lesson.material_file.url }}">
-                                {{ lesson.title }}
-                            </li>
-                            {% endif %}
+                                {% if lesson.module == module %}
+                                <li class="videodiv" id="defaultVideo" data-video-url="{{ lesson.material_file.url }}">
+                                    {{ lesson.title }}
+                                </li>
+                                {% endif %}
                             {% endfor %}
+                            {% if not video_lesson_materials|length %}
+                                <li>No content available right now</li>
+                            {% endif %}
                         </ul>
                     </li>
                     {% endfor %}
