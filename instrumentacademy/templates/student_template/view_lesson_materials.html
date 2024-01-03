@@ -1,122 +1,319 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load socialaccount %}
 {% block title %}
 {{ course.name }} - Course Overview
 {% endblock title %}
+{% block custom_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-uefMhUFlOiOHA+9qpw3P6STn/TduqF1cwKS2/KbzoIieCr4H3RFOnWp4CnU/lvvSjQph7IRl5eA6CqnTct1zKg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
 
-<body>
+{% endblock custom_css %}
+
     {% block body %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var videoList = document.querySelectorAll('.section-list li');
-    
-            videoList.forEach(function (videoItem) {
-                videoItem.addEventListener('click', function () {
-                    var videoUrl = videoItem.getAttribute('data-video-url');
-                    var videoContainer = document.getElementById('videoContainer');
-                    videoContainer.innerHTML = `
-                        <video controls width="100%">
-                            <source src="${videoUrl}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        `;
-                    });
-                });
-    
-                var moduleList = document.querySelectorAll('.module-item');
-        var courseContent = document.querySelector('.course-content');
-
-        moduleList.forEach(function (moduleItem) {
-            var moduleHeader = moduleItem.querySelector('.module-header');
-            var sectionList = moduleItem.querySelector('.section-list');
-
-            moduleHeader.addEventListener('click', function (event) {
-                sectionList.classList.toggle('active');
-                moduleItem.classList.toggle('active');
-                moduleList.forEach(function (otherModule) {
-                    if (otherModule !== moduleItem) {
-                        otherModule.querySelector('.section-list').classList.remove('active');
-                        otherModule.classList.remove('active');
-                    }
-                });
-
-                // Add or remove a class to set a fixed height for the course content div
-                if (moduleItem.classList.contains('active')) {
-                    courseContent.classList.add('fixed-height');
-                } else {
-                    courseContent.classList.remove('fixed-height');
-                }
-                
-                event.stopPropagation(); // Prevent the click from reaching the document
-            });
-
-            // Prevent clicks inside the section list from closing the module dropdown
-            sectionList.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-        });
-
-            // Trigger click on the first video item in the first module
-            var firstVideoItem = document.querySelector('.module-list .module-item:first-child .section-list li');
-            if (firstVideoItem) {
-                firstVideoItem.click();
-            }
-        });
-    </script>
-    
-    
-    
-    
-
-    
-       
-
-    <div class="main_container_lesson">
-        <div class="lessonheader">
-            <h1>{{ course.name }}</h1>
-        </div>
    
-        <div class="container">
-            <div class="video-lessons">
-                <section>
-                    <div class="video-container" id="videoContainer">
-                        <!-- Video will be displayed here -->
-                    </div>
-                </section>
-            </div>
+   
+    
+<div class="mainleasson">
 
-            <div class="course-content content-left">
-                <h2>Course Content</h2>
-                <ul class="module-list">
-                    {% for module in modules %}
-                    <li class="module-item">
-                        <div class="module-header">
-                            <span class="module-title">{{ module.title }}</span>
-                            <div class="module-toggle">&#9662;</div>
-                        </div>
-                        <ul class="section-list">
-                            {% for lesson in video_lesson_materials %}
-                                {% if lesson.module == module %}
-                                <li class="videodiv" id="defaultVideo" data-video-url="{{ lesson.material_file.url }}">
-                                    {{ lesson.title }}
-                                </li>
-                                {% endif %}
-                            {% endfor %}
-                            {% if not video_lesson_materials|length %}
-                                <li>No content available right now</li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    {% endfor %}
-                </ul>
+    
+
+    <div class="course-info-container">
+        <div class="course-image">
+            <div class="course-cover" > 
+                <img class="courseimg" src="{% if course.course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image"style="max-width: 100%; height: auto;">
+
+            </div>
+        </div>
+        <div class="course-details">
+            <h4 class="course-title">{{ course.name }}</h4>
+            <div class="status-and-rating">
+                <div class="status-container">
+                    <div class="status-chip in-progress">In Progress</div>
+                </div>
+                <div class="rating-container">
+                    <!-- Add your star rating elements here -->
+                    <button class="rate-course-btn" type="button">Rate this course</button>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="/courses/31730/pages/introduction-to-virtualization" class="resume-btn">RESUME</a>
+                <button class="share-btn" type="button">Share with your friends</button>
             </div>
         </div>
     </div>
+    
+
+
+
+
+</div>
+
+
+<div class="main_container_lesson">
+
+    <div class="breadcrumb-container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="lessonBreadcrumb" >
+                <li class="breadcrumb-item"><a href="/mylearning" class="breadcrumb-link">Courses</a></li>
+                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">{{ course.name }}</a></li>
+                <li class="breadcrumb-item"><p class="breadcrumb-link-link" id="currentLessonTitle">{{ lesson.title }}</p></li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="video-lessons">
+            <section>
+                <div class="video-container" id="videoContainer">
+                    <video controls width="100%" id="lessonVideo">
+                        <!-- Add source elements based on your needs -->
+                        <!-- For example: -->
+                        <!-- <source src="path/to/your/video.mp4" type="video/mp4"> -->
+                        Your browser does not support the video tag.
+                    </video>
+                    <!-- Video will be displayed here -->
+                </div>
+            </section>
+        </div>
+        <div class="course-content content-left">
+            <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2>
+            <ul class="module-list video-list">
+                {% for module in modules %}
+                <li class="module-item">
+                    <div class="module-header">
+                        <span class="module-title">{{ module.title }}</span>
+                        <div class="module-toggle">&#9662;</div>
+                    </div>
+                    <ul class="section-list">
+                        {% for lesson in video_lesson_materials %}
+                        {% if lesson.module == module %}
+                        <div class="contentinside">
+                            <li class="videodiv" data-video-url="{{ lesson.material_file.url }}">
+                                <div class="video-info">
+                                    <span class="video-title">{{ lesson.title }}</span>
+                                    <svg class="progress" width="50" height="50">
+                                        <circle class="progress-circledummy" cx="25" cy="25" stroke="rgba(169, 169, 169, 0.5)" r="15" fill="transparent" stroke-width="2" />
+
+                                        <circle class="progress-circle" cx="25" cy="25" stroke="blue" r="15" fill="transparent" stroke-width="2" />
+                                        <text class="loading" fill="blue" x="25" y="25" alignment-baseline="middle" text-anchor="middle"></text>
+                                    </svg>
+                                </div>
+                            </li>
+                            
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% if not video_lesson_materials|length %}
+                        <li>No content available right now</li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+        
+    </div>
+</div>
+
+
+<style>
+    .contentinside{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        /* background-color: #e0e0e0; */
+
+    }
+    
+    .progress {
+    position: absolute ;
+    margin-left: 195px;
+    max-width: 50px;
+    height: 50px;
+    background-color: #fff;
+    
+}
+
+.progress-circle {
+   
+    stroke-dasharray: 94.2;
+    stroke-dashoffset: 94.2;
+    width: 30px;
+    height: 30px;
+    fill: radial-gradient(circle, rgba(53, 53, 53, 0.718)); /* Radial gradient with faded color from center */
+    stroke: blue; /   
+
+    /* transition: stroke-dashoffset 0.3s ease-out; */
+
+    
+}
+.video-info {
+    display: flex;
+    align-items: center;
+    
+}
+
+.video-title {
+    flex-grow: 1; /* This will make the title take up all available space */
+    overflow: hidden;
+    white-space: nowrap; /* Prevent title from wrapping */
+    text-overflow: ellipsis; /* Display an ellipsis (...) for truncated text */
+    margin-right: 10px; /* Add some space between title and progress circle */
+    max-width: 190px;
+    font-size: 16px;
+}
+
+
+</style>
+
+    <style>
+       
+
+        .breadcrumb-container {
+            /* background-color: #1976D2; */
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            margin-left: 220px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            max-width: 950px;
+            
+        }
+
+        .breadcrumb-item {
+            margin-right: 10px;
+        }
+
+        .breadcrumb-link {
+            /* text-decoration: none; */
+            color: #000000;
+            font-weight:540;
+            font-size: large;
+        }
+        .breadcrumb-link-link {
+            text-decoration: none;
+            color: #0b77e4;
+        }
+
+        .breadcrumb-link-link:hover {
+            text-decoration: underline;
+        }
+
+       
+    </style>
+    <style>
+        .mainleasson{
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 5vh;
+        }
+
+        .course-info-container {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 30px;
+            margin-top: 80px;
+            width: 1150px;
+        }
+        
+       
+        
+        .course-cover {
+            width: 100%;
+            height: 150px; /* Adjust as needed */
+            background-size: cover;
+            background-position: center;
+        }
+        .courseimg{
+            width: 200px;
+            height: 200px;
+            border-radius: 5px;
+        }
+        
+        .course-details {
+            flex: 2;
+            margin-left: 16px;
+        }
+        
+        .course-title {
+            font-size: 1.5rem;
+        }
+        
+        .status-and-rating {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+        
+        .status-container, .rating-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-chip {
+            padding: 3px;
+            border-radius: 4px;
+        }
+        
+        .in-progress {
+            background-color: #4caf50;
+            color: #fff;
+        }
+        
+        .rating-container {
+            margin-left: 16px;
+        }
+        
+        .rate-course-btn {
+            background-color: #2196f3;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .action-buttons {
+            margin-top: 16px;
+        }
+        
+        .resume-btn, .share-btn {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .share-btn {
+            background-color: #2196f3;
+        }
+        
+    </style>
+
 
     <style>
         /* Header styles */
         .main_container_lesson{
-            padding: 150px;
+            padding: 60px;
 
         }
         .lessonheader {
@@ -126,10 +323,7 @@
             
         }
 
-        .lessonheader h1 {
-            font-size: 40px;
-            
-        }
+      
 
         /* Main container styles */
         .container {
@@ -201,7 +395,8 @@
         }
 
         .module-title {
-            font-size: 22px;
+            font-family: 'Arial', sans-serif;
+            font-size: 19px;
             margin: 10px;
         }
 
@@ -211,14 +406,17 @@
         }
         .videodiv {
      /* Adjust font size as needed */
-    margin: 10px;
-    padding: 12px;
-    width: 300px;
-    height: 50px;
-    cursor: pointer;
-    position: relative;
-    text-align: left; /* Align text to the left */
-}
+            display: flex;
+            flex-direction: row;
+            margin: 10px;
+            padding: 12px;
+            max-width: 250px;
+            height: 50px;
+            cursor: pointer;
+            position: relative;
+            text-align: left; /* Align text to the left */
+            
+        }
 
         .module-item.active .module-toggle {
             transform: rotate(90deg);
@@ -253,5 +451,160 @@
        
     </style>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var videoList = document.querySelectorAll('.section-list li');
+    var currentLessonTitle = document.getElementById('currentLessonTitle');
+
+    videoList.forEach(function (videoItem) {
+        videoItem.addEventListener('click', function () {
+            // Get the lesson title from the clicked video item
+            var lessonTitle = videoItem.querySelector('.video-title').textContent;
+
+            // Update the lesson title in the breadcrumb
+            currentLessonTitle.textContent = lessonTitle;
+
+            // Your existing video change logic goes here
+            // ...
+        });
+    });
+
+    // Initial video click (if needed)
+    var firstVideoItem = document.querySelector('.module-list .module-item:first-child .section-list li');
+    if (firstVideoItem) {
+        firstVideoItem.click();
+    }
+});
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var videoList = document.querySelectorAll('.section-list li');
+        var videoContainer = document.getElementById('videoContainer');
+        var lessonVideo = document.getElementById('lessonVideo');
+        var totalDurations = {}; // Store total duration for each video
+        var currentVideoUrl;
+
+        videoList.forEach(function (videoItem) {
+            var videoUrl = videoItem.getAttribute('data-video-url');
+            var progressCircle = videoItem.querySelector('.progress-circle');
+            var loadingText = videoItem.querySelector('.loading');
+
+            videoItem.addEventListener('click', function () {
+                if (currentVideoUrl !== videoUrl) {
+                    // If a new video is clicked, reset progress circles for other videos
+                    resetProgressCircles();
+                }
+
+                currentVideoUrl = videoUrl;
+
+                // If there's a currently playing video, pause it
+                if (lessonVideo) {
+                    lessonVideo.pause();
+                }
+
+                lessonVideo = document.createElement('video');
+                lessonVideo.controls = true;
+                lessonVideo.width = '100%';
+                lessonVideo.id = 'lessonVideo';
+                videoContainer.innerHTML = '';
+                videoContainer.appendChild(lessonVideo);
+
+                lessonVideo.src = videoUrl;
+                lessonVideo.load();
+
+                lessonVideo.addEventListener('loadedmetadata', function () {
+                    totalDurations[videoUrl] = lessonVideo.duration;
+
+                    function updateProgress() {
+                        var currentTime = lessonVideo.currentTime;
+                        var percentage = (currentTime / totalDurations[videoUrl]) * 100;
+                        var radius = progressCircle.getAttribute('r');
+                        var dashoffset = (2 * Math.PI * radius * (100 - percentage)) / 100;
+
+                        // Update progress circle for the current video
+                        progressCircle.style.strokeDashoffset = dashoffset;
+                        loadingText.textContent = Math.round(percentage) + '%';
+
+                        if (!lessonVideo.paused && !lessonVideo.ended) {
+                            requestAnimationFrame(updateProgress);
+                        }
+                    }
+
+                    lessonVideo.addEventListener('timeupdate', updateProgress);
+                    lessonVideo.addEventListener('ended', function () {
+                        console.log('Video ended');
+                    });
+
+                    // Start playing the video
+                    lessonVideo.play();
+                });
+            });
+        });
+
+        function resetProgressCircles() {
+            // Reset progress circles for all videos
+            for (var url in totalDurations) {
+                if (totalDurations.hasOwnProperty(url)) {
+                    var videoItem = document.querySelector('.section-list li[data-video-url="' + url + '"]');
+                    var progressCircle = videoItem.querySelector('.progress-circle');
+                    var loadingText = videoItem.querySelector('.loading');
+
+                    progressCircle.style.strokeDashoffset = 94.2;
+                    loadingText.textContent = '';
+                }
+            }
+        }
+
+        var moduleList = document.querySelectorAll('.module-item');
+        var courseContent = document.querySelector('.course-content');
+
+        moduleList.forEach(function (moduleItem) {
+            var moduleHeader = moduleItem.querySelector('.module-header');
+            var sectionList = moduleItem.querySelector('.section-list');
+
+            moduleHeader.addEventListener('click', function (event) {
+                sectionList.classList.toggle('active');
+                moduleItem.classList.toggle('active');
+                moduleList.forEach(function (otherModule) {
+                    if (otherModule !== moduleItem) {
+                        otherModule.querySelector('.section-list').classList.remove('active');
+                        otherModule.classList.remove('active');
+                    }
+                });
+
+                // Add or remove a class to set a fixed height for the course content div
+                if (moduleItem.classList.contains('active')) {
+                    courseContent.classList.add('fixed-height');
+                } else {
+                    courseContent.classList.remove('fixed-height');
+                }
+
+                event.stopPropagation(); // Prevent the click from reaching the document
+            });
+
+            // Prevent clicks inside the section list from closing the module dropdown
+            sectionList.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        // Trigger click on the first video item in the first module
+        var firstVideoItem = document.querySelector('.module-list .module-item:first-child .section-list li');
+        if (firstVideoItem) {
+            firstVideoItem.click();
+        }
+    });
+</script>
+
+
+
+
+
+
     {% endblock body %}
-</body>
+
+
+
+    
