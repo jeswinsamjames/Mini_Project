@@ -191,9 +191,28 @@
                           </ul>
                           
                           <div id="myDropdown" class="dropdown-content">
-                              <a href="#home">Share</a>
-                              <a href="#about">Create list</a>
-                              <a href="#contact">wishlist</a>
+
+                            <a href="#" style="text-decoration: none;">
+                                <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
+                                
+                                <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                    <use xlink:href="#icon-share"></use>
+                                </svg>
+                                
+                                Share
+                            </a>
+                            
+                              
+                           
+                            <a href="#">
+                                <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
+
+                                <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
+                                    <!-- Replace this with the appropriate icon ID for "Wishlist" -->
+                                    <use xlink:href="#icon-wishlist"></use>
+                                </svg>
+                                Wishlist
+                            </a>
                           </div>
                       </div>
                     

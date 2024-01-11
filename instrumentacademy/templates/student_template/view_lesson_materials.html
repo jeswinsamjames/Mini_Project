@@ -6,6 +6,10 @@
 {% block custom_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-uefMhUFlOiOHA+9qpw3P6STn/TduqF1cwKS2/KbzoIieCr4H3RFOnWp4CnU/lvvSjQph7IRl5eA6CqnTct1zKg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+    <!-- Other head elements -->
+ 
+  
+  
 
 {% endblock custom_css %}
 
@@ -65,7 +69,7 @@
         <div class="video-lessons">
             <section>
                 <div class="video-container" id="videoContainer">
-                    <video controls width="100%" id="lessonVideo">
+                    <video width="100%" controls crossorigin playsinline id="lessonVideo"class="video-js" controls>
                         <!-- Add source elements based on your needs -->
                         <!-- For example: -->
                         <!-- <source src="path/to/your/video.mp4" type="video/mp4"> -->
@@ -135,7 +139,7 @@
     
 }
 
-.progress-circle {
+    .progress-circle {
    
     stroke-dasharray: 94.2;
     stroke-dashoffset: 94.2;
@@ -148,13 +152,13 @@
 
     
 }
-.video-info {
+    .video-info {
     display: flex;
     align-items: center;
     
 }
 
-.video-title {
+    .video-title {
     flex-grow: 1; /* This will make the title take up all available space */
     overflow: hidden;
     white-space: nowrap; /* Prevent title from wrapping */
@@ -424,7 +428,7 @@
         .module-item.active {
     height: auto; /* Set to auto to allow dynamic content height */
     overflow: visible; /* Show overflowing content */
-}
+    }
 
 
         .section-list {
@@ -450,7 +454,8 @@
         }
        
     </style>
-
+    
+   
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     var videoList = document.querySelectorAll('.section-list li');
@@ -466,6 +471,7 @@
 
             // Your existing video change logic goes here
             // ...
+            
         });
     });
 
@@ -477,6 +483,15 @@
 });
 
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var player = new Plyr('#lessonVideo');
+
+        // Additional Plyr options and event listeners can go here
+        console.log('Plyr.js initialized');
+        
+    });
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -485,6 +500,7 @@
         var lessonVideo = document.getElementById('lessonVideo');
         var totalDurations = {}; // Store total duration for each video
         var currentVideoUrl;
+
 
         videoList.forEach(function (videoItem) {
             var videoUrl = videoItem.getAttribute('data-video-url');

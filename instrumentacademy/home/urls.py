@@ -20,7 +20,6 @@ urlpatterns = [
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete'),
     path('registration', views.registration,name="registration"), 
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
-    path('course_material', views.course_material, name='course_material'),
     path('get_notifications/', views.get_notifications, name='get_notifications'),
     path('mark-notifications-as-read/', views.mark_notifications_as_read, name='mark_notifications_as_read'),
 
@@ -44,6 +43,8 @@ urlpatterns = [
     path('mylearning/', student_views.enrolled_courses_list_leaner, name='mylearning'),
     path('tutor_course_content/<int:course_id>/', student_views.tutor_course_content, name='tutor_course_content'),
     path('scheduled-classes/', student_views.view_scheduled_classes_leaner, name='view_scheduled_classes_leaner'),
+    path('course_material/<int:course_id>/', student_views.course_material, name='course_material'),
+    path('student_quiz/', student_views.student_quiz, name='student_quiz'),
 
 
 
@@ -76,7 +77,7 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
 
 
     path('add_module_and_lesson_material/<int:course_id>/', tutor_views.add_module_and_lesson_material, name='add_module_and_lesson_material'),
-
+    path('add_quiz/',tutor_views.add_quiz, name='add_quiz'),
     path('list_modules/', tutor_views.list_modules, name='list_modules'),
     path('module_list_view/<int:course_id>/', tutor_views.module_list_view, name='module_list_view'),
     path('edit_module/<int:module_id>/', tutor_views.edit_module, name='edit_module'),

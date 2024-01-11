@@ -196,6 +196,23 @@ def student_view_attendance(request):
     }
     return render(request, 'student_template/attendance_view.html', context)
 
+def course_material(request,course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+    modules = Module.objects.filter(course=course)
+    lesson_materials = LessonMaterial.objects.filter(course=course)
+
+    video_lesson_materials = lesson_materials.filter(
+        material_file__icontains='.mp4')  # You can customize the condition based on your file naming convention
+    print(modules)
+    # Render the course content template with the course, modules, and video lesson materials
+    return render(request, 'student_template/course_materials.html', {
+        'course': course,
+        'modules': modules,
+        'video_lesson_materials': video_lesson_materials,  # Pass video lesson materials to the template
+    })
+
+def student_quiz(request):
+    return render(request,'student_template/student_quiz.html')
 
 
 

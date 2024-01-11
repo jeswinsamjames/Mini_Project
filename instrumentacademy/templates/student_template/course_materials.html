@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+{{ course.name }} - Course Overview
+{% endblock title %}
+{% block body %}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="content-tab" data-bs-toggle="tab" href="#content" role="tab" aria-controls="content" aria-selected="false">Content</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="assessments-tab" data-bs-toggle="tab" href="#assessments" role="tab" aria-controls="assessments" aria-selected="true">Assessments</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade" id="content" role="tabpanel" aria-labelledby="content-tab">
+                            <!-- Content Tab Content Goes Here -->
+                            <div class="container CourseModule_moduleContainer__1v3Qw p-4 rounded bg-light shadow">
+                                <div role="presentation" class="CourseModule_moduleTitleContainer__3tzS5 bg-primary text-white p-3 rounded d-flex justify-content-between align-items-center">
+                                    <h6 class="h6 m-0">Cloud Foundations Advanced - Learning Videos</h6>
+                                    <svg class="bi bi-chevron-down" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"></path>
+                                    </svg>
+                                </div>
+                                <div class="collapse show mt-3">
+                                    <div class="row CourseItem_container__3efT2 border-bottom py-3 course-item-container-hover">
+                                        <a class="CourseItem_courseItemCTA__19JvG" href="/courses/31730/pages/introduction-to-virtualization?module_item_id=880103"></a>
+                                        <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                            <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M8 5v14l11-7z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="col CourseItem_itemTitleGrid__2zLi9">
+                                            <h6 class="subtitle1 m-0">Introduction to Virtualization</h6>
+                                        </div>
+                                        <div class="col-3 CourseItem_itemSecondaryInfoGrid__1PhCU">
+                                            <h6 class="subtitle2 m-0">16m</h6>
+                                        </div>
+                                        <div class="col-1 CourseItem_itemStatusIconGrid__2YDw0">
+                                            <div class="CourseItem_itemStatusButton__39fNH" title="0% completed">
+                                                <div class="progressIcon__Xex2q ItemProgressIcon_progressIcon__3n7ee">
+                                                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Repeat the above structure for each item -->
+                                    <div class="row CourseItem_container__3efT2 border-bottom py-3 course-item-container-hover">
+                                        <a class="CourseItem_courseItemCTA__19JvG" href="/courses/31730/pages/introduction-to-virtualization?module_item_id=880103"></a>
+                                        <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                            <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M8 5v14l11-7z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="col CourseItem_itemTitleGrid__2zLi9">
+                                            <h6 class="subtitle1 m-0">Introduction to Virtualization</h6>
+                                        </div>
+                                        <div class="col-3 CourseItem_itemSecondaryInfoGrid__1PhCU">
+                                            <h6 class="subtitle2 m-0">16m</h6>
+                                        </div>
+                                        <div class="col-1 CourseItem_itemStatusIconGrid__2YDw0">
+                                            <div class="CourseItem_itemStatusButton__39fNH" title="0% completed">
+                                                <div class="progressIcon__Xex2q ItemProgressIcon_progressIcon__3n7ee">
+                                                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="tab-pane fade show active" id="assessments" role="tabpanel" aria-labelledby="assessments-tab">
+                            <div class="module-container">
+                                
+                                <div class="collapse show">
+                                    <!-- Quiz Content Goes Here -->
+                                    
+                                </div>
+                            </div>
+                            <div class="module-container">
+                                
+                                <div class="collapse show">
+                                    <a href="{% url 'student_quiz'    %}" class="text-info text-decoration-none">Start Learn</a>
+
+                                    <!-- Claim your course certificate Content Goes Here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* CSS for Hover Effect */
+.course-item-container-hover:hover {
+    background-color: #cacaca; /* Add your desired shade/color */
+}
+
+</style>
+
+{% endblock body %}

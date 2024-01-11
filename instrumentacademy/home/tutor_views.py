@@ -407,6 +407,8 @@ def delete_lesson(request, lesson_id):
         return JsonResponse({'success': False, 'error': 'Lesson not found'})
     return render()
 
+def add_quiz(request):
+    return render(request,'tutor_template/quiz.html')
 
 
 

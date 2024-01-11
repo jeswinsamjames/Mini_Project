@@ -141,8 +141,7 @@ def student_fcmtoken(request):
     return render(request, "student_template/student_view_result.html")
 
 
-def course_material(request):
-    return render(request,"tutor_template/course_material.html" )
+
 
 def custom_login(request):
     if request.method == 'POST':
