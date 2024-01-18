@@ -196,7 +196,7 @@ def student_view_attendance(request):
     }
     return render(request, 'student_template/attendance_view.html', context)
 
-def course_material(request,course_id):
+def course_material(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     modules = Module.objects.filter(course=course)
     lesson_materials = LessonMaterial.objects.filter(course=course)
@@ -210,6 +210,47 @@ def course_material(request,course_id):
         'modules': modules,
         'video_lesson_materials': video_lesson_materials,  # Pass video lesson materials to the template
     })
+
+
+@csrf_exempt  # For simplicity. You should handle CSRF properly in production.
+def update_progress(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        lesson_material_id = data.get('video_id')
+        progress_percentage = data.get('progress_percentage')
+
+        # Update the progress in your database
+        try:
+            print(lesson_material_id)
+            progress_instance = Progress.objects.get(lesson_material_id=lesson_material_id)
+            progress_instance.progress_percentage = progress_percentage
+            progress_instance.lesson_material_id = lesson_material_id
+            progress_instance.save()
+            return JsonResponse({'message': 'Progress updated successfully'}, status=200)
+        except Progress.DoesNotExist:
+            Progress.objects.create(lesson_material_id=lesson_material_id)  
+            return JsonResponse({'message': 'Lesson material not found'}, status=404)
+
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
+
+
+
+def get_progress(request):
+    if request.method == 'GET':
+        # Fetch necessary data from the request, you can modify this based on your actual model structure
+        video_id = request.GET.get('video_id', None)
+        print(video_id)
+        if video_id is not None:
+            try:
+                # Assuming you have a model named YourModel with a field progress_percentage
+                progress_instance = Progress.objects.get(lesson_material_id=video_id)
+                progress_percentage = progress_instance.progress_percentage
+                return JsonResponse({'progress_percentage': progress_percentage}, status=200)
+            except Progress.DoesNotExist:
+                return JsonResponse({'message': 'Video not found'}, status=404)
+
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
+
 
 def student_quiz(request):
     return render(request,'student_template/student_quiz.html')

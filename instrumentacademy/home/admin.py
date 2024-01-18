@@ -35,6 +35,7 @@ admin.site.register(ClassSchedule)
 admin.site.register(Attendance)
 admin.site.register(Order)
 admin.site.register(Notification)
+admin.site.register(Progress)
 
 
 

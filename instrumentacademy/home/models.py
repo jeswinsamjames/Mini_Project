@@ -116,3 +116,13 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.learner.username} - {self.class_schedule.course.name} "
+    
+class Progress(models.Model):
+   
+    lesson_material = models.ForeignKey('LessonMaterial', on_delete=models.CASCADE, blank=True, null=True)
+    progress_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    is_completed = models.BooleanField(default=False)
+    last_accessed = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.learner.username} - {self.course_detail.name} - Module {self.module.module_number} - {self.lesson_material.title if self.lesson_material else 'Overall'}"

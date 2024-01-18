@@ -92,7 +92,7 @@
                         {% for lesson in video_lesson_materials %}
                         {% if lesson.module == module %}
                         <div class="contentinside">
-                            <li class="videodiv" data-video-url="{{ lesson.material_file.url }}">
+                            <li class="videodiv" data-video-url="{{ lesson.material_file.url }}" data-video-id="{{ lesson.id }}">
                                 <div class="video-info">
                                     <span class="video-title">{{ lesson.title }}</span>
                                     <svg class="progress" width="50" height="50">
@@ -501,9 +501,10 @@
         var totalDurations = {}; // Store total duration for each video
         var currentVideoUrl;
 
-
+        var currentVideoId;
         videoList.forEach(function (videoItem) {
             var videoUrl = videoItem.getAttribute('data-video-url');
+            var id = videoItem.getAttribute('data-video-id');
             var progressCircle = videoItem.querySelector('.progress-circle');
             var loadingText = videoItem.querySelector('.loading');
 
@@ -528,14 +529,16 @@
                 videoContainer.appendChild(lessonVideo);
 
                 lessonVideo.src = videoUrl;
+                currentVideoId = id
                 lessonVideo.load();
-
+                console.log(currentVideoId);
                 lessonVideo.addEventListener('loadedmetadata', function () {
                     totalDurations[videoUrl] = lessonVideo.duration;
 
                     function updateProgress() {
                         var currentTime = lessonVideo.currentTime;
                         var percentage = (currentTime / totalDurations[videoUrl]) * 100;
+
                         var radius = progressCircle.getAttribute('r');
                         var dashoffset = (2 * Math.PI * radius * (100 - percentage)) / 100;
 
@@ -611,11 +614,89 @@
         if (firstVideoItem) {
             firstVideoItem.click();
         }
+
+        function updateProgress() {
+            // Fetch necessary data from the document
+            const progressPercentage = getCurrentProgress(); // Call a function to get the progress
+
+            const requestData = {
+                video_id: currentVideoId,  // Pass the current video id
+                progress_percentage: progressPercentage,
+            };
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update_progress/', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Progress updated successfully');
+                } else {
+                    console.error('Failed to update progress');
+                }
+            };
+
+            xhr.send(JSON.stringify(requestData));
+        }
+
+        // Function to get the current progress from the currently playing video
+        function getCurrentProgress() {
+            const currentVideoItem = document.querySelector('.section-list li[data-video-id="' + currentVideoId + '"]');
+            const loadingText = currentVideoItem.querySelector('.loading');
+            per = loadingText.textContent;
+            percentage_value = parseFloat(per)
+            
+            return percentage_value
+
+        }
+
+
+        function getAndDisplayProgress() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/get_progress?video_id=' + currentVideoId, true);
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                console.log('Progress Percentage:', response.progress_percentage);
+
+                // Display the progress in your UI
+                // For example, update a div with the progress
+                const currentVideoItem = document.querySelector('.section-list li[data-video-id="' + currentVideoId + '"]');
+                currentVideoItems.textContent = response.progress_percentage
+            } else {
+                console.error('Failed to get progress');
+            }
+        };
+
+        xhr.send();
+    }
+    
+
+    // Set interval to update progress every 10 seconds
+    setInterval(function () {
+        updateProgress();
+        getAndDisplayProgress();
+          // Call the function to fetch and display progress
+    }, 10000);
+        // Set interval to update progress every 10 seconds
+
+        // setInterval(updateProgress, 10000);
+
+        // ... (Rest of the script)
     });
 </script>
 
 
 
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Function to send the AJAX request to update progress
+      
+
+    });
+</script> -->
 
 
 

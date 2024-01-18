@@ -157,7 +157,7 @@
                                 <div class="separator"></div>
                                 <div class="text-center">
                                    {% if user in course.course.enrolled_learners.all %}
-                                        <a href="{% url 'course_material course.course_id'  %}" class="text-info text-decoration-none">Start Learn</a>
+                                        <a href="{% url 'course_material' course.course_id  %}" class="text-info text-decoration-none">Start Learn</a>
                                         {% comment %} <a href="{% url 'tutor_course_content' course.course.pk   %}" class="text-info text-decoration-none">Start Learn</a> {% endcomment %}
                                     {% else %}
                                         <a href="#" class="text-info text-decoration-none">See Details</a>

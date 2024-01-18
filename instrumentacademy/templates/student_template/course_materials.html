@@ -23,79 +23,172 @@
                     <div class="tab-content mt-3">
                         <div class="tab-pane fade" id="content" role="tabpanel" aria-labelledby="content-tab">
                             <!-- Content Tab Content Goes Here -->
-                            <div class="container CourseModule_moduleContainer__1v3Qw p-4 rounded bg-light shadow">
-                                <div role="presentation" class="CourseModule_moduleTitleContainer__3tzS5 bg-primary text-white p-3 rounded d-flex justify-content-between align-items-center">
-                                    <h6 class="h6 m-0">Cloud Foundations Advanced - Learning Videos</h6>
-                                    <svg class="bi bi-chevron-down" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <div class="container p-4 rounded bg-light shadow">
+                                <div class="bg-primary text-white p-3 rounded d-flex justify-content-between align-items-center">
+                                    <h6 class="h6 m-0">{{course.name}} - Learn Videos</h6>
+                                    <svg class="bi bi-chevron-down" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" id="toggleBtn">
                                         <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"></path>
                                     </svg>
                                 </div>
-                                <div class="collapse show mt-3">
-                                    <div class="row CourseItem_container__3efT2 border-bottom py-3 course-item-container-hover">
-                                        <a class="CourseItem_courseItemCTA__19JvG" href="/courses/31730/pages/introduction-to-virtualization?module_item_id=880103"></a>
-                                        <div class="col-1 CourseItem_itemIconGrid__3KRju">
-                                            <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M8 5v14l11-7z"></path>
-                                            </svg>
-                                        </div>
-                                        <div class="col CourseItem_itemTitleGrid__2zLi9">
-                                            <h6 class="subtitle1 m-0">Introduction to Virtualization</h6>
-                                        </div>
-                                        <div class="col-3 CourseItem_itemSecondaryInfoGrid__1PhCU">
-                                            <h6 class="subtitle2 m-0">16m</h6>
-                                        </div>
-                                        <div class="col-1 CourseItem_itemStatusIconGrid__2YDw0">
-                                            <div class="CourseItem_itemStatusButton__39fNH" title="0% completed">
-                                                <div class="progressIcon__Xex2q ItemProgressIcon_progressIcon__3n7ee">
-                                                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="collapse show mt-3" id="courseContent">
+                        
+                                    <!-- Course Content Section -->
+                                    <div class="course-content content-left">
+                                        <!-- <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2> -->
+                                        <ul class="module-list video-list">
+                                            {% for module in modules %}
+                                            <li class="module-item">
+                                                <div class="module-header" data-toggle="collapse" data-target="#module{{ module.id }}">
+                                                    <span class="module-title">{{ module.title }}</span>
+                                                    <div class="module-toggle">&#9662;</div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                                <ul class="section-list collapse" id="module{{ module.id }}">
+                                                    {% for lesson in video_lesson_materials %}
+                                                    {% if lesson.module == module %}
+                                                    <div class="contentinside">
+                                                        <li class="videodiv" data-video-url="{{ lesson.material_file.url }}" data-lesson-url="{{ lesson.video_url }}">
+                                                            <a href="/tutor_course_content/{{ course.id }}">
+                                                            <div class="video-info row align-items-center">
+                                                                <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                                                    <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <path d="M8 5v14l11-7z"></path>
+                                                                    </svg>
+                                                                </div>
+                                                                <span class="video-title col" style="color: black;">{{ lesson.title }}</span>
+                                                                <div class="col-3 d-flex align-items-center" style="height: 50px;"> <!-- Adjust the height value as needed -->
+                                                                    <svg class="progress" width="50" height="50">
+                                                                        <circle class="progress-circledummy" cx="25" cy="25" stroke="rgba(169, 169, 169, 0.5)" r="20" fill="transparent" stroke-width="2" />
+                                                                        <circle class="progress-circle" cx="25" cy="25" stroke="blue" r="20" fill="transparent" stroke-width="2" />
+                                                                        <text class="loading" fill="blue" x="25" y="25" alignment-baseline="middle" text-anchor="middle"></text>
+                                                                    </svg>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                            
+                                                            
+                                                            
+                                                        </li>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    {% if not video_lesson_materials|length %}
+                                                    <li>No content available right now</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
-                                    
+                                    <!-- End of Course Content Section -->
+                        
                                     <!-- Repeat the above structure for each item -->
                                     <div class="row CourseItem_container__3efT2 border-bottom py-3 course-item-container-hover">
-                                        <a class="CourseItem_courseItemCTA__19JvG" href="/courses/31730/pages/introduction-to-virtualization?module_item_id=880103"></a>
-                                        <div class="col-1 CourseItem_itemIconGrid__3KRju">
-                                            <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M8 5v14l11-7z"></path>
-                                            </svg>
-                                        </div>
-                                        <div class="col CourseItem_itemTitleGrid__2zLi9">
-                                            <h6 class="subtitle1 m-0">Introduction to Virtualization</h6>
-                                        </div>
-                                        <div class="col-3 CourseItem_itemSecondaryInfoGrid__1PhCU">
-                                            <h6 class="subtitle2 m-0">16m</h6>
-                                        </div>
-                                        <div class="col-1 CourseItem_itemStatusIconGrid__2YDw0">
-                                            <div class="CourseItem_itemStatusButton__39fNH" title="0% completed">
-                                                <div class="progressIcon__Xex2q ItemProgressIcon_progressIcon__3n7ee">
-                                                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <!-- Your content goes here -->
                                     </div>
-
-                                    
+                        
                                 </div>
                             </div>
+                        
+                          
+                            
                             
                             
                         </div>
                         <div class="tab-pane fade show active" id="assessments" role="tabpanel" aria-labelledby="assessments-tab">
                             <div class="module-container">
                                 
-                                <div class="collapse show">
-                                    <!-- Quiz Content Goes Here -->
+                                <div class="container CourseModule_moduleContainer__1v3Qw p-4 rounded bg-light shadow">
+                                    <div role="presentation" class="CourseModule_moduleTitleContainer__3tzS5 bg-primary text-white p-3 rounded d-flex justify-content-between align-items-center">
+                                        <h6 class="h6 m-0">{{course.name}} - Quiz</h6>
+                                        <svg class="bi bi-chevron-down" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="collapse show mt-3">
+                                        <!-- Quiz Content Goes Here -->
+                                        <div class="course-content content-left">
+                                            <!-- <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2> -->
+                                    
+                                            <div class="contentinside">
+                                                <a href="{% url 'student_quiz'    %}" class="quiz-item-link">
+                                                    <div class="video-info row align-items-center">
+                                                        <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                                            <svg class="bi bi-exclamation-triangle" width="24" height="24" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M8.524 1.753a1 1 0 0 0-1.048 0l-6 4.5A1 1 0 0 0 1 7v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-.476-.747l-6-4.5zM8 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0-8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                                            </svg>
+                                                            
+                                                            
+                                                            
+                                                        </div>
+                                                        <span class="video-title col " style="color: black;">Quiz to attend</span>
+                                                        <div class="col-1 CourseItem_itemIconGrid__3KRju d-flex align-items-center">
+                                                            <!-- Lock Icon -->
+                                                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 50 50">
+                                                                <path d="M 25 3 C 18.363281 3 13 8.363281 13 15 L 13 20 L 9 20 C 7.300781 20 6 21.300781 6 23 L 6 47 C 6 48.699219 7.300781 50 9 50 L 41 50 C 42.699219 50 44 48.699219 44 47 L 44 23 C 44 21.300781 42.699219 20 41 20 L 37 20 L 37 15 C 37 8.363281 31.636719 3 25 3 Z M 25 5 C 30.566406 5 35 9.433594 35 15 L 35 20 L 15 20 L 15 15 C 15 9.433594 19.433594 5 25 5 Z M 25 30 C 26.699219 30 28 31.300781 28 33 C 28 33.898438 27.601563 34.6875 27 35.1875 L 27 38 C 27 39.101563 26.101563 40 25 40 C 23.898438 40 23 39.101563 23 38 L 23 35.1875 C 22.398438 34.6875 22 33.898438 22 33 C 22 31.300781 23.300781 30 25 30 Z"></path>
+                                                            </svg>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </a>
+                                            </div>
+                                    
+                                        </div>
+                                    </div>
                                     
                                 </div>
+                                
+                                
                             </div>
+
+
+
+
+
+
                             <div class="module-container">
                                 
                                 <div class="collapse show">
-                                    <a href="{% url 'student_quiz'    %}" class="text-info text-decoration-none">Start Learn</a>
+                                    <!-- <a href="{% url 'student_quiz'    %}" class="text-info text-decoration-none">Start Learn</a> -->
 
                                     <!-- Claim your course certificate Content Goes Here -->
+                                    <div class="container CourseModule_moduleContainer__1v3Qw p-4 rounded bg-light shadow">
+                                        <div role="presentation" class="CourseModule_moduleTitleContainer__3tzS5 bg-primary text-white p-3 rounded d-flex justify-content-between align-items-center">
+                                            <h6 class="h6 m-0">{{course.name}} - Certificate</h6>
+                                            <svg class="bi bi-chevron-down" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="collapse show mt-3">
+                                            <!-- Quiz Content Goes Here -->
+                                            <div class="course-content content-left">
+                                                <!-- <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2> -->
+                                        
+                                                <div class="contentinside">
+                                                    <a href="/tutor_course_content/{{ course.id }}" class="quiz-item-link">
+                                                        <div class="video-info row align-items-center">
+                                                            <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                                                <svg class="bi bi-exclamation-triangle" width="24" height="24" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M8.524 1.753a1 1 0 0 0-1.048 0l-6 4.5A1 1 0 0 0 1 7v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-.476-.747l-6-4.5zM8 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0-8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                                                </svg>
+                                                                
+                                                                
+                                                            </div>
+                                                            <span class="video-title col" style="color: black;">Claim Your Course Certificate</span>
+                                                            <div class="col-1 CourseItem_itemIconGrid__3KRju d-flex align-items-center">
+                                                                <!-- Lock Icon -->
+                                                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 50 50">
+                                                                    <path d="M 25 3 C 18.363281 3 13 8.363281 13 15 L 13 20 L 9 20 C 7.300781 20 6 21.300781 6 23 L 6 47 C 6 48.699219 7.300781 50 9 50 L 41 50 C 42.699219 50 44 48.699219 44 47 L 44 23 C 44 21.300781 42.699219 20 41 20 L 37 20 L 37 15 C 37 8.363281 31.636719 3 25 3 Z M 25 5 C 30.566406 5 35 9.433594 35 15 L 35 20 L 15 20 L 15 15 C 15 9.433594 19.433594 5 25 5 Z M 25 30 C 26.699219 30 28 31.300781 28 33 C 28 33.898438 27.601563 34.6875 27 35.1875 L 27 38 C 27 39.101563 26.101563 40 25 40 C 23.898438 40 23 39.101563 23 38 L 23 35.1875 C 22.398438 34.6875 22 33.898438 22 33 C 22 31.300781 23.300781 30 25 30 Z"></path>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                        
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -105,13 +198,125 @@
         </div>
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+                            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+                        
+<script>
+                                // JavaScript for collapse/expand functionality
+             document.getElementById('toggleBtn').addEventListener('click', function () {
+             var courseContent = document.getElementById('courseContent');
+         courseContent.classList.toggle('show');
+     });
+</script>
 <style>
-    /* CSS for Hover Effect */
-.course-item-container-hover:hover {
-    background-color: #cacaca; /* Add your desired shade/color */
+    .quiz-item-link {
+    text-decoration: none;
 }
 
+.contentinside {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.video-info {
+    position: relative;
+}
+
+.video-title {
+    margin-left: 10px;
+}
+
+.CourseItem_itemIconGrid__3KRju svg {
+    margin-right: 10px;
+}
+
+.CourseItem_itemIconGrid__3KRju svg.bi-lock-fill {
+    color: #6c757d; /* Adjust the color as needed */
+}
+
+</style>
+
+<style>
+  
+    
+    .progress {
+    position: absolute ;
+    margin-left: 195px;
+    max-width: 50px;
+    height: 50px;
+    background-color: #f6f6f6;
+    
+}
+
+    .progress-circle {
+   
+    stroke-dasharray: 94.2;
+    stroke-dashoffset: 55.2;
+    width: 30px;
+    height: 30px;
+    fill: radial-gradient(circle, rgba(53, 53, 53, 0.718)); /* Radial gradient with faded color from center */
+    stroke: blue; /   
+    }
+
+    /* transition: stroke-dashoffset 0.3s ease-out; */
+
+    
+
+
+
+</style>
+<style>
+    /* CSS for Hover Effect */
+    .videodiv:hover, .progress:hover {
+    background-color: #f6f6f6; /* Add your desired shade/color */
+}
+
+
+</style>
+<style>
+    /* Custom Styles */
+    .module-item {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 10px;
+    }
+
+    .module-header {
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 10px;
+        background-color: #f8f9fa;
+    }
+
+    .module-title {
+        font-weight: bold;
+        list-style: none; /* Remove the dot */
+padding-left: 0; /* Remove default padding */
+
+    }
+
+    .module-toggle {
+        font-size: 20px;
+    }
+
+    .section-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .videodiv {
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        margin-bottom: 5px;
+    }
+
+    .progress {
+        display: block;
+        margin: 10px auto;
+    }
 </style>
 
 {% endblock body %}
