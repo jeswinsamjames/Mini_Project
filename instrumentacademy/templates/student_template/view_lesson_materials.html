@@ -663,7 +663,9 @@
                 // Display the progress in your UI
                 // For example, update a div with the progress
                 const currentVideoItem = document.querySelector('.section-list li[data-video-id="' + currentVideoId + '"]');
-                currentVideoItems.textContent = response.progress_percentage
+                // currentVideoItems.textContent = response.progress_percentage
+                currentVideoItem.querySelector('.loading').textContent = Math.round(response.progress_percentage) + '%';
+
             } else {
                 console.error('Failed to get progress');
             }

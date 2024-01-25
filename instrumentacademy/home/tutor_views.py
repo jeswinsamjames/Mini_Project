@@ -407,10 +407,58 @@ def delete_lesson(request, lesson_id):
         return JsonResponse({'success': False, 'error': 'Lesson not found'})
     return render()
 
-def add_quiz(request):
-    return render(request,'tutor_template/quiz.html')
 
 
+# def quiz_form(request):
+#     if request.method == 'POST':
+        
+#         # Handle form submission and save question
+#         question_title = request.POST.get('question-title')
+#         print("question_title")
+#         new_question = Question.objects.create(title=question_title)
+
+#         for key, value in request.POST.items():
+#             if key.startswith('option-'):
+#                 Option.objects.create(question=new_question, text=value)
+
+#         # Redirect to the quiz form page after saving a question
+#         return redirect('quiz_form')
+
+#     # Display the quiz form
+#     questions = Question.objects.all()
+#     return render(request, 'tutor_template/quiz.html', {'questions': questions})
+
+@csrf_exempt
+def quiz_form(request, course_id):
+    if request.method == 'POST':
+       
+        try:
+            question_title = request.POST.get('question-title')
+            course = CourseDetail.objects.get(pk=course_id)
+            new_question = Question.objects.create(title=question_title, course=course)
+
+            for key, value in request.POST.items():
+                if key.startswith('option-'):
+                    is_correct = request.POST.get('marked')
+                    print(is_correct)
+                    Option.objects.create(
+                        question=new_question,
+                        text=value,
+                        is_correct=1 if key.endswith(is_correct) else 0
+                    )
+
+            return redirect('quiz_form')
+        except Exception as e:
+            print(f"Error in quiz_form view (Form Submission): {e}")
+            return render(request, 'tutor_template/quiz.html', {'error_message': f'An error occurred: {e}'})
+    try:
+        course = CourseDetail.objects.get(pk=course_id)
+    except CourseDetail.DoesNotExist:
+        return render(request, 'tutor_template/error.html', {'error_message': 'Course not found'})
+
+    # Display the quiz form
+    questions = Question.objects.all()
+    return render(request, 'tutor_template/quiz.html', {'questions': questions,'course':course})
 
  # ...........END LESSON MATERIAL.............
 

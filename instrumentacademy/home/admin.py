@@ -36,6 +36,8 @@ admin.site.register(Attendance)
 admin.site.register(Order)
 admin.site.register(Notification)
 admin.site.register(Progress)
+admin.site.register(Question)
+admin.site.register(Option)
 
 
 

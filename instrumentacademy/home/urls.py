@@ -81,7 +81,6 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
 
 
     path('add_module_and_lesson_material/<int:course_id>/', tutor_views.add_module_and_lesson_material, name='add_module_and_lesson_material'),
-    path('add_quiz/',tutor_views.add_quiz, name='add_quiz'),
     path('list_modules/', tutor_views.list_modules, name='list_modules'),
     path('module_list_view/<int:course_id>/', tutor_views.module_list_view, name='module_list_view'),
     path('edit_module/<int:module_id>/', tutor_views.edit_module, name='edit_module'),
@@ -99,6 +98,9 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
     path('tutor-courses/', tutor_views.tutor_courses, name='tutor_courses'),
     path('view-course-sessions/<int:course_id>/', tutor_views.view_course_sessions, name='view_course_sessions'),
     path('take-attendance/<int:session_id>/', tutor_views.take_attendance, name='take_attendance'),
+
+     path('quiz_form/<int:course_id>/', tutor_views.quiz_form, name='quiz_form'),
+
 
 
 

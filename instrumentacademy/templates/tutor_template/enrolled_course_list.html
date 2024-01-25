@@ -33,7 +33,7 @@
                                     <td> {{ course.name }} </td>
                                     <td> <li><a href="{% url 'enrolled_course_details' course.id %}">view Lists</a></li></td>
                                     <td> <li><a href="{% url 'add_module_and_lesson_material' course.id %}">upload</a></li></td>
-                                    <td> <li><a href="{% url 'add_quiz'  %}">Add Quiz</a></li></td>
+                                    <td> <li><a href="{% url 'quiz_form' course.id  %}">Add Quiz</a></li></td>
                                     
                                 </tr>
                                 {% endfor %}

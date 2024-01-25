@@ -78,7 +78,8 @@
                 </div>
             </div>
             <div class="col-md-10 ">
-                <form id="quizForm" class="flex flex-col space-y-4 mx-auto">
+                <form id="quizForm" method="POST" class="flex flex-col space-y-4 mx-auto" action="{% url 'quiz_form' course.id %}">
+                    {% csrf_token %}
                     <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">Create new question</button>
                     <div class="form-group">
                         <label class="text-md font-semibold" for="question-title">Question Title</label>
@@ -99,25 +100,36 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Initial option index
-            let optionIndex = 2;
-
-            // Function to add a new option
+            let optionIndex = 1;
+            let markedOption = 0;
+            const optionsContainer = document.getElementById('quizForm');
+            
+            const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `marked`;
+                hiddenInput.value = '0';
+                optionsContainer.appendChild(hiddenInput);
+            console.log(hiddenInput)
             function addOption() {
                 const optionsContainer = document.getElementById('optionsContainer');
                 const newOptionInput = document.createElement('input');
                 newOptionInput.className = 'form-control';
                 newOptionInput.name = `option-${optionIndex}`;
-                newOptionInput.value = `New Option ${optionIndex}`;
+                newOptionInput.type = 'text';
+
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'flex flex-col lg:flex-row space-y-2 lg:space-x-2 option-container';
                 optionDiv.appendChild(newOptionInput);
 
+                 
+    
                 const buttonDiv = document.createElement('div');
                 buttonDiv.className = 'flex justify-between flex-1 p-2';
-
+    
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'btn btn-primary';
                 removeBtn.type = 'button';
@@ -125,91 +137,115 @@
                 removeBtn.addEventListener('click', function () {
                     optionsContainer.removeChild(optionDiv);
                 });
-
+    
                 const markCorrectBtn = document.createElement('button');
                 markCorrectBtn.className = 'btn btn-primary mark-as-correct-btn';
                 markCorrectBtn.type = 'button';
+                markCorrectBtn.setAttribute("data-value",optionIndex)
                 markCorrectBtn.textContent = 'Mark as correct';
+                
+                markCorrectBtn.addEventListener('click', function (e) {
+                    // Toggle the correctness status (0 to 1 or 1 to 0)
 
+                    markedOption = e.target.name
+                    hiddenInput.value = markCorrectBtn.getAttribute('data-value')
+                    {% comment %} updateDatabase(optionIndex, hiddenInput.value); {% endcomment %}
+                });
+    
                 buttonDiv.appendChild(removeBtn);
                 buttonDiv.appendChild(markCorrectBtn);
                 optionDiv.appendChild(buttonDiv);
-
+    
                 optionsContainer.appendChild(optionDiv);
-
+    
                 optionIndex++;
             }
-
-            // Function to add a new question
+            function updateDatabase(optionIndex, isCorrect) {
+                const formData = new FormData();
+                formData.append('option_index', optionIndex);
+                formData.append('is_correct', isCorrect);
+    
+                fetch('{% url 'quiz_form' course.id %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);  // Log the server response
+                })
+                .catch(error => {
+                    console.error('Error updating database:', error);
+                });
+            }
+    
+            // Function to get CSRF token from cookies
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+    
             function addQuestion() {
                 const minimapButtons = document.getElementById('minimapButtons');
                 const newQuestionBtn = document.createElement('button');
                 newQuestionBtn.className = 'btn btn-primary h-10 px-4 py-2';
                 newQuestionBtn.textContent = minimapButtons.children.length + 1;
                 minimapButtons.appendChild(newQuestionBtn);
-
-                // Clear options container
+    
                 document.getElementById('optionsContainer').innerHTML = '';
-                // Add initial options
                 addOption();
             }
-
-            // Add initial options
+    
             document.getElementById('addOptionBtn').addEventListener('click', addOption);
-
-            // Add question and reset form on button click
             document.getElementById('addQuestionBtn').addEventListener('click', addQuestion);
-
-            // Function to handle form submission
+    
             function submitForm() {
                 const form = document.getElementById('quizForm');
                 const formData = new FormData(form);
-
-                // Display form data (you can modify this part based on your backend logic)
-                for (const pair of formData.entries()) {
-                    console.log(pair[0] + ': ' + pair[1]);
-                }
+    
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            // Success (modify this part based on your needs)
+                            console.log('Form data sent successfully:', xhr.responseText);
+                        } else {
+                            // Error (modify this part based on your needs)
+                            console.error('Error sending form data:', xhr.status, xhr.statusText);
+                        }
+                    }
+                };
+                xhr.send(formData);
             }
-
-            // Add question and reset form on button click
+    
             document.getElementById('saveQuestionBtn').addEventListener('click', function () {
                 submitForm();
-                // Reset form after submission
                 document.getElementById('quizForm').reset();
-                optionIndex = 2; // Reset option index for the next question
-                addQuestion(); // Add a new question button
+                optionIndex = 1;
+                addQuestion();
             });
-
-            // Add initial question button
-            addQuestion();
-
-            // Add event listener for "Mark as Correct" button
+    
             document.addEventListener('click', function (event) {
                 if (event.target.classList.contains('mark-as-correct-btn')) {
-                    // Get the parent option container
                     const optionContainer = event.target.closest('.option-container');
-
-                    // Remove 'correct' class from all options
                     const allOptions = document.querySelectorAll('.option-container');
                     allOptions.forEach(opt => {
                         opt.classList.remove('correct-option');
-                        
-                    // const tickIcon = opt.querySelector('.correct-icon');
-                    //     if (tickIcon) {
-                    //         opt.removeChild(tickIcon);
-                    //     }
                     });
-
-                    // Add 'correct' class to the selected option container
                     optionContainer.classList.add('correct-option');
-
-                    // const tickIcon = document.createElement('span');
-                    // tickIcon.className = 'correct-icon fas fa-check';
-                    // optionContainer.appendChild(tickIcon);
                 }
             });
+    
+            addQuestion();
         });
     </script>
+    
 
 {% endblock content %}
 

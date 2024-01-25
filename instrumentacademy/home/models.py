@@ -126,3 +126,18 @@ class Progress(models.Model):
 
     def __str__(self):
         return f"{self.learner.username} - {self.course_detail.name} - Module {self.module.module_number} - {self.lesson_material.title if self.lesson_material else 'Overall'}"
+    
+class Question(models.Model):
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)    
+
+    def __str__(self):
+        return self.title
+
+class Option(models.Model):
+    question = models.ForeignKey(Question, related_name='options', on_delete=models.CASCADE)
+    text = models.CharField(max_length=255)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.text
