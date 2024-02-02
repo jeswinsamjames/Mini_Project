@@ -427,38 +427,71 @@ def delete_lesson(request, lesson_id):
 #     # Display the quiz form
 #     questions = Question.objects.all()
 #     return render(request, 'tutor_template/quiz.html', {'questions': questions})
+from django.core.serializers import serialize
 
 @csrf_exempt
 def quiz_form(request, course_id):
-    if request.method == 'POST':
-       
-        try:
-            question_title = request.POST.get('question-title')
-            course = CourseDetail.objects.get(pk=course_id)
-            new_question = Question.objects.create(title=question_title, course=course)
-
-            for key, value in request.POST.items():
-                if key.startswith('option-'):
-                    is_correct = request.POST.get('marked')
-                    print(is_correct)
-                    Option.objects.create(
-                        question=new_question,
-                        text=value,
-                        is_correct=1 if key.endswith(is_correct) else 0
-                    )
-
-            return redirect('quiz_form')
-        except Exception as e:
-            print(f"Error in quiz_form view (Form Submission): {e}")
-            return render(request, 'tutor_template/quiz.html', {'error_message': f'An error occurred: {e}'})
     try:
         course = CourseDetail.objects.get(pk=course_id)
     except CourseDetail.DoesNotExist:
         return render(request, 'tutor_template/error.html', {'error_message': 'Course not found'})
+    
+    if request.method == 'POST':
+        try:
+            # Check if the form is for updating an existing question
+            question_id = request.POST.get('question_id')
+            if question_id:
+                question = Question.objects.get(pk=question_id)
+                question.title = request.POST.get('question-title')
+                question.save()
 
-    # Display the quiz form
-    questions = Question.objects.all()
-    return render(request, 'tutor_template/quiz.html', {'questions': questions,'course':course})
+                # Delete existing options for the question
+                question.options.all().delete()
+
+                # Update options for the question
+                for key, value in request.POST.items():
+                    if key.startswith('option-'):
+                        option = Option(question=question, text=value)
+                        option.save()
+                        is_correct = request.POST.get('marked')
+
+                        option.is_correct = 1 if key.endswith(is_correct) else 0
+                        option.save()
+
+
+                return JsonResponse({'success': True})
+            # If it's a new question, create it
+            else:
+                question_title = request.POST.get('question-title')
+                new_question = Question.objects.create(title=question_title, course=course)
+                for key, value in request.POST.items():
+                    if key.startswith('option-'):
+                        is_correct = request.POST.get('marked')
+                        Option.objects.create(
+                            question=new_question,
+                            text=value,
+                            is_correct=1 if key.endswith(is_correct) else 0
+                        )
+                return redirect('quiz_form', course_id=course_id)
+        except Exception as e:
+            print(f"Error in quiz_form view (Form Submission): {e}")
+            return render(request, 'tutor_template/quiz.html', {'error_message': f'An error occurred: {e}','course':course})
+    
+    # Fetch existing questions for the course
+    questions = Question.objects.filter(course=course)
+    
+    # Serialize questions and options to JSON
+    questions_json = json.dumps([
+        {
+            'pk': q.pk,
+            'title': q.title,
+            'options': [{'pk': option.pk, 'text': option.text, 'is_correct': option.is_correct} for option in q.options.all()]
+        }
+        for q in questions
+    ])
+    print(course.id)
+    return render(request, 'tutor_template/quiz.html', {'questions': questions,'questions_json' : questions_json,'course':course})
+
 
  # ...........END LESSON MATERIAL.............
 

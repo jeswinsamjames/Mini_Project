@@ -1,252 +1,434 @@
-{% extends 'main_app/base.html' %}
-{% load static %}
-{% block page_title %}{{ page_title }}{% endblock page_title %}
-{% block content %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
+    {% extends 'main_app/base.html' %}
+    {% load static %}
+    {% block page_title %}{{ page_title }}{% endblock page_title %}
+    {% block content %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
 
-        .container-md {
-            margin-top: 50px;
-        }
+            .container-md {
+                margin-top: 50px;
+            }
 
-        .minimap-container {
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            padding: 15px;
-        }
+            .minimap-container {
+                border: 1px solid #ced4da;
+                border-radius: 10px;
+                padding: 15px;
+            }
 
-        #minimapButtons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+            #minimapButtons {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
 
-        #quizForm {
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+            #quizForm {
+                background-color: #fff;
+                border: 1px solid #ced4da;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+            .form-group {
+                margin-bottom: 20px;
+            }
 
-        .options-container {
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            padding: 15px;
-        }
+            .options-container {
+                border: 1px solid #ced4da;
+                border-radius: 10px;
+                padding: 15px;
+            }
 
-        .options-container input {
-            margin-bottom: 10px;
-        }
+            .options-container input {
+                margin-bottom: 10px;
+            }
 
-        .action-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-        }
+            .action-buttons {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+            }
 
-        .action-buttons button {
-            width: 32%;
-            margin-top: 8px;
-        }
+            .action-buttons button {
+                width: 32%;
+                margin-top: 8px;
+            }
 
-        .correct-option .form-control {
-            background-color: #bffed3; /* Light green background for correct option */
-            border-color: #00cc00;
-        }
-        .correct-icon {
-            color: rgb(0, 197, 0); /* Color of the tick icon */
-            margin-right: 5px; /* Adjust spacing */
-        }
+            .correct-option .form-control {
+                background-color: #bffed3; /* Light green background for correct option */
+                border-color: #00cc00;
+            }
+            .correct-icon {
+                color: rgb(0, 197, 0); /* Color of the tick icon */
+                margin-right: 5px; /* Adjust spacing */
+            }
 
-    </style>
-    <div class="container-md">
-        <div class="row">
-            <div class="col-md-2 mx-auto">
-                <div class="minimap-container">
-                    <p class="leading-7 mb-4 text-center">Minimap</p>
-                    <div id="minimapButtons">
-                        <!-- Minimap buttons will be dynamically added here -->
+           
+            
+
+        </style>
+        <div class="container-md">
+            <div class="row">
+                <div class="col-md-2 mx-auto">
+                    <div class="minimap-container">
+                        <p class="leading-7 mb-4 text-center">Minimap</p>
+                        <div id="minimapButtons">
+                            {% for question in questions %}
+                            <button class="minimap-btn btn btn-primary h-10 px-4 py-2 " data-question-id="{{ question.id }}" >
+                                <span class="minimap-number">{{ forloop.counter }}</span>
+
+                            </button>
+                            {% endfor %}
+                            <!-- Minimap buttons will be dynamically added here -->
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-10 ">
-                <form id="quizForm" method="POST" class="flex flex-col space-y-4 mx-auto" action="{% url 'quiz_form' course.id %}">
-                    {% csrf_token %}
-                    <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">Create new question</button>
-                    <div class="form-group">
-                        <label class="text-md font-semibold" for="question-title">Question Title</label>
-                        <input type="text" class="form-control" id="question-title" name="question-title"
-                            placeholder="Question title">
-                    </div>
-                    <div id="optionsContainer" class="options-container">
-                        <!-- Options will be dynamically added here -->
-                    </div>
-                    <button id="addOptionBtn" class="btn btn-primary" type="button">Add Option</button>
-                    <div class="action-buttons">
-                        <button id="saveQuestionBtn" class="btn btn-primary" type="button">Save and add new question</button>
-                        <button class="btn btn-secondary" type="reset">Reset</button>
-                    </div>
-                </form>
+                <div class="col-md-10 ">
+                    <form id="quizForm" method="POST" class="flex flex-col space-y-4 mx-auto" data-id="{{ course.id }}" action="{% url 'quiz_form' course.id %}">
+                        {% csrf_token %}
+                        
+                        <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">Create new question</button>
+                        <div class="form-group">
+                            <label class="text-md font-semibold" for="question-title">Question Title</label>
+                            <input type="text" class="form-control" id="question-title" name="question-title" placeholder="Question title" required>
+                        </div>
+                        <div id="optionsContainer" class="options-container">
+                            <!-- Options will be dynamically added here -->
+                        </div>
+                        <button id="addOptionBtn" class="btn btn-primary" type="button">Add Option</button>
+                        <div class="action-buttons">
+                            <button id="saveQuestionBtn" class="btn btn-primary" type="button">Save and add new question</button>
+                            
+                            <input type="hidden" name="question_id" id="question-id" value="">
+                            {% comment %} <button id="updateQuestionBtn" class="btn btn-primary" type="button">Update or Create Question</button> {% endcomment %}
+
+
+                            <button class="btn btn-secondary" type="reset">Reset</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let optionIndex = 1;
-            let markedOption = 0;
-            const optionsContainer = document.getElementById('quizForm');
-            
-            const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = `marked`;
-                hiddenInput.value = '0';
-                optionsContainer.appendChild(hiddenInput);
-            console.log(hiddenInput)
-            function addOption() {
-                const optionsContainer = document.getElementById('optionsContainer');
-                const newOptionInput = document.createElement('input');
-                newOptionInput.className = 'form-control';
-                newOptionInput.name = `option-${optionIndex}`;
-                newOptionInput.type = 'text';
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let optionIndex = 1;
+                let markedOption = 0;
+                const optionsContainer = document.getElementById('quizForm');
+                const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = `marked`;
+                    hiddenInput.value = '0';
+                    optionsContainer.appendChild(hiddenInput);
+                console.log(hiddenInput)
+                function addOption() {
+                    const optionsContainer = document.getElementById('optionsContainer');
+                    const newOptionInput = document.createElement('input');
+                    newOptionInput.className = 'form-control';
+                    newOptionInput.name = `option-${optionIndex}`;
+                    newOptionInput.type = 'text';
 
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'flex flex-col lg:flex-row space-y-2 lg:space-x-2 option-container';
-                optionDiv.appendChild(newOptionInput);
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'flex flex-col lg:flex-row space-y-2 lg:space-x-2 option-container';
+                    optionDiv.appendChild(newOptionInput);
 
-                 
-    
-                const buttonDiv = document.createElement('div');
-                buttonDiv.className = 'flex justify-between flex-1 p-2';
-    
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'btn btn-primary';
-                removeBtn.type = 'button';
-                removeBtn.textContent = 'Remove';
-                removeBtn.addEventListener('click', function () {
-                    optionsContainer.removeChild(optionDiv);
-                });
-    
-                const markCorrectBtn = document.createElement('button');
-                markCorrectBtn.className = 'btn btn-primary mark-as-correct-btn';
-                markCorrectBtn.type = 'button';
-                markCorrectBtn.setAttribute("data-value",optionIndex)
-                markCorrectBtn.textContent = 'Mark as correct';
-                
-                markCorrectBtn.addEventListener('click', function (e) {
-                    // Toggle the correctness status (0 to 1 or 1 to 0)
-
-                    markedOption = e.target.name
-                    hiddenInput.value = markCorrectBtn.getAttribute('data-value')
-                    {% comment %} updateDatabase(optionIndex, hiddenInput.value); {% endcomment %}
-                });
-    
-                buttonDiv.appendChild(removeBtn);
-                buttonDiv.appendChild(markCorrectBtn);
-                optionDiv.appendChild(buttonDiv);
-    
-                optionsContainer.appendChild(optionDiv);
-    
-                optionIndex++;
-            }
-            function updateDatabase(optionIndex, isCorrect) {
-                const formData = new FormData();
-                formData.append('option_index', optionIndex);
-                formData.append('is_correct', isCorrect);
-    
-                fetch('{% url 'quiz_form' course.id %}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);  // Log the server response
-                })
-                .catch(error => {
-                    console.error('Error updating database:', error);
-                });
-            }
-    
-            // Function to get CSRF token from cookies
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-            }
-    
-            function addQuestion() {
-                const minimapButtons = document.getElementById('minimapButtons');
-                const newQuestionBtn = document.createElement('button');
-                newQuestionBtn.className = 'btn btn-primary h-10 px-4 py-2';
-                newQuestionBtn.textContent = minimapButtons.children.length + 1;
-                minimapButtons.appendChild(newQuestionBtn);
-    
-                document.getElementById('optionsContainer').innerHTML = '';
-                addOption();
-            }
-    
-            document.getElementById('addOptionBtn').addEventListener('click', addOption);
-            document.getElementById('addQuestionBtn').addEventListener('click', addQuestion);
-    
-            function submitForm() {
-                const form = document.getElementById('quizForm');
-                const formData = new FormData(form);
-    
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', form.action, true);
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            // Success (modify this part based on your needs)
-                            console.log('Form data sent successfully:', xhr.responseText);
-                        } else {
-                            // Error (modify this part based on your needs)
-                            console.error('Error sending form data:', xhr.status, xhr.statusText);
-                        }
-                    }
-                };
-                xhr.send(formData);
-            }
-    
-            document.getElementById('saveQuestionBtn').addEventListener('click', function () {
-                submitForm();
-                document.getElementById('quizForm').reset();
-                optionIndex = 1;
-                addQuestion();
-            });
-    
-            document.addEventListener('click', function (event) {
-                if (event.target.classList.contains('mark-as-correct-btn')) {
-                    const optionContainer = event.target.closest('.option-container');
-                    const allOptions = document.querySelectorAll('.option-container');
-                    allOptions.forEach(opt => {
-                        opt.classList.remove('correct-option');
+                    
+        
+                    const buttonDiv = document.createElement('div');
+                    buttonDiv.className = 'flex justify-between flex-1 p-2';
+        
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'btn btn-primary';
+                    removeBtn.type = 'button';
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.addEventListener('click', function () {
+                        optionsContainer.removeChild(optionDiv);
                     });
-                    optionContainer.classList.add('correct-option');
+        
+                    const markCorrectBtn = document.createElement('button');
+                    markCorrectBtn.className = 'btn btn-primary mark-as-correct-btn';
+                    markCorrectBtn.type = 'button';
+                    markCorrectBtn.setAttribute("data-value",optionIndex)
+                    markCorrectBtn.textContent = 'Mark as correct';
+                    
+                    markCorrectBtn.addEventListener('click', function (e) {
+                        // Toggle the correctness status (0 to 1 or 1 to 0)
+
+                        markedOption = e.target.name
+                        hiddenInput.value = markCorrectBtn.getAttribute('data-value')
+                        {% comment %} updateDatabase(optionIndex, hiddenInput.value); {% endcomment %}
+                    });
+        
+                    buttonDiv.appendChild(removeBtn);
+                    buttonDiv.appendChild(markCorrectBtn);
+                    optionDiv.appendChild(buttonDiv);
+        
+                    optionsContainer.appendChild(optionDiv);
+        
+                    optionIndex++;
                 }
+                function updateDatabase(optionIndex, isCorrect) {
+                    const formData = new FormData();
+                    formData.append('option_index', optionIndex);
+                    formData.append('is_correct', isCorrect);
+        
+                    fetch('{% url 'quiz_form' course.id %}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);  // Log the server response
+                    })
+                    .catch(error => {
+                        console.error('Error updating database:', error);
+                    });
+                }
+               
+                
+        
+                // Function to get CSRF token from cookies
+                function getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                }
+        
+                function addQuestion() {
+                    const minimapButtons = document.getElementById('minimapButtons');
+                    const newQuestionBtn = document.createElement('button');
+                    newQuestionBtn.className = 'new-btn btn-primary h-10 px-4 py-2';
+                    newQuestionBtn.textContent = minimapButtons.children.length + 1;
+                    minimapButtons.appendChild(newQuestionBtn);
+        
+                    document.getElementById('optionsContainer').innerHTML = '';
+                    addOption();
+                    let inputElement = document.getElementById('question-id');
+                    inputElement.removeAttribute('value');
+                    inputElement.value = ''; // This will clear the input field's value
+
+                   const addOptionBtn = document.getElementById('addOptionBtn');
+                    addOptionBtn.style.display = 'block';
+                    
+
+                    
+                }
+                
+
+
+
+                
+
+                document.getElementById('addOptionBtn').addEventListener('click', addOption);
+                document.getElementById('addQuestionBtn').addEventListener('click', addQuestion);
+        
+                function submitForm() {
+                    const form = document.getElementById('quizForm');
+                    const formData = new FormData(form);
+        
+                
+
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', form.action, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                // Success (modify this part based on your needs)
+                                console.log('Form data sent successfully:', xhr.responseText);
+                            } else {
+                                // Error (modify this part based on your needs)
+                                console.error('Error sending form data:', xhr.status, xhr.statusText);
+                            }
+                        }
+                    };
+                    xhr.send(formData);
+                    
+                }
+        
+                document.getElementById('saveQuestionBtn').addEventListener('click', function () {
+                if (validateForm()){ 
+                    submitForm();
+                    document.getElementById('quizForm').reset();
+                    optionIndex = 1;
+                    addQuestion();
+                    window.location.reload(); // Reload the page
+                 }
+
+                });
+        
+                document.addEventListener('click', function (event) {
+                    if (event.target.classList.contains('mark-as-correct-btn')) {
+                        const optionContainer = event.target.closest('.option-container');
+                        const allOptions = document.querySelectorAll('.option-container');
+                        allOptions.forEach(opt => {
+                            opt.classList.remove('correct-option');
+                        });
+                        optionContainer.classList.add('correct-option');
+                    }
+                });
+        
+                {% comment %} addQuestion(); {% endcomment %}
+
+                document.querySelectorAll('.minimap-btn').forEach(function(button) {
+                    button.addEventListener('click', function(event) {
+                        const questionId = event.target.dataset.questionId;
+                        console.log(event)
+                       
+                        const questions = JSON.parse('{{ questions_json | safe }}');
+                        console.log(questions)
+                        const question = questions.find(q => q.pk === parseInt(questionId));
+                            if (question) {
+                                console.log(question)
+                                displayQuestion(question);
+                                
+                            }
+                        
+                    });
+                });
+
+
+                
+
+
+                function displayQuestion(question) {
+                    document.getElementById('question-title').value = question.title;
+            
+                    // Clear existing options
+                    const optionsContainer = document.getElementById('optionsContainer');
+                    optionsContainer.innerHTML = '';
+                    ///////////////////////////////////////////////////
+                    document.getElementById('question-title').value = question.title;
+                    document.getElementById('question-id').value = question.pk;
+                    // Add options
+                    question.options.forEach((option,index) => {
+
+                        
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'flex flex-col lg:flex-row space-y-2 lg:space-x-2 option-container';
+
+
+                        const newOptionInput = document.createElement('input');
+                        newOptionInput.className = 'form-control';
+                        newOptionInput.type = 'text';
+                        newOptionInput.value = option.text;
+                        newOptionInput.name=`option-${index+1}`
+            
+                        optionDiv.appendChild(newOptionInput);
+                        optionsContainer.appendChild(optionDiv); 
+
+                        if (option.is_correct) {
+                            optionDiv.classList.add('correct-option');
+                        }
+
+                        const buttonDiv = document.createElement('div');
+                        buttonDiv.className = 'flex justify-between flex-1 p-2';
+                
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'btn btn-primary';
+                        removeBtn.type = 'button';
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.addEventListener('click', function () {
+                            optionsContainer.removeChild(optionDiv);
+                        });
+
+                        const markCorrectBtn = document.createElement('button');
+                        markCorrectBtn.className = 'btn btn-primary mark-as-correct-btn';
+                        markCorrectBtn.type = 'button';
+                        markCorrectBtn.textContent = 'Mark as correct';
+                        markCorrectBtn.addEventListener('click', function (e) {
+                            
+                            markedOption = e.target.getAttribute('data-value');
+                            hiddenInput.value = markedOption;
+                            hiddenInput.value = '1'; // Set the hidden input value to '1' when the button is clicked
+
+                        });
+                        const queOpt = document.getElementById('question-id');
+
+                        if(queOpt.hasAttribute('value')){
+                        const optBtn = document.getElementById('addOptionBtn');
+                        optBtn.style.display = 'none';
+                        }
+
+
+                        
+
+                        buttonDiv.appendChild(removeBtn);
+                        buttonDiv.appendChild(markCorrectBtn);
+                        optionDiv.appendChild(newOptionInput);
+                        optionDiv.appendChild(buttonDiv);
+                
+                        optionsContainer.appendChild(optionDiv);
+                        
+
+                       
+                    });
+                }
+
+
+                //validation
+
+                function validateForm() {
+                    const questionTitle = document.getElementById('question-title').value.trim();
+                    const options = document.querySelectorAll('#optionsContainer input.form-control');
+                    let isValid = true;
+                
+                    // Check if the question title is filled out
+                    if (questionTitle === '') {
+                        isValid = false;
+                        alert('Please enter the question title.');
+                        return isValid;
+                    }
+                
+                    // Check if at least two options are filled out
+                    let filledOptionsCount = 0;
+                    options.forEach(option => {
+                        if (option.value.trim() !== '') {
+                            filledOptionsCount++;
+                        }
+                    });
+
+                    // Check if at least two options are filled out
+                    if (filledOptionsCount < 2) {
+                        isValid = false;
+                        alert('Please enter at least two options.');
+                        return isValid;
+                    }
+
+                    
+                    // Check if more than four options are filled out
+                    if (filledOptionsCount > 4) {
+                        isValid = false;
+                        alert('Please enter a maximum of four options.');
+                        return isValid;
+                    }
+
+                    return isValid;
+                } 
+                
+
+            
+
+                
             });
-    
-            addQuestion();
-        });
+        </script>
+
+       <script>
+
     </script>
-    
 
-{% endblock content %}
+        
 
-{% endblock
+    {% endblock content %}
+
+    {% endblock

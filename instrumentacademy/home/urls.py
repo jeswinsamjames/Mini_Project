@@ -105,6 +105,7 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
 
 
 
+
     # path("staff/get_students/", staff_views.get_ students, name='get_students'),
     # path("staff/attendance/fetch/", staff_views.get_student_attendance,
     #      name='get_student_attendance'),
