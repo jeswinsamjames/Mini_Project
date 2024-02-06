@@ -89,8 +89,8 @@
                 <div class="col-md-10 ">
                     <form id="quizForm" method="POST" class="flex flex-col space-y-4 mx-auto" data-id="{{ course.id }}" action="{% url 'quiz_form' course.id %}">
                         {% csrf_token %}
-                        
-                        <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">Create new question</button>
+                    <div id="question-{{ question.id }}" class="question-container">
+                            <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">Create new question</button>
                         <div class="form-group">
                             <label class="text-md font-semibold" for="question-title">Question Title</label>
                             <input type="text" class="form-control" id="question-title" name="question-title" placeholder="Question title" required>
@@ -104,10 +104,12 @@
                             
                             <input type="hidden" name="question_id" id="question-id" value="">
                             {% comment %} <button id="updateQuestionBtn" class="btn btn-primary" type="button">Update or Create Question</button> {% endcomment %}
+                            <button class="delete-btn btn btn-danger" type="button" data-question-id="">Delete </button>
 
 
                             <button class="btn btn-secondary" type="reset">Reset</button>
                         </div>
+                    </div>
                     </form>
                 </div>
             </div>
@@ -144,7 +146,7 @@
                     buttonDiv.className = 'flex justify-between flex-1 p-2';
         
                     const removeBtn = document.createElement('button');
-                    removeBtn.className = 'btn btn-primary';
+                    removeBtn.className = 'btn btn-primary ';
                     removeBtn.type = 'button';
                     removeBtn.textContent = 'Remove';
                     removeBtn.addEventListener('click', function () {
@@ -283,6 +285,8 @@
                 document.querySelectorAll('.minimap-btn').forEach(function(button) {
                     button.addEventListener('click', function(event) {
                         const questionId = event.target.dataset.questionId;
+                        const deleteButton = document.querySelector(".delete-btn");
+                        deleteButton.dataset.questionId = questionId;
                         console.log(event)
                        
                         const questions = JSON.parse('{{ questions_json | safe }}');
@@ -335,7 +339,7 @@
                         buttonDiv.className = 'flex justify-between flex-1 p-2';
                 
                         const removeBtn = document.createElement('button');
-                        removeBtn.className = 'btn btn-primary';
+                        removeBtn.className = 'btn btn_remove btn-primary';
                         removeBtn.type = 'button';
                         removeBtn.textContent = 'Remove';
                         removeBtn.addEventListener('click', function () {
@@ -353,11 +357,20 @@
                             hiddenInput.value = '1'; // Set the hidden input value to '1' when the button is clicked
 
                         });
-                        const queOpt = document.getElementById('question-id');
 
+                        const queOpt = document.getElementById('question-id');
                         if(queOpt.hasAttribute('value')){
                         const optBtn = document.getElementById('addOptionBtn');
                         optBtn.style.display = 'none';
+                        {% comment %} const removeBtns = document.querySelectorAll('.btn_remove');
+                            console.log(removeBtns)
+                        // Loop through each remove button and disable it
+                        removeBtns.forEach(function(removeBtn) {
+                            removeBtn.disabled = true;
+                        }); {% endcomment %}
+                
+
+
                         }
 
 
@@ -375,6 +388,37 @@
                     });
                 }
 
+                document.querySelectorAll('.delete-btn').forEach(function(button) {
+                    button.addEventListener('click', function(event) {
+                        const questionId = event.target.dataset.questionId;
+                        
+                        
+                        // Send a POST request to update the question status
+                        axios.post('{% url 'update_question_status' question_id=0 %}'.replace('0', questionId), {
+                            
+                            is_active: false  // Indicates that the question should be deactivated
+                        })
+                        .then(function (response) {
+                            
+                            // Handle success response
+                            
+                            if (response.data.success) {
+                                const questionContainer = document.getElementById('question-' + questionId);
+                                window.location.reload();
+
+                                if (questionContainer) {
+                                    questionContainer.style.display = 'none';
+                                }
+                            }
+                            
+                        })
+                        .catch(function (error) {
+                            // Handle error
+                            console.error('Error deactivating question:', error);
+                        });
+                    });
+                });
+                
 
                 //validation
 
@@ -416,7 +460,7 @@
                     return isValid;
                 } 
                 
-
+           
             
 
                 
@@ -424,11 +468,11 @@
         </script>
 
        <script>
-
+        
+        
     </script>
 
         
 
     {% endblock content %}
 
-    {% endblock

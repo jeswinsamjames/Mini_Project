@@ -110,7 +110,7 @@
                                             <!-- <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2> -->
                                     
                                             <div class="contentinside">
-                                                <a href="{% url 'student_quiz'    %}" class="quiz-item-link">
+                                                <a href="{% url 'student_quiz' course.id %}" class="quiz-item-link">
                                                     <div class="video-info row align-items-center">
                                                         <div class="col-1 CourseItem_itemIconGrid__3KRju">
                                                             <svg class="bi bi-exclamation-triangle" width="24" height="24" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
@@ -148,7 +148,6 @@
                             <div class="module-container">
                                 
                                 <div class="collapse show">
-                                    <!-- <a href="{% url 'student_quiz'    %}" class="text-info text-decoration-none">Start Learn</a> -->
 
                                     <!-- Claim your course certificate Content Goes Here -->
                                     <div class="container CourseModule_moduleContainer__1v3Qw p-4 rounded bg-light shadow">

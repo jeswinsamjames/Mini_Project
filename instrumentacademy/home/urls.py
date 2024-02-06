@@ -44,11 +44,9 @@ urlpatterns = [
     path('tutor_course_content/<int:course_id>/', student_views.tutor_course_content, name='tutor_course_content'),
     path('scheduled-classes/', student_views.view_scheduled_classes_leaner, name='view_scheduled_classes_leaner'),
     path('course_material/<int:course_id>/', student_views.course_material, name='course_material'),
-    path('student_quiz/', student_views.student_quiz, name='student_quiz'),
     path('update_progress/', student_views.update_progress, name='update_progress'),
     path('get_progress/', student_views.get_progress, name='get_progress'),
-
-
+    path('student_quiz/<int:course_id>/', student_views.student_quiz, name='student_quiz'),
 
 
 
@@ -99,7 +97,9 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
     path('view-course-sessions/<int:course_id>/', tutor_views.view_course_sessions, name='view_course_sessions'),
     path('take-attendance/<int:session_id>/', tutor_views.take_attendance, name='take_attendance'),
 
-     path('quiz_form/<int:course_id>/', tutor_views.quiz_form, name='quiz_form'),
+    path('quiz_form/<int:course_id>/', tutor_views.quiz_form, name='quiz_form'),
+    path('update_question_status/<int:question_id>/', tutor_views.update_question_status, name='update_question_status'),
+
 
 
 

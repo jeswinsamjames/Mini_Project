@@ -478,7 +478,7 @@ def quiz_form(request, course_id):
             return render(request, 'tutor_template/quiz.html', {'error_message': f'An error occurred: {e}','course':course})
     
     # Fetch existing questions for the course
-    questions = Question.objects.filter(course=course)
+    questions = Question.objects.filter(course=course, is_active= True)
     
     # Serialize questions and options to JSON
     questions_json = json.dumps([
@@ -493,6 +493,25 @@ def quiz_form(request, course_id):
     return render(request, 'tutor_template/quiz.html', {'questions': questions,'questions_json' : questions_json,'course':course})
 
 
+@csrf_exempt
+def update_question_status(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    
+    if request.method == 'POST':
+        # Get the JSON data from the request body
+        data = json.loads(request.body.decode('utf-8'))
+        
+        # Retrieve the 'is_active' value from the JSON data
+        is_active = data.get('is_active')
+        print(is_active)
+        if is_active is not None:
+            # Update the question's 'is_active' field and save
+            question.is_active = is_active
+            question.save()
+            return JsonResponse({'success': True})
+    
+    # Return a JsonResponse indicating an invalid request
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
  # ...........END LESSON MATERIAL.............
 
 

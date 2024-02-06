@@ -129,7 +129,9 @@ class Progress(models.Model):
     
 class Question(models.Model):
     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)    
+    title = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)  # Add this field
+    
 
     def __str__(self):
         return self.title
@@ -141,3 +143,41 @@ class Option(models.Model):
 
     def __str__(self):
         return self.text
+    
+class Response(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    option = models.ForeignKey(Option, on_delete=models.PROTECT)
+    score = models.IntegerField(default=0)
+    response_data = models.JSONField()
+
+
+class QuizResponse(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    option = models.ForeignKey(Option, on_delete=models.PROTECT)
+    response_time = models.DateTimeField(auto_now_add=True)
+    is_correct = models.BooleanField(default=False)  # New field to indicate if the response is correct
+
+    class Meta:
+        verbose_name = "Quiz Response"
+        verbose_name_plural = "Quiz Responses"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.question.title}"
+    
+# from django.core.validators import MaxValueValidator, MinValueValidator
+# class QuizCompletion(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+#     score = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
+#     completion_date = models.DateTimeField(auto_now_add=True)
+#     is_completed = models.BooleanField(default=False)
+
+#     class Meta:
+#         verbose_name = "Quiz Completion"
+#         verbose_name_plural = "Quiz Completions"
+
+#     def __str__(self):
+#         return f"{self.user.username} - {self.course.name}"

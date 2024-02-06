@@ -252,8 +252,35 @@ def get_progress(request):
     return JsonResponse({'message': 'Invalid request method'}, status=400)
 
 
-def student_quiz(request):
-    return render(request,'student_template/student_quiz.html')
+# def student_quiz(request):
+
+
+
+#     return render(request,'student_template/student_quiz.html')
+def student_quiz(request, course_id):
+    try:
+        course = CourseDetail.objects.get(pk=course_id)
+        questions = Question.objects.filter(course=course, is_active=True)
+
+        # Serialize questions data to JSON
+        questions_data = []
+        for question in questions:
+            question_data = {
+                'title': question.title,
+                'options': list(question.options.values('text', 'is_correct'))
+            }
+            questions_data.append(question_data)
+
+        questions_json = json.dumps({'course': course.name, 'questions': questions_data})
+        return render(request, 'student_template/student_quiz.html', {'questions_json': questions_json})
+        
+    except CourseDetail.DoesNotExist:
+        # Handle case where the course with the provided course_id does not exist
+        return JsonResponse({'error': 'Course not found'})
+    
+    except Exception as e:
+        # Handle other exceptions
+        return JsonResponse({'error': str(e)})
 
 
 
