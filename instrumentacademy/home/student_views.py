@@ -223,9 +223,10 @@ def update_progress(request):
         try:
             print(lesson_material_id)
             progress_instance = Progress.objects.get(lesson_material_id=lesson_material_id)
-            progress_instance.progress_percentage = progress_percentage
-            progress_instance.lesson_material_id = lesson_material_id
-            progress_instance.save()
+            if progress_instance.progress_percentage < progress_percentage:
+                progress_instance.progress_percentage = progress_percentage
+                progress_instance.lesson_material_id = lesson_material_id
+                progress_instance.save()
             return JsonResponse({'message': 'Progress updated successfully'}, status=200)
         except Progress.DoesNotExist:
             Progress.objects.create(lesson_material_id=lesson_material_id)  
@@ -271,7 +272,7 @@ def student_quiz(request, course_id):
             }
             questions_data.append(question_data)
 
-        questions_json = json.dumps({'course': course.name, 'questions': questions_data})
+        questions_json = json.dumps({'course': course.name, 'questions': questions_data})   
         return render(request, 'student_template/student_quiz.html', {'questions_json': questions_json})
         
     except CourseDetail.DoesNotExist:

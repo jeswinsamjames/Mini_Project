@@ -495,6 +495,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        var globalVar=0;
         var videoList = document.querySelectorAll('.section-list li');
         var videoContainer = document.getElementById('videoContainer');
         var lessonVideo = document.getElementById('lessonVideo');
@@ -541,11 +542,16 @@
 
                         var radius = progressCircle.getAttribute('r');
                         var dashoffset = (2 * Math.PI * radius * (100 - percentage)) / 100;
-
-                        // Update progress circle for the current video
+                        //console.log("123123"+globalVar);
                         progressCircle.style.strokeDashoffset = dashoffset;
-                        loadingText.textContent = Math.round(percentage) + '%';
+                        if (globalVar){
+                            if (Math.round(percentage) > globalVar){
+                                loadingText.textContent = Math.round(percentage) + '%';
 
+
+                            }
+                        }
+                       
                         if (!lessonVideo.paused && !lessonVideo.ended) {
                             requestAnimationFrame(updateProgress);
                         }
@@ -664,6 +670,7 @@
                 // For example, update a div with the progress
                 const currentVideoItem = document.querySelector('.section-list li[data-video-id="' + currentVideoId + '"]');
                 // currentVideoItems.textContent = response.progress_percentage
+                globalVar=Math.round(response.progress_percentage);
                 currentVideoItem.querySelector('.loading').textContent = Math.round(response.progress_percentage) + '%';
 
             } else {

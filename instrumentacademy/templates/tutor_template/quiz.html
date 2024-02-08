@@ -392,32 +392,42 @@
                     button.addEventListener('click', function(event) {
                         const questionId = event.target.dataset.questionId;
                         
+                        const result = confirm('Are you sure you want to delete?');
                         
-                        // Send a POST request to update the question status
-                        axios.post('{% url 'update_question_status' question_id=0 %}'.replace('0', questionId), {
+                        // Check the result of the confirmation box
+                        if (result === true) {
+                            axios.post('{% url 'update_question_status' question_id=0 %}'.replace('0', questionId), {
                             
-                            is_active: false  // Indicates that the question should be deactivated
-                        })
-                        .then(function (response) {
-                            
-                            // Handle success response
-                            
-                            if (response.data.success) {
-                                const questionContainer = document.getElementById('question-' + questionId);
-                                window.location.reload();
-
-                                if (questionContainer) {
-                                    questionContainer.style.display = 'none';
+                                is_active: false  // Indicates that the question should be deactivated
+                            })
+                            .then(function (response) {
+                                
+                                // Handle success response
+                                
+                                if (response.data.success) {
+                                    const questionContainer = document.getElementById('question-' + questionId);
+    
+                                   
+                                    window.location.reload();
+    
+                                    if (questionContainer) {
+                                        questionContainer.style.display = 'none';
+                                    }
                                 }
-                            }
-                            
-                        })
-                        .catch(function (error) {
-                            // Handle error
-                            console.error('Error deactivating question:', error);
-                        });
+                                
+                            })
+                            .catch(function (error) {
+                                // Handle error
+                                console.error('Error deactivating question:', error);
+                            });
+                            // User clicked "OK", proceed with the delete action
+                            alert('Delete confirmed!');
+                        }
+                        // Send a POST request to update the question status
+                        
                     });
                 });
+                
                 
 
                 //validation
@@ -434,6 +444,31 @@
                         return isValid;
                     }
                 
+                    // Check if the question title contains only letters, numbers, and optionally ends with either a '?' or '.'
+                    const titleRegex = /^[A-Za-z0-9\s]+[?.]?$/;
+                    if (!titleRegex.test(questionTitle)) {
+                        isValid = false;
+                        alert('Please enter a title containing only letters and numbers.');
+                        return isValid;
+                    }
+                
+                    // Check if each option input field is filled out
+                    options.forEach(option => {
+                        const optionValue = option.value.trim();
+                        if (optionValue === '') {
+                            isValid = false;
+                            alert('Please fill out all option fields.');
+                            return isValid;
+                        }
+                        if (!/^[a-zA-Z0-9]+$/.test(optionValue)) {
+                            isValid = false;
+                            alert('Option should contain only letters and numbers.');
+                            return isValid;
+                        }
+                    });
+                    
+                    
+                
                     // Check if at least two options are filled out
                     let filledOptionsCount = 0;
                     options.forEach(option => {
@@ -441,26 +476,22 @@
                             filledOptionsCount++;
                         }
                     });
-
-                    // Check if at least two options are filled out
                     if (filledOptionsCount < 2) {
                         isValid = false;
                         alert('Please enter at least two options.');
                         return isValid;
                     }
-
-                    
+                
                     // Check if more than four options are filled out
                     if (filledOptionsCount > 4) {
                         isValid = false;
                         alert('Please enter a maximum of four options.');
                         return isValid;
                     }
-
-                    return isValid;
-                } 
                 
-           
+                    return isValid;
+                }
+                
             
 
                 
