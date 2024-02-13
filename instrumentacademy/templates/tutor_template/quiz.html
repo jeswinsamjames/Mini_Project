@@ -90,25 +90,34 @@
                     <form id="quizForm" method="POST" class="flex flex-col space-y-4 mx-auto" data-id="{{ course.id }}" action="{% url 'quiz_form' course.id %}">
                         {% csrf_token %}
                     <div id="question-{{ question.id }}" class="question-container">
-                            <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">Create new question</button>
-                        <div class="form-group">
+                        <button id="addQuestionBtn" class="btn btn-primary w-100" type="button">
+                            <i class="fas fa-plus-circle"></i> Create new question
+                        </button>
+                                                <div class="form-group">
                             <label class="text-md font-semibold" for="question-title">Question Title</label>
                             <input type="text" class="form-control" id="question-title" name="question-title" placeholder="Question title" required>
                         </div>
                         <div id="optionsContainer" class="options-container">
                             <!-- Options will be dynamically added here -->
                         </div>
-                        <button id="addOptionBtn" class="btn btn-primary" type="button">Add Option</button>
-                        <div class="action-buttons">
-                            <button id="saveQuestionBtn" class="btn btn-primary" type="button">Save and add new question</button>
-                            
+                        <button id="addOptionBtn" class="btn btn-primary" type="button">
+                            <i class="fas fa-plus"></i> Add Option</button>
+                            <div class="action-buttons">
+                            <button id="saveQuestionBtn" class="btn btn-primary" type="button">
+                                <i class="fas fa-save"></i> Save and add new question
+                            </button>
+                                                        
                             <input type="hidden" name="question_id" id="question-id" value="">
                             {% comment %} <button id="updateQuestionBtn" class="btn btn-primary" type="button">Update or Create Question</button> {% endcomment %}
-                            <button class="delete-btn btn btn-danger" type="button" data-question-id="">Delete </button>
+                            <button class="delete-btn btn btn-danger" type="button" data-question-id="">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                            
 
-
-                            <button class="btn btn-secondary" type="reset">Reset</button>
-                        </div>
+                            <button class="btn btn-secondary" type="reset">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                                                    </div>
                     </div>
                     </form>
                 </div>

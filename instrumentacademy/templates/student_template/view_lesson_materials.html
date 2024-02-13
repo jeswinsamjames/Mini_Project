@@ -510,10 +510,10 @@
             var loadingText = videoItem.querySelector('.loading');
 
             videoItem.addEventListener('click', function () {
-                if (currentVideoUrl !== videoUrl) {
+                {% comment %} if (currentVideoUrl !== videoUrl) {
                     // If a new video is clicked, reset progress circles for other videos
                     resetProgressCircles();
-                }
+                } {% endcomment %}
 
                 currentVideoUrl = videoUrl;
 
@@ -636,6 +636,14 @@
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    const isComplete = response.is_complete;
+                    if (isComplete) {
+                        console.log('Congratulations! Youve completed');
+                        }
+                        else{
+                            console.log('not completed');
+                        }
                     console.log('Progress updated successfully');
                 } else {
                     console.error('Failed to update progress');
@@ -647,14 +655,39 @@
 
         // Function to get the current progress from the currently playing video
         function getCurrentProgress() {
+            // Find the current video item
             const currentVideoItem = document.querySelector('.section-list li[data-video-id="' + currentVideoId + '"]');
-            const loadingText = currentVideoItem.querySelector('.loading');
-            per = loadingText.textContent;
-            percentage_value = parseFloat(per)
             
-            return percentage_value
-
+            // Check if the current video item exists
+            if (currentVideoItem) {
+                // Find the loading text element within the current video item
+                const loadingTextElement = currentVideoItem.querySelector('.loading');
+                
+                // Check if the loading text element exists
+                if (loadingTextElement) {
+                    // Extract the progress percentage text content
+                    const progressText = loadingTextElement.textContent;
+                    
+                    // Extract the numerical value of the progress percentage
+                    const progressPercentage = parseFloat(progressText);
+                    
+                    // Check if the extracted value is a valid number
+                    if (!isNaN(progressPercentage)) {
+                        return progressPercentage;
+                    } else {
+                        console.error('Failed to extract progress percentage:', progressText);
+                    }
+                } else {
+                    console.error('Loading text element not found within current video item');
+                }
+            } else {
+                console.error('Current video item not found');
+            }
+        
+            // Return a default value (e.g., 0) or handle the error case as needed
+            return 0; // Default value
         }
+        
 
 
         function getAndDisplayProgress() {

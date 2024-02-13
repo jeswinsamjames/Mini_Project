@@ -200,16 +200,31 @@ def course_material(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     modules = Module.objects.filter(course=course)
     lesson_materials = LessonMaterial.objects.filter(course=course)
-
+    print(lesson_materials)
+    res=True
+    for lesson in lesson_materials:
+        progress=Progress.objects.filter(learner=request.user,lesson_material=lesson)
+        if progress:
+            if not progress[0].is_completed:
+                res=False
+        else:
+            res=False
+    # print(a)
     video_lesson_materials = lesson_materials.filter(
         material_file__icontains='.mp4')  # You can customize the condition based on your file naming convention
     print(modules)
     # Render the course content template with the course, modules, and video lesson materials
-    return render(request, 'student_template/course_materials.html', {
+    context={
         'course': course,
         'modules': modules,
         'video_lesson_materials': video_lesson_materials,  # Pass video lesson materials to the template
-    })
+    }
+    if res:
+        context['key']=True
+    return render(request, 'student_template/course_materials.html', context)
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.http import require_POST
 
 
 @csrf_exempt  # For simplicity. You should handle CSRF properly in production.
@@ -219,21 +234,31 @@ def update_progress(request):
         lesson_material_id = data.get('video_id')
         progress_percentage = data.get('progress_percentage')
 
+
         # Update the progress in your database
         try:
-            print(lesson_material_id)
-            progress_instance = Progress.objects.get(lesson_material_id=lesson_material_id)
-            if progress_instance.progress_percentage < progress_percentage:
+            
+            progress_instance = Progress.objects.get(lesson_material_id=lesson_material_id, learner=request.user)
+            print('123' + str(progress_instance.progress_percentage))
+            if progress_instance.progress_percentage <= progress_percentage:
+                print("sdfsd")
                 progress_instance.progress_percentage = progress_percentage
                 progress_instance.lesson_material_id = lesson_material_id
                 progress_instance.save()
-            return JsonResponse({'message': 'Progress updated successfully'}, status=200)
-        except Progress.DoesNotExist:
-            Progress.objects.create(lesson_material_id=lesson_material_id)  
+                if progress_percentage >= 90:
+                    progress_instance.is_completed = True
+                    progress_instance.save()
+                    return JsonResponse({'message': 'Progress updated successfully'}, status=200)
+                # else:
+                #     return JsonResponse({'message': 'You have already completed this module.'})
+        except Exception as error:
+            print("Error occured while updating progress",error)
+        except ObjectDoesNotExist:
+            # Create a new Progress instance with the current user
+            Progress.objects.create(lesson_material_id=lesson_material_id, learner=request.user)
             return JsonResponse({'message': 'Lesson material not found'}, status=404)
 
     return JsonResponse({'message': 'Invalid request method'}, status=400)
-
 
 
 def get_progress(request):
@@ -244,7 +269,7 @@ def get_progress(request):
         if video_id is not None:
             try:
                 # Assuming you have a model named YourModel with a field progress_percentage
-                progress_instance = Progress.objects.get(lesson_material_id=video_id)
+                progress_instance = Progress.objects.get(lesson_material_id=video_id, learner=request.user)
                 progress_percentage = progress_instance.progress_percentage
                 return JsonResponse({'progress_percentage': progress_percentage}, status=200)
             except Progress.DoesNotExist:
