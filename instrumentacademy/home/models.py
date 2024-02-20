@@ -118,9 +118,10 @@ class Attendance(models.Model):
         return f"{self.learner.username} - {self.class_schedule.course.name} "
     
 class Progress(models.Model):
-   
+    learner = models.ForeignKey(User, on_delete=models.CASCADE)
+
     lesson_material = models.ForeignKey('LessonMaterial', on_delete=models.CASCADE, blank=True, null=True)
-    progress_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    progress_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=1.00)
     is_completed = models.BooleanField(default=False)
     last_accessed = models.DateTimeField(auto_now=True)
 
@@ -131,6 +132,8 @@ class Question(models.Model):
     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)  # Add this field
+    unlock_condition = models.ForeignKey(Progress, on_delete=models.SET_NULL, blank=True, null=True)
+
     
 
     def __str__(self):
@@ -149,23 +152,23 @@ class Response(models.Model):
     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.PROTECT)
     option = models.ForeignKey(Option, on_delete=models.PROTECT)
-    score = models.IntegerField(default=0)
-    response_data = models.JSONField()
+    score = models.IntegerField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Automatically set the score based on correctness of the response
+        self.score = self.option.is_correct
+        super(Response, self).save(*args, **kwargs) 
 
 
-class QuizResponse(models.Model):
+
+class Certificate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT)
-    option = models.ForeignKey(Option, on_delete=models.PROTECT)
-    response_time = models.DateTimeField(auto_now_add=True)
-    is_correct = models.BooleanField(default=False)  # New field to indicate if the response is correct
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    issued_date = models.DateField(auto_now_add=True)
+    # Add any other fields you need for the certificate
 
-    class Meta:
-        verbose_name = "Quiz Response"
-        verbose_name_plural = "Quiz Responses"
-
-    def __str__(self):
-        return f"{self.user.username} - {self.question.title}"
+    def str(self):
+        return f"Certificate for {self.user.username} - {self.course.course_title}"
     
 # from django.core.validators import MaxValueValidator, MinValueValidator
 # class QuizCompletion(models.Model):

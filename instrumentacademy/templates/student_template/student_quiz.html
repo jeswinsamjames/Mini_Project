@@ -15,7 +15,6 @@
 </style>
 <div class="container-md d-flex p-5 m-2">
     <div class="container-md w-25 mx-auto border-end border-lg border-2 p-3 hidden-lg">
-        <p class="leading-7 mb-6">Minimap</p>
         <div class="flex flex-wrap gap-2">
             <!-- Minimap buttons will be dynamically added here -->
         </div>
@@ -50,7 +49,6 @@
                     </svg>
                     Submit
                 </button>
-                
             </div>
         </div>
     </main>
@@ -59,10 +57,13 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const data = JSON.parse('{{ questions_json|escapejs }}');
+        
+
         let questions = data.questions;
         console.log(questions);
 
         let currentQuestionIndex = 0;
+        let userScore = 0; // Variable to track user's score
         let chancesRemaining = 2; // Variable to track remaining chances for each question
 
         const optionsContainer = document.getElementById('options-container');
@@ -70,6 +71,8 @@
         const saveButton = document.getElementById('save-quiz');
         const nextButton = document.querySelector('.btn-primary.next-question');
         const previousButton = document.querySelector('.btn-primary.previous-question');
+        const scoreDisplay = document.getElementById('score-display'); // Display area for user's score
+        
 
         function displayQuestion() {
             const currentQuestion = questions[currentQuestionIndex];
@@ -103,32 +106,70 @@
         }
 
         function evaluateResponses() {
-            // Remove background color from all options
-            optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2').forEach(optionDiv => {
-                optionDiv.style.backgroundColor = ''; // Remove background color
-            });
+            console.log("connected")
+    // Remove background color from all options
+    optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2').forEach(optionDiv => {
+        optionDiv.style.backgroundColor = ''; // Remove background color
+    });
 
-            // Loop through all options and check if they are correct
-            optionsContainer.querySelectorAll('input[type="radio"]').forEach((input, index) => {
-                const optionDiv = input.parentElement;
-                const currentQuestion = questions[currentQuestionIndex];
-                const isCorrect = currentQuestion.options[index].is_correct;
+    // Loop through all options and check if they are correct
+    optionsContainer.querySelectorAll('input[type="radio"]').forEach((input, index) => {
+        const optionDiv = input.parentElement;
+        const currentQuestion = questions[currentQuestionIndex];
+        let questionId = null; // Initialize with a default value
+        if (currentQuestion && currentQuestion.id !== undefined) {
+            questionId = currentQuestion.id;
+        }        
+        const isCorrect = currentQuestion.options[index].is_correct;
 
-                // Mark the option with appropriate color based on correctness
-                if (input.checked) {
-                    optionDiv.style.backgroundColor = isCorrect ? 'lightgreen' : 'lightcoral';
-                    // Decrement chances remaining if an option is selected
-                    chancesRemaining--;
-                }
-            });
-
-            // If chances are exhausted, display the correct answer
-            if (chancesRemaining === 0) {
-                displayCorrectAnswer();
-                submitButton.style.display = 'none';
-                nextButton.style.display = 'block'; // Reappear next button for the next question
+        // Mark the option with appropriate color based on correctness
+        if (input.checked) {
+            optionDiv.style.backgroundColor = isCorrect ? 'lightgreen' : 'lightcoral';
+            // Increment user's score if the option is correct
+            if (isCorrect) {
+                userScore++;
             }
+            // Decrement chances remaining if an option is selected
+            chancesRemaining--;
+
+            // Send user response to the server
+            const responseData = {
+                questionId: currentQuestion.id,  // Use the id property
+                selectedOption: currentQuestion.options[index].id,
+                isCorrect: isCorrect
+            };
+            console.log(currentQuestion);
+
+            fetch('/student_quiz/{{ course.id }}/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                    // Add any additional headers as needed
+                },
+                body: JSON.stringify({responseData})
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle successful response from server
+                } else {
+                    // Handle error response from server
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting response:', error);
+            });
         }
+    });
+
+    // If chances are exhausted, display the correct answer and update score
+    if (chancesRemaining === 0) {
+        displayCorrectAnswer();
+        submitButton.style.display = 'none';
+        nextButton.style.display = 'block'; // Reappear next button for the next question
+        scoreDisplay.textContent = `Your Score: ${userScore} / ${questions.length}`;
+    }
+}
 
         function nextQuestion() {
             currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
@@ -170,6 +211,7 @@
         });
     });
 </script>
+
 
 
 

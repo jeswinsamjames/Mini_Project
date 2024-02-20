@@ -45,35 +45,50 @@
                                                 <ul class="section-list collapse" id="module{{ module.id }}">
                                                     {% for lesson in video_lesson_materials %}
                                                     {% if lesson.module == module %}
-                                                    <div class="contentinside">
-                                                        <li class="videodiv" data-video-url="{{ lesson.material_file.url }}" data-lesson-url="{{ lesson.video_url }}">
-                                                            <a href="/tutor_course_content/{{ course.id }}">
-                                                            <div class="video-info row align-items-center">
-                                                                <div class="col-1 CourseItem_itemIconGrid__3KRju">
-                                                                    <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path d="M8 5v14l11-7z"></path>
-                                                                    </svg>
-                                                                </div>
-                                                                <span class="video-title col" style="color: black;">{{ lesson.title }}</span>
-                                                                <div class="col-3 d-flex align-items-center" style="height: 50px;"> <!-- Adjust the height value as needed -->
-                                                                    <svg class="progress" width="50" height="50">
-                                                                        <circle class="progress-circledummy" cx="25" cy="25" stroke="rgba(169, 169, 169, 0.5)" r="20" fill="transparent" stroke-width="2" />
-                                                                        <circle class="progress-circle" cx="25" cy="25" stroke="blue" r="20" fill="transparent" stroke-width="2" />
-                                                                        <text class="loading" fill="blue" x="25" y="25" alignment-baseline="middle" text-anchor="middle"></text>
-                                                                    </svg>
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                            
-                                                            
-                                                            
-                                                        </li>
-                                                    </div>
+                                                        <div class="contentinside">
+                                                            <li class="videodiv" data-video-url="{{ lesson.material_file.url }}" data-lesson-url="{{ lesson.video_url }}">
+                                                                <a href="/tutor_course_content/{{ course.id }}">
+                                                                    <div class="video-info row align-items-center">
+                                                                        <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                                                            <svg class="bi bi-film PageItem_videoIcon__3Bpn_ CustomIcons_coloured__27h9V CustomIcons_roundedIcon__qBQvT CustomIcons_videoIcon__14rLc text-primary" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                                <path d="M8 5v14l11-7z"></path>
+                                                                            </svg>
+                                                                        </div>
+                                                                        <span class="video-title col" style="color: black;">{{ lesson.title }}</span>
+                                                                        <!-- Filter progress list for current lesson -->
+                                                                        {% for progress in progress_list %}
+                                                                            {% if progress.lesson_material == lesson %}
+                                                                                <!-- Display progress percentage -->
+                                                                                {% comment %} <span>{{ progress.progress_percentage }}</span> {% endcomment %}
+                                                                                <!-- Display progress circle -->
+                                                                                <div class="col-3 d-flex align-items-center" style="height: 50px;"> <!-- Adjust the height value as needed -->
+                                                                                    <svg class="progress" width="50" height="50">
+                                                                                        <!-- Background circle -->
+                                                                                        <circle class="progress-circle-background" cx="25" cy="25" r="20" stroke="rgba(169, 169, 169, 0.5)" fill="transparent" stroke-width="2" />
+                                                                                    
+                                                                                        <!-- Progress circle -->
+                                                                                        {% comment %} <circle class="progress-circle" data-progress="{{ progress.progress_percentage }}" cx="25" cy="25" r="20" stroke="blue" fill="transparent" stroke-width="2" /> {% endcomment %}
+                                                                                    
+                                                                                        <!-- Text to display progress percentage -->
+                                                                                        <text class="loading" fill="blue" x="25" y="25" alignment-baseline="middle" text-anchor="middle">
+                                                                                            {{ progress.progress_percentage|floatformat:0 }}%
+                                                                                        </text>
+                                                                                                                                                                            </svg>
+                                                                                </div>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                        </div>
                                                     {% endif %}
-                                                    {% endfor %}
-                                                    {% if not video_lesson_materials|length %}
+                                                {% endfor %}
+                                                {% if not video_lesson_materials|length %}
                                                     <li>No content available right now</li>
-                                                    {% endif %}
+                                                {% endif %}
+                                                
+                                                
+
                                                 </ul>
                                             </li>
                                             {% endfor %}
@@ -110,6 +125,7 @@
                                             <!-- <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2> -->
                                     
                                             <div class="contentinside">
+                                                {% if key %}
                                                 <a href="{% url 'student_quiz' course.id %}" class="quiz-item-link">
                                                     <div class="video-info row align-items-center">
                                                         <div class="col-1 CourseItem_itemIconGrid__3KRju">
@@ -130,6 +146,26 @@
                                                         
                                                     </div>
                                                 </a>
+                                                {% else %}
+                                                <div class="video-info row align-items-center">
+                                                    <div class="col-1 CourseItem_itemIconGrid__3KRju">
+                                                        <svg class="bi bi-exclamation-triangle" width="24" height="24" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M8.524 1.753a1 1 0 0 0-1.048 0l-6 4.5A1 1 0 0 0 1 7v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-.476-.747l-6-4.5zM8 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0-8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                                        </svg>
+                                                        
+                                                        
+                                                        
+                                                    </div>
+                                                    <span class="video-title col " style="color: red;">Finish videos before attending quiz</span>
+                                                    <div class="col-1 CourseItem_itemIconGrid__3KRju d-flex align-items-center">
+                                                        <!-- Lock Icon -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 50 50">
+                                                            <path d="M 25 3 C 18.363281 3 13 8.363281 13 15 L 13 20 L 9 20 C 7.300781 20 6 21.300781 6 23 L 6 47 C 6 48.699219 7.300781 50 9 50 L 41 50 C 42.699219 50 44 48.699219 44 47 L 44 23 C 44 21.300781 42.699219 20 41 20 L 37 20 L 37 15 C 37 8.363281 31.636719 3 25 3 Z M 25 5 C 30.566406 5 35 9.433594 35 15 L 35 20 L 15 20 L 15 15 C 15 9.433594 19.433594 5 25 5 Z M 25 30 C 26.699219 30 28 31.300781 28 33 C 28 33.898438 27.601563 34.6875 27 35.1875 L 27 38 C 27 39.101563 26.101563 40 25 40 C 23.898438 40 23 39.101563 23 38 L 23 35.1875 C 22.398438 34.6875 22 33.898438 22 33 C 22 31.300781 23.300781 30 25 30 Z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    
+                                                </div>
+                                                {% endif %}
                                             </div>
                                     
                                         </div>
@@ -163,7 +199,7 @@
                                                 <!-- <h2 style="font-weight: bold; margin-top: 10px;">Course Content</h2> -->
                                         
                                                 <div class="contentinside">
-                                                    <a href="/tutor_course_content/{{ course.id }}" class="quiz-item-link">
+                                                    <a href="{% url 'view_certificate' course_id=course.id %}" class="certificate-button">
                                                         <div class="video-info row align-items-center">
                                                             <div class="col-1 CourseItem_itemIconGrid__3KRju">
                                                                 <svg class="bi bi-exclamation-triangle" width="24" height="24" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
@@ -172,7 +208,9 @@
                                                                 
                                                                 
                                                             </div>
-                                                            <span class="video-title col" style="color: black;">Claim Your Course Certificate</span>
+                                                            <span class="video-title col" style="color: black;">Download Certificate</span>
+                                                                           
+
                                                             <div class="col-1 CourseItem_itemIconGrid__3KRju d-flex align-items-center">
                                                                 <!-- Lock Icon -->
                                                                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 50 50">
@@ -207,7 +245,33 @@
              var courseContent = document.getElementById('courseContent');
          courseContent.classList.toggle('show');
      });
+
+
 </script>
+{% comment %} <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const progressCircles = document.querySelectorAll('.progress-circle');
+        
+        progressCircles.forEach(function(circle) {
+            const progressPercentage = parseFloat(circle.dataset.progress);
+            const adjustedPercentage = Math.round(progressPercentage * 0.942);
+            
+            // Update progress circle
+            circle.setAttribute('stroke-dasharray', `${adjustedPercentage}, 94.2`);
+        });
+    });
+</script> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
 <style>
     .quiz-item-link {
     text-decoration: none;

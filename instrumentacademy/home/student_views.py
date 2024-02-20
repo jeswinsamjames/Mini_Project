@@ -199,17 +199,34 @@ def student_view_attendance(request):
 def course_material(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     modules = Module.objects.filter(course=course)
-    lesson_materials = LessonMaterial.objects.filter(course=course)
-
+    lesson_materials = LessonMaterial.objects.filter(course=course) 
+   
+    res=True
+    for lesson in lesson_materials:
+        progress=Progress.objects.filter(learner=request.user,lesson_material=lesson)
+        
+        if progress:
+            if not progress[0].is_completed:
+                res=False
+        else:
+            res=False
+    # print(a)
     video_lesson_materials = lesson_materials.filter(
         material_file__icontains='.mp4')  # You can customize the condition based on your file naming convention
-    print(modules)
-    # Render the course content template with the course, modules, and video lesson materials
-    return render(request, 'student_template/course_materials.html', {
+    progress_list = Progress.objects.filter(learner=request.user, lesson_material__in=video_lesson_materials)
+
+
+    context={
         'course': course,
         'modules': modules,
-        'video_lesson_materials': video_lesson_materials,  # Pass video lesson materials to the template
-    })
+        'video_lesson_materials': video_lesson_materials,
+        'progress':progress,  # Pass video lesson materials to the template
+        'progress_list': progress_list,
+    }
+    if res:
+        context['key']=True
+    return render(request, 'student_template/course_materials.html', context)
+
 
 
 @csrf_exempt  # For simplicity. You should handle CSRF properly in production.
@@ -222,14 +239,18 @@ def update_progress(request):
         # Update the progress in your database
         try:
             print(lesson_material_id)
-            progress_instance = Progress.objects.get(lesson_material_id=lesson_material_id)
+            progress_instance = Progress.objects.get(lesson_material_id=lesson_material_id,  learner=request.user)
             if progress_instance.progress_percentage < progress_percentage:
                 progress_instance.progress_percentage = progress_percentage
                 progress_instance.lesson_material_id = lesson_material_id
                 progress_instance.save()
+                if progress_percentage >= 90:
+                    progress_instance.is_completed = True
+                    progress_instance.save()
+                    return JsonResponse({'message': 'Progress updated successfully'}, status=200)
             return JsonResponse({'message': 'Progress updated successfully'}, status=200)
         except Progress.DoesNotExist:
-            Progress.objects.create(lesson_material_id=lesson_material_id)  
+            Progress.objects.create(lesson_material_id=lesson_material_id, learner=request.user)  
             return JsonResponse({'message': 'Lesson material not found'}, status=404)
 
     return JsonResponse({'message': 'Invalid request method'}, status=400)
@@ -244,7 +265,7 @@ def get_progress(request):
         if video_id is not None:
             try:
                 # Assuming you have a model named YourModel with a field progress_percentage
-                progress_instance = Progress.objects.get(lesson_material_id=video_id)
+                progress_instance = Progress.objects.get(lesson_material_id=video_id, learner=request.user)
                 progress_percentage = progress_instance.progress_percentage
                 return JsonResponse({'progress_percentage': progress_percentage}, status=200)
             except Progress.DoesNotExist:
@@ -258,30 +279,170 @@ def get_progress(request):
 
 
 #     return render(request,'student_template/student_quiz.html')
+
+from django.http import JsonResponse
+@csrf_exempt
 def student_quiz(request, course_id):
-    try:
-        course = CourseDetail.objects.get(pk=course_id)
-        questions = Question.objects.filter(course=course, is_active=True)
+    if request.method == 'POST':
+        try:
+            course = CourseDetail.objects.get(pk=course_id)
+            questions = Question.objects.filter(course=course, is_active=True)
 
-        # Serialize questions data to JSON
-        questions_data = []
-        for question in questions:
-            question_data = {
-                'title': question.title,
-                'options': list(question.options.values('text', 'is_correct'))
-            }
-            questions_data.append(question_data)
+            # Retrieve user's responses from the request
+            print("heelooo")
+            data = json.loads(request.body.decode('utf-8'))
 
-        questions_json = json.dumps({'course': course.name, 'questions': questions_data})   
-        return render(request, 'student_template/student_quiz.html', {'questions_json': questions_json})
-        
-    except CourseDetail.DoesNotExist:
-        # Handle case where the course with the provided course_id does not exist
-        return JsonResponse({'error': 'Course not found'})
+            user_responses = data.get('responseData')
+            
+            print(user_responses)
+
+            # Calculate the score based on user's responses
+
+            # Save the user's score to the database or any other necessary action
+            # Example: Assuming there is a UserProfile model linked to User
+            if user_responses:
+                print("hiiii")
+                    
+                    # Iterate through user responses and save them
+                question_id = user_responses.get('questionId')
+                option_id = user_responses.get('selectedOption')
+                is_correct = user_responses.get('isCorrect')
+                print(question_id)
+
+                # Save the response to the database
+                response = Response.objects.create(
+                    user=request.user,
+                    course=course,
+                    question_id=question_id,
+                    option_id=option_id,
+                    score=is_correct
+                )
+                print(response)
+                response.save()
+
+                return JsonResponse({'success': 'Quiz submitted successfully'})
+
+
+            return JsonResponse({'success': 'Quiz submitted successfully', 'score': score})
+
+        except CourseDetail.DoesNotExist:
+            return JsonResponse({'error': 'Course not found'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+    else:
+        try:
+            course = CourseDetail.objects.get(pk=course_id)
+            questions = Question.objects.filter(course=course, is_active=True)
+
+            # Serialize questions data to JSON
+            questions_data = []
+            for question in questions:
+                question_data = {
+                    'id': question.id,
+                    'title': question.title,
+                    'options': list(question.options.values('id','text', 'is_correct'))
+                }
+                questions_data.append(question_data)
+
+            questions_json = json.dumps({'course': course.name, 'questions': questions_data})   
+            return render(request, 'student_template/student_quiz.html', {'questions_json': questions_json, 'course': course})
+
+        except CourseDetail.DoesNotExist:
+            return JsonResponse({'error': 'Course not found'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+
+
+
+
+
+
+import pdfkit
+from django.template import Context, loader
+
+def generate_certificate(request, course_id):
+    # Fetch course details, user name, and other required data
+    course = CourseDetail.objects.get(pk=course_id)
+    user = request.user
+    existing_certificate = Certificate.objects.filter(user=user, course=course).first()
+
+    if existing_certificate:
+        # If a certificate already exists, return it without creating a new one
+        return existing_certificate
     
-    except Exception as e:
-        # Handle other exceptions
-        return JsonResponse({'error': str(e)})
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    # Create and save the certificate in the database
+    certificate = Certificate(user=user, course=course, issued_date=current_date)
+    certificate.save()
+
+    return certificate
+
+def view_certificate(request, course_id):
+
+    course = CourseDetail.objects.get(pk=course_id)  # Adjust this based on your models
+    #current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    certificate = generate_certificate(request, course_id)
+    if isinstance(certificate, HttpResponse):
+        return certificate  
+    context = {
+        'course': certificate.course,
+        'current_date': certificate.issued_date.strftime("%Y-%m-%d"),
+        'user': certificate.user,
+        'certificate_id': certificate.id ,
+    }
+    
+    return render(request, 'student_template/download_certificate.html', context)
+
+
+
+def download_certificate(request, certificate_id):
+
+    certificate = get_object_or_404(Certificate, pk=certificate_id)
+
+
+    # Load the HTML template as a Django template
+    template = loader.get_template('student_template/download_certificate.html')
+
+    # Define the context as a dictionary
+    print(certificate.id)
+    context = {
+        'user': certificate.user,
+        'course': certificate.course,
+        'current_date': certificate.issued_date.strftime("%Y-%m-%d"),
+        'certificate':certificate,
+        'download':True
+    }
+
+    # Render the template with the context
+    rendered_html = template.render(context)
+
+    # Create a PDF response object
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{certificate.user.username}_certificate.pdf"'
+
+    # Specify the path to wkhtmltopdf executable in a list of options
+    pdfkit_options = {
+        'page-size': 'A4',
+        'margin-top': '0mm',
+        'margin-right': '0mm',
+        'margin-bottom': '0mm',
+        'margin-left': '0mm',
+        'encoding': 'UTF-8',
+        'no-outline': None,
+        'quiet': '',  # Disable wkhtmltopdf console output
+    }
+
+    # Generate the PDF from the HTML content using pdfkit with the config
+    pdf_data = pdfkit.from_string(rendered_html, False, options=pdfkit_options, configuration=pdfkit.configuration(wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'))
+
+    # Write the PDF data to the response
+    response.write(pdf_data)
+
+    return response
 
 
 

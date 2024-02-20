@@ -636,6 +636,14 @@
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    const isComplete = response.is_complete;
+                    if (isComplete) {
+                        console.log('Congratulations! Youve completed');
+                        }
+                        else{
+                            console.log('not completed');
+                        }
                     console.log('Progress updated successfully');
                 } else {
                     console.error('Failed to update progress');

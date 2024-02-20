@@ -48,6 +48,11 @@ urlpatterns = [
     path('get_progress/', student_views.get_progress, name='get_progress'),
     path('student_quiz/<int:course_id>/', student_views.student_quiz, name='student_quiz'),
 
+    path('view_certificate/<int:course_id>/', student_views.view_certificate, name='view_certificate'),
+    path('generate_certificate/<int:course_id>/', student_views.generate_certificate, name='generate_certificate'),
+    path('download_certificate/<int:certificate_id>/', student_views.download_certificate, name='download_certificate'),
+
+
 
 
     #<<<<<<<<<<<<<<staff>>>>>>>>>>>>>>>
