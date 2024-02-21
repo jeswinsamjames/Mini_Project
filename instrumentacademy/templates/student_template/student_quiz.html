@@ -13,73 +13,89 @@
     
     }
 </style>
-<div class="container-md d-flex p-5 m-2">
-    <div class="container-md w-25 mx-auto border-end border-lg border-2 p-3 hidden-lg">
-        <div class="flex flex-wrap gap-2">
-            <!-- Minimap buttons will be dynamically added here -->
-        </div>
-    </div>
+
+<div class="container_main d-flex justify-content-center align-items-center p-5 m-lg-5 ">
+<div class="container-md d-flex justify-content-center align-items-center p-2 m-2 border rounded shadow bg-light">
+    
     <main class="p-3 w-100">
         <div class="container-md mx-auto">
-            <div class="question border-2 border-bottom pb-4">
-                <h2 class="text-lg "></h2>
-                <p class="text-md mb-4 bright-bold"></p>
-                <div class="flex flex-col space-y-2 mt-4" id="options-container">
-                    <!-- Options will be dynamically added here -->
+            
+            <div class="question border-2 border-bottom pb-4 d-flex">
+                <!-- Left side content -->
+                <div class="w-50 p-3">
+                    <div>
+                        <h2 class="text-lg"></h2>
+                        <p class="text-md mb-4 bright-bold fs-6 fst-italic"></p>
+                    </div>
+                </div>
+                <!-- Right side options container -->
+                <div class="separator-vertical bg-dark shadow" style="width: 1px;"></div>
+
+                <div class="w-50 p-3">
+                    <p class="fw-bold fs-5 ">Answer Choice</p>
+                    <p>Select only one option</p>
+                    <div class="flex flex-col space-y-2 mt-4" id="options-container">
+                        <!-- Options will be dynamically added here -->
+                    </div>
                 </div>
             </div>
+            
             <div class="flex flex-wrap flex-col lg:flex-row space-y-2 lg:space-y-0 lg:items-center lg:space-x-2">
-                <button class="btn btn-primary h-10 px-4 py-2 previous-question">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m15 18-6-6 6-6"></path>
-                    </svg>
-                    Previous Question
-                </button>
-                <button class="btn btn-primary h-10 px-4 py-2 next-question">
-                    Next Question
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m9 18 6-6-6-6"></path>
-                    </svg>
-                </button>
-                <button class="btn btn-primary h-10 px-4 py-2" id="submit-quiz">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                        <polyline points="7 3 7 8 15 8"></polyline>
-                    </svg>
-                    Submit
-                </button>
+                
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <div class="fw-medium fs-6 fst-italic" id="score-display"> Score= {{ total_score }}/{{ total_attempted_questions }} </div>
+                    <div>
+                        <button class="btn btn-primary h-10 px-4 py-2 previous-question">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6"></path>
+                            </svg>
+                            Previous 
+                        </button>
+                        <button class="btn btn-primary h-10 px-4 py-2 next-question">
+                            Next 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </button>
+                        <button class="btn btn-primary h-10 px-4 py-2" id="submit-quiz">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Submit
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+            
+
             </div>
         </div>
     </main>
+</div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const data = JSON.parse('{{ questions_json|escapejs }}');
-        
-
         let questions = data.questions;
         console.log(questions);
-
         let currentQuestionIndex = 0;
         let userScore = 0; // Variable to track user's score
-        let chancesRemaining = 2; // Variable to track remaining chances for each question
-
         const optionsContainer = document.getElementById('options-container');
         const submitButton = document.getElementById('submit-quiz');
         const saveButton = document.getElementById('save-quiz');
         const nextButton = document.querySelector('.btn-primary.next-question');
         const previousButton = document.querySelector('.btn-primary.previous-question');
         const scoreDisplay = document.getElementById('score-display'); // Display area for user's score
-        
 
         function displayQuestion() {
             const currentQuestion = questions[currentQuestionIndex];
             if (currentQuestion) {
                 // Reset chances remaining for each question
                 chancesRemaining = 2;
-
                 // Display question title
                 document.querySelector('.question h2').textContent = `Question ${currentQuestionIndex + 1}`;
                 // Display question text
@@ -100,96 +116,111 @@
                     label.textContent = option.text;
                     optionDiv.appendChild(input);
                     optionDiv.appendChild(label);
+
+                    // Retrieve user's response from local storage and set the background color
+                    const storedResponse = localStorage.getItem(`response_${currentQuestion.id}`);
+                    if (storedResponse) {
+                        const response = JSON.parse(storedResponse);
+                        if (response.selectedOption === option.id) {
+                            optionDiv.style.backgroundColor = response.isCorrect ? 'lightgreen' : 'lightcoral';
+                            input.checked = true;
+                        }
+                    }
+
                     optionsContainer.appendChild(optionDiv);
                 });
             }
         }
 
         function evaluateResponses() {
-            console.log("connected")
-    // Remove background color from all options
-    optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2').forEach(optionDiv => {
-        optionDiv.style.backgroundColor = ''; // Remove background color
-    });
-
-    // Loop through all options and check if they are correct
-    optionsContainer.querySelectorAll('input[type="radio"]').forEach((input, index) => {
-        const optionDiv = input.parentElement;
-        const currentQuestion = questions[currentQuestionIndex];
-        let questionId = null; // Initialize with a default value
-        if (currentQuestion && currentQuestion.id !== undefined) {
-            questionId = currentQuestion.id;
-        }        
-        const isCorrect = currentQuestion.options[index].is_correct;
-
-        // Mark the option with appropriate color based on correctness
-        if (input.checked) {
-            optionDiv.style.backgroundColor = isCorrect ? 'lightgreen' : 'lightcoral';
-            // Increment user's score if the option is correct
-            if (isCorrect) {
-                userScore++;
-            }
-            // Decrement chances remaining if an option is selected
-            chancesRemaining--;
-
-            // Send user response to the server
-            const responseData = {
-                questionId: currentQuestion.id,  // Use the id property
-                selectedOption: currentQuestion.options[index].id,
-                isCorrect: isCorrect
-            };
-            console.log(currentQuestion);
-
-            fetch('/student_quiz/{{ course.id }}/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                    // Add any additional headers as needed
-                },
-                body: JSON.stringify({responseData})
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Handle successful response from server
-                } else {
-                    // Handle error response from server
-                }
-            })
-            .catch(error => {
-                console.error('Error submitting response:', error);
+            console.log("connected");
+            // Remove background color from all options
+            optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2').forEach(optionDiv => {
+                optionDiv.style.backgroundColor = ''; // Remove background color
             });
-        }
-    });
 
-    // If chances are exhausted, display the correct answer and update score
-    if (chancesRemaining === 0) {
-        displayCorrectAnswer();
-        submitButton.style.display = 'none';
-        nextButton.style.display = 'block'; // Reappear next button for the next question
-        scoreDisplay.textContent = `Your Score: ${userScore} / ${questions.length}`;
-    }
-}
+            // Loop through all options and check if they are correct
+            optionsContainer.querySelectorAll('input[type="radio"]').forEach((input, index) => {
+                const optionDiv = input.parentElement;
+                const currentQuestion = questions[currentQuestionIndex];
+                const isCorrect = currentQuestion.options[index].is_correct;
+
+                // Mark the option with appropriate color based on correctness
+                if (input.checked) {
+                    optionDiv.style.backgroundColor = isCorrect ? 'lightgreen' : 'lightcoral';
+                    // Increment user's score if the option is correct
+                    if (isCorrect) {
+                        userScore++;
+                    }
+                    // Decrement chances remaining if an option is selected
+                    chancesRemaining--;
+
+                    // If the option is incorrect, display the correct answer
+                    if (!isCorrect) {
+                        displayCorrectAnswer();
+                    }
+
+                    // Store user response in local storage
+                    const responseData = {
+                        questionId: currentQuestion.id,
+                        selectedOption: currentQuestion.options[index].id,
+                        isCorrect: isCorrect
+                    };
+                    localStorage.setItem(`response_${currentQuestion.id}`, JSON.stringify(responseData));
+
+                    // Send user response to the server
+                    fetch('/student_quiz/{{ course.id }}/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({responseData})
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Handle successful response from server
+                        } else {
+                            // Handle error response from server
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting response:', error);
+                    });
+                }
+            });
+            scoreDisplay.textContent = `Score: ${userScore} / ${totalQuestions}`;
+
+
+        }
 
         function nextQuestion() {
             currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
             displayQuestion();
-            submitButton.style.display = 'block'; // Reappear submit button for the next question
         }
 
         function displayCorrectAnswer() {
             const currentQuestion = questions[currentQuestionIndex];
             const correctOptionIndex = currentQuestion.options.findIndex(option => option.is_correct);
 
-            // Display the correct answer by marking the option with a special class
+            // Display the correct answer by marking the option with a special class initially
             const correctOptionDiv = optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2')[correctOptionIndex];
             correctOptionDiv.classList.add('correct-answer');
+
+            // Loop through all options and check if the user selected the correct option
+            optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2').forEach(optionDiv => {
+                const isCorrectOption = optionDiv.classList.contains('correct-answer');
+                if (isCorrectOption) {
+                    optionDiv.classList.add('selected-correct');
+                } else {
+                    optionDiv.classList.add('selected-incorrect');
+                }
+            });
         }
 
         function previousQuestion() {
             currentQuestionIndex = (currentQuestionIndex - 1 + questions.length) % questions.length;
             displayQuestion();
-            // submitButton.style.display = 'block'; // Reappear submit button for the previous question
         }
 
         // Event listeners for the Next and Previous Question buttons
@@ -211,6 +242,10 @@
         });
     });
 </script>
+
+
+
+
 
 
 

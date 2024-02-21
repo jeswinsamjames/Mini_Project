@@ -281,6 +281,8 @@ def get_progress(request):
 #     return render(request,'student_template/student_quiz.html')
 
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+
 @csrf_exempt
 def student_quiz(request, course_id):
     if request.method == 'POST':
@@ -289,41 +291,32 @@ def student_quiz(request, course_id):
             questions = Question.objects.filter(course=course, is_active=True)
 
             # Retrieve user's responses from the request
-            print("heelooo")
             data = json.loads(request.body.decode('utf-8'))
-
             user_responses = data.get('responseData')
             
-            print(user_responses)
-
-            # Calculate the score based on user's responses
-
-            # Save the user's score to the database or any other necessary action
-            # Example: Assuming there is a UserProfile model linked to User
             if user_responses:
-                print("hiiii")
-                    
-                    # Iterate through user responses and save them
                 question_id = user_responses.get('questionId')
                 option_id = user_responses.get('selectedOption')
                 is_correct = user_responses.get('isCorrect')
-                print(question_id)
 
-                # Save the response to the database
-                response = Response.objects.create(
-                    user=request.user,
-                    course=course,
-                    question_id=question_id,
-                    option_id=option_id,
-                    score=is_correct
-                )
-                print(response)
-                response.save()
+                # Check if a response already exists for this user and question
+                try:
+                    response = Response.objects.get(user=request.user, question_id=question_id)
+                    # Update the existing response with the new option selected by the user
+                    response.option_id = option_id
+                    response.score = is_correct
+                    response.save()
+                except ObjectDoesNotExist:
+                    # If a response does not exist, create a new one
+                    response = Response.objects.create(
+                        user=request.user,
+                        course=course,
+                        question_id=question_id,
+                        option_id=option_id,
+                        score=is_correct
+                    )
 
-                return JsonResponse({'success': 'Quiz submitted successfully'})
-
-
-            return JsonResponse({'success': 'Quiz submitted successfully', 'score': score})
+                return JsonResponse({'success': 'Quiz response updated successfully'})
 
         except CourseDetail.DoesNotExist:
             return JsonResponse({'error': 'Course not found'})
@@ -335,29 +328,46 @@ def student_quiz(request, course_id):
         try:
             course = CourseDetail.objects.get(pk=course_id)
             questions = Question.objects.filter(course=course, is_active=True)
+            print(questions)
 
+            # Retrieve responses for the current user and course
+            user_responses = Response.objects.filter(user=request.user, course=course)
+            
+            total_attempted_questions = len(set(questions))
+            print('Total attempts', total_attempted_questions)
+
+
+            # Calculate the user's total score
+            if user_responses:
+                active_responses = [response for response in user_responses if response.question.is_active]
+                total_score = sum(response.score for response in active_responses)
             # Serialize questions data to JSON
             questions_data = []
             for question in questions:
                 question_data = {
                     'id': question.id,
                     'title': question.title,
-                    'options': list(question.options.values('id','text', 'is_correct'))
+                    'options': list(question.options.values('id', 'text', 'is_correct'))
                 }
                 questions_data.append(question_data)
 
             questions_json = json.dumps({'course': course.name, 'questions': questions_data})   
-            return render(request, 'student_template/student_quiz.html', {'questions_json': questions_json, 'course': course})
+
+            # Pass the user's total score and questions data to the template
+            return render(request, 'student_template/student_quiz.html', {
+                'questions_json': questions_json,
+                'course': course,
+                'total_score': total_score,
+                'user_responses': user_responses,
+                'total_attempted_questions': total_attempted_questions
+                
+            })
 
         except CourseDetail.DoesNotExist:
             return JsonResponse({'error': 'Course not found'})
 
         except Exception as e:
             return JsonResponse({'error': str(e)})
-
-
-
-
 
 
 
