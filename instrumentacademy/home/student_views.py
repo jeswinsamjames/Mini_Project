@@ -200,6 +200,17 @@ def course_material(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     modules = Module.objects.filter(course=course)
     lesson_materials = LessonMaterial.objects.filter(course=course) 
+    questions = Question.objects.filter(course=course, is_active=True)
+    user_responses = Response.objects.filter(user=request.user, question_id__in=questions.values_list('id', flat=True))
+    total_active_questions = questions.count()
+    total_user_responses = user_responses.count()
+    all_questions_attempted = total_user_responses == total_active_questions
+    print('attt', all_questions_attempted)
+
+
+
+
+
    
     res=True
     for lesson in lesson_materials:
@@ -222,6 +233,7 @@ def course_material(request, course_id):
         'video_lesson_materials': video_lesson_materials,
         'progress':progress,  # Pass video lesson materials to the template
         'progress_list': progress_list,
+        'all_questions_attempted': all_questions_attempted
     }
     if res:
         context['key']=True
@@ -335,9 +347,12 @@ def student_quiz(request, course_id):
             
             total_attempted_questions = len(set(questions))
             print('Total attempts', total_attempted_questions)
+            
 
 
             # Calculate the user's total score
+            total_score = 0
+
             if user_responses:
                 active_responses = [response for response in user_responses if response.question.is_active]
                 total_score = sum(response.score for response in active_responses)
@@ -359,7 +374,7 @@ def student_quiz(request, course_id):
                 'course': course,
                 'total_score': total_score,
                 'user_responses': user_responses,
-                'total_attempted_questions': total_attempted_questions
+                'total_attempted_questions': total_attempted_questions,
                 
             })
 
