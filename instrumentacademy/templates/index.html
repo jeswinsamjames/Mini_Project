@@ -178,6 +178,7 @@
   
   
 </head>
+         
 
 <body>
 
@@ -193,9 +194,21 @@
         
         
         <h1>MusciLearn Hub</h1>
+        
       </a>
       <nav id="navbar" class="navbar">
         <ul>
+          <li>
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search here..." aria-label="Search" aria-describedby="button-search">
+              <div class="input-group-append">
+                  <button class="btn btn-primary btn-dark-brown" type="button" id="button-search">Search</button>
+              </div>
+          </div>
+
+        </li>
+        
+         
          
           <li><a href="#hero">Home</a></li>
           <li><a href="#about">About</a></li>
@@ -450,6 +463,15 @@
     </div>
     
     <style>
+        .btn-dark-brown {
+          background-color: #3d2e28; /* Dark brown color */
+          border-color: #3d2e28; /* Dark brown color for border */
+      }
+      
+      .btn-dark-brown:hover {
+          background-color: #2c1e19; /* Darker brown color on hover */
+          border-color: #2c1e19; /* Darker brown color for border on hover */
+      }
       /* Add styling to the course boxes */
       .hero {
         background-image: url('/static/assets/img/keynote.jpg');

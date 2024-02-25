@@ -43,7 +43,7 @@
             <div class="flex flex-wrap flex-col lg:flex-row space-y-2 lg:space-y-0 lg:items-center lg:space-x-2">
                 
                 <div class="d-flex justify-content-between align-items-center py-3">
-                    <div class="fw-medium fs-6 fst-italic" id="score-display"> Score= {{ total_score }}/{{ total_attempted_questions }} </div>
+                    <div class="fw-medium fs-6 fst-italic" id="score-display"> Score= {{total_score}}/{{total_attempted_questions}}  </div>
                     <div>
                         <button class="btn btn-primary h-10 px-4 py-2 previous-question" style="background-color: #323649;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -89,6 +89,9 @@
         const saveButton = document.getElementById('save-quiz');
         const nextButton = document.querySelector('.btn-primary.next-question');
         const previousButton = document.querySelector('.btn-primary.previous-question');
+        const scores="{{ total_score }}";
+        const tot_quest="{{ total_attempted_questions }}";
+        
 
         function displayQuestion() {
             const currentQuestion = questions[currentQuestionIndex];
@@ -132,6 +135,9 @@
         }
 
         function evaluateResponses() {
+            // let Score= scores / tot_quest
+            // console.log(`Score: ${scores}/${tot_quest}`)
+
             console.log("connected");
             // Remove background color from all options
             optionsContainer.querySelectorAll('.flex.items-center.space-x-2.p-3.rounded.border-2').forEach(optionDiv => {
@@ -166,7 +172,7 @@
                         isCorrect: isCorrect
                     };
                     localStorage.setItem(`response_${currentQuestion.id}`, JSON.stringify(responseData));
-
+                    
                     // Send user response to the server
                     fetch('/student_quiz/{{ course.id }}/', {
                         method: 'POST',
@@ -178,11 +184,35 @@
                     })
                     .then(response => {
                         if (response.ok) {
+                            return response.json();
                             // Handle successful response from server
                         } else {
+                            throw new Error('Failed to update quiz response');
+
                             // Handle error response from server
                         }
                     })
+                    .then(data => {
+                            // Extract score and total_attempted_questions from the data
+                            const totalScore = data.total_score;
+                            const totalAttemptedQuestions = data.total_attempted_questions;
+                            const scoreDisplay = document.getElementById('score-display');
+                            if (scoreDisplay) {
+                                scoreDisplay.textContent = `Score= ${totalScore}/${totalAttemptedQuestions}`;
+                            } else {
+                                console.error('Element with ID "score-display" not found.');
+                            }
+                                        console.log('Displayed Score:', scoreDisplay.textContent);
+
+                            // Use the score and total_attempted_questions as needed
+                            console.log('Score:', totalScore);
+                            console.log('Total Attempted Questions:', totalAttemptedQuestions);
+
+                            
+
+                            // Update your UI or perform any other actions based on the score and total_attempted_questions
+                    })
+                    
                     .catch(error => {
                         console.error('Error submitting response:', error);
                     });
@@ -240,10 +270,10 @@
         });
        
     });
-    document.getElementById('submit-quiz').addEventListener('click', function() {
-        // Reload the page
-        window.location.reload();
-        });
+    // document.getElementById('submit-quiz').addEventListener('click', function() {
+    //     // Reload the page
+    //     window.location.reload();
+    //     });
 </script>
 
 

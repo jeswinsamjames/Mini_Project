@@ -327,8 +327,21 @@ def student_quiz(request, course_id):
                         option_id=option_id,
                         score=is_correct
                     )
+                user_responses = Response.objects.filter(user=request.user, course=course)
 
-                return JsonResponse({'success': 'Quiz response updated successfully'})
+                total_attempted_questions = len(set(questions))
+                print('Total attempts', total_attempted_questions)
+                    
+                    # Calculate the user's total score
+                total_score = 0
+
+                if user_responses:
+                    active_responses = [response for response in user_responses if response.question.is_active]
+                    total_score = sum(response.score for response in active_responses)
+                    print('Total attempts', total_score)
+
+
+                return JsonResponse({'success': 'Quiz response updated successfully', 'total_score': total_score,'total_attempted_questions': total_attempted_questions})
 
         except CourseDetail.DoesNotExist:
             return JsonResponse({'error': 'Course not found'})
@@ -344,18 +357,20 @@ def student_quiz(request, course_id):
 
             # Retrieve responses for the current user and course
             user_responses = Response.objects.filter(user=request.user, course=course)
-            
             total_attempted_questions = len(set(questions))
             print('Total attempts', total_attempted_questions)
-            
-
-
-            # Calculate the user's total score
+                    
+                    # Calculate the user's total score
             total_score = 0
 
             if user_responses:
                 active_responses = [response for response in user_responses if response.question.is_active]
                 total_score = sum(response.score for response in active_responses)
+                print('Total attempts', total_score)
+            
+           
+
+ 
             # Serialize questions data to JSON
             questions_data = []
             for question in questions:
@@ -372,9 +387,9 @@ def student_quiz(request, course_id):
             return render(request, 'student_template/student_quiz.html', {
                 'questions_json': questions_json,
                 'course': course,
-                'total_score': total_score,
                 'user_responses': user_responses,
                 'total_attempted_questions': total_attempted_questions,
+                'total_score': total_score,
                 
             })
 
@@ -425,49 +440,54 @@ def view_certificate(request, course_id):
 
 
 def download_certificate(request, certificate_id):
+    try:
+        certificate = get_object_or_404(Certificate, pk=certificate_id)
 
-    certificate = get_object_or_404(Certificate, pk=certificate_id)
 
+        # Load the HTML template as a Django template
+        template = loader.get_template('student_template/download_certificate.html')
 
-    # Load the HTML template as a Django template
-    template = loader.get_template('student_template/download_certificate.html')
+        # Define the context as a dictionary
+        print(certificate.id)
+        context = {
+            'user': certificate.user,
+            'course': certificate.course,
+            'current_date': certificate.issued_date.strftime("%Y-%m-%d"),
+            'certificate':certificate,
+            'download':True
+        }
 
-    # Define the context as a dictionary
-    print(certificate.id)
-    context = {
-        'user': certificate.user,
-        'course': certificate.course,
-        'current_date': certificate.issued_date.strftime("%Y-%m-%d"),
-        'certificate':certificate,
-        'download':True
-    }
+        # Render the template with the context
+        rendered_html = template.render(context)
 
-    # Render the template with the context
-    rendered_html = template.render(context)
+        # Create a PDF response object
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{certificate.user.username}_certificate.pdf"'
 
-    # Create a PDF response object
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{certificate.user.username}_certificate.pdf"'
+        # Specify the path to wkhtmltopdf executable in a list of options
+        pdfkit_options = {
+            'page-size': 'A4',
+            'margin-top': '0mm',
+            'margin-right': '0mm',
+            'margin-bottom': '0mm',
+            'margin-left': '0mm',
+            'encoding': 'UTF-8',
+            'no-outline': None,
+            'quiet': '',  # Disable wkhtmltopdf console output
+        }
 
-    # Specify the path to wkhtmltopdf executable in a list of options
-    pdfkit_options = {
-        'page-size': 'A4',
-        'margin-top': '0mm',
-        'margin-right': '0mm',
-        'margin-bottom': '0mm',
-        'margin-left': '0mm',
-        'encoding': 'UTF-8',
-        'no-outline': None,
-        'quiet': '',  # Disable wkhtmltopdf console output
-    }
+        # Generate the PDF from the HTML content using pdfkit with the config
+        pdf_data = pdfkit.from_string(rendered_html, False, options=pdfkit_options, configuration=pdfkit.configuration(wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'))
 
-    # Generate the PDF from the HTML content using pdfkit with the config
-    pdf_data = pdfkit.from_string(rendered_html, False, options=pdfkit_options, configuration=pdfkit.configuration(wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'))
+        # Write the PDF data to the response
+        response.write(pdf_data)
 
-    # Write the PDF data to the response
-    response.write(pdf_data)
+        return response
 
-    return response
+    except OSError as e:
+            # Handle the case of no internet connection
+            error_message = 'Error generating PDF: No internet connection'
+            return JsonResponse({'error': error_message}, status=500)
 
 
 
