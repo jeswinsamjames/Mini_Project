@@ -23,6 +23,7 @@ urlpatterns = [
     path('get_notifications/', views.get_notifications, name='get_notifications'),
     path('mark-notifications-as-read/', views.mark_notifications_as_read, name='mark_notifications_as_read'),
 
+    path('search/', views.search_results, name='search_results'),
 
 
    

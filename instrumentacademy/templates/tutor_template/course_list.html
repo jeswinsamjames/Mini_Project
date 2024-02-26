@@ -63,22 +63,11 @@
        
       </a>
       <nav id="navbar" class="navbar">
-        {% comment %} {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %} {% endcomment %}
-        <ul>
-          {% comment %} <li><a href="">{{user.username}}</a></li> {% endcomment %}
-          <li><a href="{% url 'index' %}">Home</a></li>
-          {% comment %} <li><a href="#about">About</a></li> {% endcomment %}
+       
         
-          {% comment %} <li class="dropdown"><a href="{% url 'view_catgories' %}"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a> {% endcomment %}
+        <ul>
             
-              
-          
+          <li><a href="{% url 'index' %}" style=>Home</a></li>      
           <li><a href="{% url 'view_catgories' %}">Courses</a></li>
           
           {% if user.is_authenticated %}
@@ -175,8 +164,14 @@
 
     <section class="courselist">
         <div class="container mt-5">
+            
+                <div class="input-group">
+                  <input type="text" id="search_input" class="form-control" placeholder="Search here..." aria-label="Search" aria-describedby="button-search">
+              </div>
+    
+            
             <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Courses</h1>
-            <div class="row">
+            <div class="row" id="course">
                 {% for course in courses %}
                 <div class="col-md-3 course-card1">
                     <div class="card mb-4 course-card">
@@ -220,7 +215,7 @@
                             <h5 class="card-title">{{ course.name }} </h5>
                             <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}x</p>
                             <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
-                            <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                            <p class="course-description" class="card-text"><strong>Description:</strong> {{ course.description }}</p>
                             <p class="card-text"><strong>price:</strong> {{ course.amount }}</p>
                         </div>
                         <div class="card-footer">
@@ -356,6 +351,56 @@
           }
       }
   </script>
+  <script>
+    $(document).ready(function () {
+        // Function to handle live search
+        $("#search_input").on("keyup", function () {
+            var searchText = $(this).val().trim().toLowerCase();
+            
+            // Check if searchText has at least 3 characters
+            if (searchText.length >= 1) {
+                $("#course > div").each(function () {
+                    var listItemText = $(this).text().toLowerCase();
+                    if (listItemText.indexOf(searchText) === -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            } else {
+                // If searchText has less than 3 characters, show all items
+                $("#course > div").show();
+            }
+        });
+    });
+    
+</script>
+<script>
+    // Get the description paragraph by its ID
+    // Get all elements with the class name 'course-description'
+var descriptionParagraphs = document.getElementsByClassName('course-description');
+
+// Loop through each description paragraph
+for (var i = 0; i < descriptionParagraphs.length; i++) {
+    var descriptionParagraph = descriptionParagraphs[i];
+    
+    // Get the full description text
+    var fullDescription = descriptionParagraph.innerHTML;
+    
+    // Define the maximum number of characters to display
+    var maxLength = 120;
+    
+    // Check if the length of the description text exceeds the maximum length
+    if (fullDescription.length > maxLength) {
+        // Truncate the description text to the maximum length
+        var truncatedDescription = fullDescription.substring(0, maxLength) + '...';
+        
+        // Update the description paragraph with the truncated text
+        descriptionParagraph.innerHTML = truncatedDescription;
+    }
+}
+
+</script>
 </body>
 <style>
   

@@ -171,3 +171,14 @@ def mark_notifications_as_read(request):
         Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+
+def search_results(request):
+    query = request.GET.get('query')
+    if query:
+        results = CourseDetail.objects.filter(name__icontains=query)
+        # You can customize this queryset based on your model and search criteria
+        print(results)
+        return render(request, 'tutor_template/search_results.html', {'results': results})
+    else:
+        return JsonResponse({'error': 'No query provided'}, status=400)

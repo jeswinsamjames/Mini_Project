@@ -166,6 +166,66 @@
 </script>
 
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+   $(document).ready(function(){
+
+       $('#search-input').keyup(function(){
+           var query = $(this).val();
+           if (query.length > 1) {
+               $.ajax({
+                   url: '{% url "search_results" %}',
+                   method: 'GET',
+                   data: {'query': query},
+                   success: function(response){
+                       $('#search-results').html(response);
+                   },
+                   error: function(xhr, errmsg, err){
+                       console.log(xhr.status + ": " + xhr.responseText);
+                   }
+               });
+           } else {
+               $('#search-results').html('');
+           }
+       });
+   });
+</script>
+
+
+ <style>
+  .search-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: auto;
+}
+
+#search-input {
+    margin-bottom: 10px;
+    width: 280px;
+}
+
+#search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-top: none;
+    z-index: 1000;
+    color: #000000;
+}
+
+#search-results.show {
+    display: block;
+}
+
+
+
+
+</style> 
+
 
 
 
@@ -196,17 +256,16 @@
         <h1>MusciLearn Hub</h1>
         
       </a>
+      <div class="search-container">
+        <input id="search-input" type="text" class="form-control" placeholder="Search here..." aria-label="Search" aria-describedby="button-search">
+        <div id="search-results"></div>
+    </div>
+
       <nav id="navbar" class="navbar">
         <ul>
-          <li>
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search here..." aria-label="Search" aria-describedby="button-search">
-              <div class="input-group-append">
-                  <button class="btn btn-primary btn-dark-brown" type="button" id="button-search">Search</button>
-              </div>
-          </div>
-
-        </li>
+          
+            
+        
         
          
          
@@ -225,10 +284,10 @@
         
             <!--........ notification ..........-->
             {% if user.is_authenticated %}
-            <li class="dropdown"  >
+            <li>
               
-              <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
+              <a  id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-thin fa-bell" id="custom-notification-icon" style="color: #fff;"></i>
                   <div id="notification-badge-container">
                       <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
                   </div>
@@ -463,7 +522,8 @@
     </div>
     
     <style>
-        .btn-dark-brown {
+        .btn-dark-brown  {
+          
           background-color: #3d2e28; /* Dark brown color */
           border-color: #3d2e28; /* Dark brown color for border */
       }
