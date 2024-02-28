@@ -19,7 +19,13 @@ from django.views.decorators.cache import cache_control
 
 def index(request):
     course = category.objects.all()
-    return render(request,'index.html',{'course': course})
+    # courses = get_object_or_404(CourseDetail, id=course_id)
+
+    context  = {
+        'course' : course,
+        # 'courses' : courses,
+    }
+    return render(request,'index.html',context)
 
 def index(request):
     categories = category.objects.all()  
@@ -182,3 +188,9 @@ def search_results(request):
         return render(request, 'tutor_template/search_results.html', {'results': results})
     else:
         return JsonResponse({'error': 'No query provided'}, status=400)
+    
+
+
+def metronome(request):
+
+    return render(request, "metronome.html")

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+  {% block title %}
+  Profile
+  {% endblock title %}
+    
+
+ 
+    
+    {% block body %}
+    <main style="background-color: rgb(249, 249, 249); padding: 20px; margin: 180px;">
+        <!-- Banner Section -->
+      
+        <section class="banner" style="background-color: #ffffff; padding: 50px 0;">
+          <div class="container text-center">
+              <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Welcome to Online {{course.course.name}} Lessons: {{ course.name }}</h1>
+              <p style="font-size: 1.2rem; margin-bottom: 20px;">Rating</p>
+              <hr class="dotted_lines" style="background-color: black; height: 1px; border: none; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: center; align-items: center;">
+                  <p style="margin: 10px; color: black;">{{ course.tutor.first_name }} {{ course.tutor.last_name }}</p>
+                  <div style="background-color: black; height: 25px; width: 2px; margin: 0 10px;"></div>
+                  <p style="margin: 10px; color: black;">Learn {{course.course.name}} from the comfort of your home with our expert instructors.</p>
+              </div>
+          </div>
+      </section>
+        
+        
+    
+        <!-- About Section -->
+        
+    
+        <!-- Courses Section -->
+        <section id="courses" class="courses" style="display: flex; justify-content: center; align-items: center;">
+          <div class="container" style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 20px;">
+            <div class="row justify-content-center">
+                <div class="col-md-9">
+                    <h2>Our Courses</h2>
+                    <!-- Course Cards -->
+                    <div class="card mb-4" style="background-color: rgb(245, 245, 245);">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="{{course.image.url}}" class="card-img-top" alt="Course Image" style="height: 150px; width: 200px;">
+                                </div>
+                                <div class="col-md-8">
+                                    <h5 style="color: rgb(0, 0, 0);">₹ {{course.amount}}</h5>
+                                    <p style="color: black;" class="card-text">{{ course.description }}</p>
+                                    <a href="/payment/homepage/{{course.id}}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add more course cards here -->
+                </div>
+            </div>
+        </div>
+        
+        
+      </section>
+      
+
+
+        <section id="about" class="about" style="padding-top: 20px; background-color: #ffffff;">
+    <div class="container col-md-8" style="background-color: rgb(245, 245, 245); padding: 10px;">
+        <div class="row">
+            <div class="col-lg-5">
+                <img src="{{user_profile.profile_picture.url}}" class="card-img-top" alt="Course Image" style="width: 150px; height: 150px; border-radius: 45px; ">
+            </div>
+            <div class="col-lg-6" style="padding-left: -200px;">
+                <h2>Teacher Profile</h2>
+                <p style="color: black;" >{{ course.tutor.first_name }} {{course.tutor.last_name}}</p>
+                <p style="color: black;" >Experience: {{ user_profile.teaching_experience }}</p>
+                <p style="color: black;" >Specialist on: {{ user_profile.specialist }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+          
+        <!-- FAQ Section -->
+        <section id="faq" class="faq">
+          <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <!-- FAQ Accordion -->
+            <div id="accordion">
+              <div class="card">
+                <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Question 1
+                    </button>
+                  </h5>
+                </div>
+    
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="card-body">
+                    Answer 1
+                  </div>
+                </div>
+              </div>
+              <!-- Add more FAQ items here -->
+            </div>
+          </div>
+        </section>
+    
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+          <div class="container">
+            <h2>Contact Us <i class="fas fa-phone-alt"></i></h2>
+            <p style="color: black;">Contact no: {{ user_profile.phoneNo }}</p>
+          </div>
+        </section>
+      </main>
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endblock body %}

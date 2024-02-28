@@ -24,6 +24,9 @@ urlpatterns = [
     path('mark-notifications-as-read/', views.mark_notifications_as_read, name='mark_notifications_as_read'),
 
     path('search/', views.search_results, name='search_results'),
+    path('metronome/', views.metronome, name='metronome'),
+    
+    
 
 
    
@@ -52,6 +55,7 @@ urlpatterns = [
     path('view_certificate/<int:course_id>/', student_views.view_certificate, name='view_certificate'),
     path('generate_certificate/<int:course_id>/', student_views.generate_certificate, name='generate_certificate'),
     path('download_certificate/<int:certificate_id>/', student_views.download_certificate, name='download_certificate'),
+    path('tutor_profile/<int:course_id>/',student_views.tutor_profile, name='tutor_profile'),
 
 
 

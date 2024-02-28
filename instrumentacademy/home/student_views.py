@@ -489,8 +489,16 @@ def download_certificate(request, certificate_id):
             error_message = 'Error generating PDF: No internet connection'
             return JsonResponse({'error': error_message}, status=500)
 
+def tutor_profile(request,course_id):
+    course = get_object_or_404(CourseDetail, id=course_id)
+    user_profile = get_object_or_404(UserProfile, user=course.tutor)
+    context = {
+        'course': course,
+        'user_profile': user_profile
+    }
 
-
+    return render(request, "student_template/tutor_profile.html", context)
+    
 def student_feedback(request):
    
     return render(request, "student_template/student_feedback.html")

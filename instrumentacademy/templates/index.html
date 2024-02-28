@@ -256,9 +256,14 @@
         <h1>MusciLearn Hub</h1>
         
       </a>
+      
       <div class="search-container">
         <input id="search-input" type="text" class="form-control" placeholder="Search here..." aria-label="Search" aria-describedby="button-search">
-        <div id="search-results"></div>
+          {% comment %} <a href="{% url 'tutor_profile' courses.id %}"> {% endcomment %}
+            <div id="search-results">
+            </div>
+            </a>
+        
     </div>
 
       <nav id="navbar" class="navbar">
