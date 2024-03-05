@@ -9,13 +9,95 @@
  
     
     {% block body %}
+    
     <main style="background-color: rgb(249, 249, 249); padding: 20px; margin: 180px;">
         <!-- Banner Section -->
       
         <section class="banner" style="background-color: #ffffff; padding: 50px 0;">
           <div class="container text-center">
               <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Welcome to Online {{course.course.name}} Lessons: {{ course.name }}</h1>
-              <p style="font-size: 1.2rem; margin-bottom: 20px;">Rating</p>
+              
+
+              <div class="rating_top" style="display: flex; justify-content: center; align-items: center;">
+                <p style="color: black;" id="average-rating">Rating : {{ average_rating }}/5</p>
+                <!-- <div id="num-ratings">{{ num_ratings }}</div> -->
+
+
+          
+
+                <div class="rating che d-flex align-items-center" style="width: 100px;">
+                  <input type="radio" name="new_rating" id="new_rating-5" value="5" disabled>
+                  <label for="new_rating-5"></label>
+                  <input type="radio" name="new_rating" id="new_rating-4" value="4" disabled>
+                  <label for="new_rating-4"></label>
+                  <input type="radio" name="new_rating" id="new_rating-3" value="3" disabled>
+                  <label for="new_rating-3"></label>
+                  <input type="radio" name="new_rating" id="new_rating-2" value="2" disabled>
+                  <label for="new_rating-2"></label>
+                  <input type="radio" name="new_rating" id="new_rating-1" value="1" disabled>
+                  <label for="new_rating-1"></label>
+              </div>
+              
+              
+                
+                    <p class="d-flex flex-col inner_para mr-3" style="color: black;"> See all reviews</p>
+                    <div id="comments">{{comments}}</div>
+
+                    <i id="rating-arrow" class="fas fa-chevron-down" style="cursor: pointer;"></i>
+
+<!-- Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="ratingModalLabel">Rating Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <!-- Modal Body -->
+      <div class="rating_tooltip course_rating_statistics">
+        <div class="cover_divs_grid">
+            <div class="rating_outof">
+                <p class="rating_text font_jakarta_regular">Rating out of 5</p>
+                <h5 class="rating-average font_jakarta_regular">4.9</h5>
+                <p class="rating_text font_jakarta_regular">Average of 647</p>
+            </div>
+            <!-- Rating Bars for each star -->
+          
+        </div>
+        <div class="see_rating_div">
+            <p class="see_text_link">See all 647 Reviews</p>
+        </div>
+    </div>
+
+
+    
+
+
+    
+
+
+    </div>
+  </div>
+</div>
+
+
+               
+               
+            </div>
+            
+
+              
+
+             
+            </div>
+            
+           
+
+
+
+
+            
               <hr class="dotted_lines" style="background-color: black; height: 1px; border: none; margin-bottom: 20px;">
               <div style="display: flex; justify-content: center; align-items: center;">
                   <p style="margin: 10px; color: black;">{{ course.tutor.first_name }} {{ course.tutor.last_name }}</p>
@@ -78,8 +160,60 @@
 </section>
 
 
+<section class="banner" style="background-color: #ffffff; padding: 50px 0;">
+
+<div class="mainleasson">
+
+    
+
+  <div class="course-info-container">
+      
+      <div class="course-details">
+          <div class="status-and-rating">
+              <div class="status-container">
+              </div>
+              <div class="rating-container">
+                  <!-- Add your star rating elements here -->
+                  <h2 style="text-align: center;">Rate this course </h2>
+              </div>
+          </div>
 
 
+        <div class="cont">
+          <div class="stars" style="display: flex;  justify-content: space-around;">
+            <form action="{% url 'rating_review' course.id %}" method="post" id="ratingForm">
+              {% csrf_token %}
+              <input type="hidden" name="course_id" value="{{ course.id }}">
+              <div class="rating">
+                <input type="radio" name="rating" id="rating-5" value="5" {% if rating == 5 %} checked {% endif %}>
+                <label for="rating-5"></label>
+                <input type="radio" name="rating" id="rating-4" value="4" {% if rating == 4 %} checked {% endif %}>
+                <label for="rating-4"></label>
+                <input type="radio" name="rating" id="rating-3" value="3" {% if rating == 3 %} checked {% endif %}>
+                <label for="rating-3"></label>
+                <input type="radio" name="rating" id="rating-2" value="2" {% if rating == 2 %} checked {% endif %}>
+                <label for="rating-2"></label>
+                <input type="radio" name="rating" id="rating-1" value="1" {% if rating == 1 %} checked {% endif %}>
+                <label for="rating-1"></label>
+            </div>
+            
+            
+              <div class="rev-box">
+                  <textarea class="review form-control" rows="4" name="review" id="review" placeholder="Brief Review" required>{{ review }}</textarea>
+              </div>
+              <button class="post-button btn btn-primary" type="submit">Post</button>
+          </form>
+          
+          
+          </div>
+        </div>  
+        <div id="snackbar"></div>
+  
+      </div>
+  </div>
+</div>
+
+</section>
 
           
         <!-- FAQ Section -->
@@ -115,8 +249,200 @@
             <p style="color: black;">Contact no: {{ user_profile.phoneNo }}</p>
           </div>
         </section>
+        
       </main>
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+
+
+
+      <style>
+     
+      
+        * { box-sizing: border-box; }
+        
+        .rev-box{
+          width: 550px;
+          align-items: center;
+          
+        }
+        
+        .rating {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        overflow: hidden;
+        flex-direction: row-reverse;
+        position: relative;
+        }
+        
+        .rating-0 {
+        filter: grayscale(100%);
+        }
+        
+        .rating > input {
+        display: none;
+        }
+        
+        .rating > label {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        margin-top: auto;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23e3e3e3' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 76%;
+        transition: .3s;
+        }
+        
+        .rating > input:checked ~ label,
+        .rating > input:checked ~ label ~ label {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23fcd93a' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+        }
+        
+        
+        .rating > input:not(:checked) ~ label:hover,
+        .rating > input:not(:checked) ~ label:hover ~ label {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23d8b11e' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+        }
+        
+        
+        
+        .snackbar {
+          position: fixed;
+          bottom: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: #4CAF50; /* Default background color */
+          color: white;
+          text-align: center;
+          padding: 15px;
+          border-radius: 8px;
+          z-index: 1;
+      }
+      
+      .snackbar.error {
+          background-color: #ff5c5c; /* Error background color */
+      }
+      
+        
+                    </style>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+      $('#rating-arrow').on('click', function() {
+          $('#ratingModal').modal('show');
+      });
+
+      $('#ratingForm').on('submit', function(event) {
+          event.preventDefault(); // Prevent default form submission
+
+          var course_id = $(this).find('[name="course_id"]').val(); // Retrieve the course ID from the hidden input field
+
+          $.ajax({
+              type: 'POST',
+              url: $(this).attr('action'),
+              data: $(this).serialize(), // Serialize the form data
+              success: function(response) {
+                  // Handle success response
+                  console.log('Form submitted successfully');
+                  showSnackbar('Rating and review submitted successfully', 'success');
+              },
+              error: function(xhr, errmsg, err) {
+                  // Handle error response
+                  console.log('Form submission error');
+                  showSnackbar('Error: Rating and review submission failed', 'error');
+              }
+          });
+      });
+
+      // Function to show snackbar notification
+      function showSnackbar(message, type) {
+          // Create a new snackbar element
+          var snackbar = $('<div class="snackbar"></div>');
+
+          // Set the message text
+          snackbar.text(message);
+
+          // Add class based on type
+          snackbar.addClass(type);
+
+          // Append snackbar to the body
+          $('body').append(snackbar);
+
+          // Remove the snackbar after 3 seconds
+          setTimeout(function() {
+              snackbar.remove();
+          }, 3000);
+      }
+
+      // Function to set the checked property of radio inputs based on average rating
+      $(document).ready(function() {
+        function updateRatingData() {
+            var course_id = "{{ course.id }}"; // Replace this with how you pass course id to JavaScript
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'get_updated_rating' course.id %}",
+                data: {
+                    course_id: course_id
+                },
+                success: function(data) {
+                    $('#average-rating').text("Rating: "+data.average_rating.toFixed(1)+"/5");
+                    $('#num-ratings').text(data.num_ratings);
+                    setStars(data.average_rating);
+                    
+                    $('#comments').empty();
+
+                    // Display comments
+                    if (data.comments.length > 0) {
+                        data.comments.forEach(function(comment) {
+                            $('#comments').append('<div>' + comment.user__username + ': ' + comment.review + '</div>');
+                        });
+                    } else {
+                        $('#comments').text('No comments yet.');
+                    }
+
+                    setStars(data.average_rating);
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log('Error fetching updated rating data');
+                }
+            });
+        }
+
+        // Call the function to update rating data initially
+        updateRatingData();
+
+        // Optionally, set a timer to update rating data periodically
+        setInterval(updateRatingData, 3000); // Update every minute (adjust as needed)
+    });
+    function setStars(averageRating) {
+    const stars = document.querySelectorAll('.rating input[type="radio"]');
+    for (let i = 1; i <= 5; i++) {
+        const star = document.getElementById(`new_rating-${i}`);
+        if (i <= averageRating) {
+            star.checked = true;
+        } else {
+            star.checked = false;
+        }
+    }
+}
+  });
+</script>
+
+
+
+
     {% endblock body %}
+
+   

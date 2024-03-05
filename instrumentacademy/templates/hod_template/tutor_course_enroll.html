@@ -174,7 +174,7 @@
   
 
   <header id="header" class="header d-flex align-items-center">
-             <h1 style="color: #ffffff; font-size: 35px; margin-left: 10px;" >MusciLearn Hub</h1>
+             <h1 style="color: #ffffff; font-size: 35px; margin-left: 10px;" >MusicLearn Hub</h1>
 
    
     
@@ -211,29 +211,12 @@
          
       </li>
       {% endif %}
-<style>
-  /* Customize the width of the notification panel */
 
-  #notification-panel {
-      max-width: 400px; /* Adjust the width as needed */
-  }
-
-  /* Customize the appearance of notifications */
-
-  #notification-badge-container {
-    position: absolute;
-    top: -10px; /* Adjust the top position as needed */
-    left: 20px; /* Adjust the left position as needed */
-}
-
-/* Resize the icon */
-#custom-notification-icon {
-    font-size: 20px; /* Adjust the font size to resize the icon */
-}
-
-/* Customize the appearance of the badge */
-
-</style>
+{% if user.is_authenticated %}
+{% if user.userprofile.isTutor == 0 %}
+    <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+{% endif %}
+{% endif %}
           {% if user.is_authenticated %}
           <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
          <li><a href="{% url 'logout' %}">logout</a></li>
@@ -241,6 +224,9 @@
         
          <li><a href="{% url 'login' %}">Login</a></li> 
          {% endif%}
+
+        </ul>
+      </nav><!-- .navbar -->
 <style>
   /* Customize the width of the notification panel */
 
@@ -264,22 +250,33 @@
 /* Customize the appearance of the badge */
 
 </style>
-          {% comment %} <li class="dropdown"><a href="{% url 'view_catgories' %}"><span>Courses</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a> 
-            
-              
+<style>
+  /* Customize the width of the notification panel */
+
+  #notification-panel {
+      max-width: 400px; /* Adjust the width as needed */
+  }
+
+  /* Customize the appearance of notifications */
+
+  #notification-badge-container {
+    position: absolute;
+    top: -10px; /* Adjust the top position as needed */
+    left: 20px; /* Adjust the left position as needed */
+}
+
+/* Resize the icon */
+#custom-notification-icon {
+    font-size: 20px; /* Adjust the font size to resize the icon */
+}
+
+/* Customize the appearance of the badge */
+
+</style>
           
-          <li><a href="{% url 'view_catgories' %}">Courses</a></li>
-          <li><a href="#resource">Resource</a></li>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="{% url 'mylearning' %}">My Learning</a></li> {% endcomment %}
-      {% if user.is_authenticated %}
-          {% if user.userprofile.isTutor == 0 %}
-              <li><a href="{% url 'mylearning' %}">My Learning</a></li>
-          {% endif %}
-      {% endif %}
+    
           
-          </ul>
-      </nav><!-- .navbar -->
+          
       {% for message in messages %}
       <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
         <strong></strong> {{message}}

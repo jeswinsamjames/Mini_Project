@@ -488,17 +488,90 @@ def download_certificate(request, certificate_id):
             # Handle the case of no internet connection
             error_message = 'Error generating PDF: No internet connection'
             return JsonResponse({'error': error_message}, status=500)
+    
+from django.db.models import Avg
 
-def tutor_profile(request,course_id):
+@login_required
+def tutor_profile(request, course_id):
     course = get_object_or_404(CourseDetail, id=course_id)
     user_profile = get_object_or_404(UserProfile, user=course.tutor)
+
+    # Retrieve rating and review data for the course
+    try:
+        rating_review = RatingReview.objects.get(course=course, user=request.user)
+        rating = rating_review.rating
+        review = rating_review.review
+    except RatingReview.DoesNotExist:
+        rating = None
+        review = None
+
+    ratings = RatingReview.objects.filter(course=course)
+    
+
     context = {
         'course': course,
-        'user_profile': user_profile
-    }
+        'user_profile': user_profile,
+        'rating': rating,
+        'review': review,
+       
 
+
+    }
     return render(request, "student_template/tutor_profile.html", context)
-    
+
+
+def get_updated_rating(request, course_id):
+    course = get_object_or_404(CourseDetail, id=course_id)
+    ratings = RatingReview.objects.filter(course=course)
+    num_ratings = RatingReview.objects.filter(course=course).count()
+    average_rating = ratings.aggregate(Avg('rating'))['rating__avg'] or 0
+    comments = RatingReview.objects.filter(course=course).values('user__username', 'review')
+    comments_data = list(comments)
+    return JsonResponse({
+        'average_rating': average_rating,
+        'num_ratings': num_ratings,
+        'comments': comments_data,
+
+    })
+
+
+@login_required
+def rating_review(request, course_id):
+    course = get_object_or_404(CourseDetail, id=course_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        review = request.POST.get('review')
+        user = request.user
+
+        # Check if the user has already submitted a rating and review for this course
+        existing_rating_review = RatingReview.objects.filter(user=user, course=course).first()
+        if existing_rating_review:
+            # Update the existing rating and review
+            existing_rating_review.rating = rating
+            existing_rating_review.review = review
+            existing_rating_review.save()
+            # messages.success(request, 'Rating and review updated successfully.')
+        else:
+            # Create a new rating and review
+            rating_review = RatingReview(user=user, course=course, rating=rating, review=review)
+            rating_review.save()
+            # messages.success(request, 'Rating and review posted successfully.')
+
+        # Render the template with a success message
+        context = {
+            'course': course,
+            'success_message': 'Rating and review posted successfully.'  # Add success message to the context
+        }
+        return render(request, 'student_template/tutor_profile.html', context)
+
+    # Render the template without a success message for GET requests
+    context = {
+        'course': course,
+    }
+    return render(request, 'student_template/tutor_profile.html', context)
+
+
 def student_feedback(request):
    
     return render(request, "student_template/student_feedback.html")

@@ -466,11 +466,11 @@
                             alert('Please fill out all option fields.');
                             return isValid;
                         }
-                        if (!/^[a-zA-Z0-9]+$/.test(optionValue)) {
+                        {% comment %} if (!/^[a-zA-Z0-9]+$/.test(optionValue)) {
                             isValid = false;
                             alert('Option should contain only letters and numbers.');
                             return isValid;
-                        }
+                        } {% endcomment %}
                     });
                     
                     

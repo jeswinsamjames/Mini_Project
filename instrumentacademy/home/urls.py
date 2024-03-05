@@ -56,6 +56,9 @@ urlpatterns = [
     path('generate_certificate/<int:course_id>/', student_views.generate_certificate, name='generate_certificate'),
     path('download_certificate/<int:certificate_id>/', student_views.download_certificate, name='download_certificate'),
     path('tutor_profile/<int:course_id>/',student_views.tutor_profile, name='tutor_profile'),
+    path('rating-review/<int:course_id>/', student_views.rating_review, name='rating_review'),
+    path('get_updated_rating/<int:course_id>/', student_views.get_updated_rating, name='get_updated_rating'),
+
 
 
 
