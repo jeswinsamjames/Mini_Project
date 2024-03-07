@@ -1,15 +1,606 @@
+
+
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  
+    <title>Home page</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+  
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/favicon.png'%}" rel="icon">
+    <link href="{% static ''%}assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css'%}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/aos/aos.css'%}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css'%}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
+  
+  
+     <link href="{% static 'assets/css/main.css'%}" rel="stylesheet">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+    <!--Template Main CSS File -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+  
+
+
+    <meta charset="UTF-8">
+    <title>Course List</title>
+    <!-- Add Bootstrap CSS Link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add custom CSS for styling -->
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+</head>
+<body>
+
+  <!-- ======= Header ======= -->
+  
+
+  <header id="header" class="header d-flex align-items-center">
+    <h2 style="color: #fff; margin-left: 50px;"> MusicLearn Hub</h2>
+    
+
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="{% url 'index' %}" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+       
+      </a>
+      <nav id="navbar" class="navbar">
+       
+        
+        <ul>
+            
+          <li><a href="{% url 'index' %}" style=>Home</a></li>      
+          <li><a href="{% url 'view_catgories' %}">Courses</a></li>
+          
+          {% if user.is_authenticated %}
+          <li class="dropdown"  >
+            
+            <a href="#" id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-thin fa-bell" id="custom-notification-icon"></i>
+                <div id="notification-badge-container">
+                    <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
+                </div>
+            </a>
+            
+            <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
+              <p id="no-notifications-message" style="display: none;">No notifications</p>
+  
+                <!-- Customize the appearance of notifications here -->
+            </ul>
+           
+        </li>
+        {% endif %}
+        <li>
+            <a href=" {% url 'wishlist'  %}" >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+               
+            </a>
+           </li>
+  <style>
+    /* Customize the width of the notification panel */
+  
+    #notification-panel {
+        max-width: 400px; /* Adjust the width as needed */
+    }
+  
+    /* Customize the appearance of notifications */
+  
+    #notification-badge-container {
+      position: absolute;
+      top: -10px; /* Adjust the top position as needed */
+      left: 20px; /* Adjust the left position as needed */
+  }
+  
+  /* Resize the icon */
+  #custom-notification-icon {
+      font-size: 20px; /* Adjust the font size to resize the icon */
+  }
+  
+  /* Customize the appearance of the badge */
+  
+  </style>
+  {% if user.is_authenticated %}
+  {% if user.userprofile.isTutor == 0 %}
+      <li><a href="{% url 'mylearning' %}">My Learning</a></li>
+  {% endif %}
+{% endif %}
+
+
+          {% if user.is_authenticated %}
+           <li><a href="/homecontent">Welcome, {{ user.username }}</a></li>
+          <li><a href="{% url 'logout' %}">logout</a></li>
+          {% else %}
+         
+          <li><a href="{% url 'login' %}">Login</a></li> 
+          {% endif%}
+        </ul> 
+      
+          </ul>
+      </nav><!-- .navbar -->
+      {% for message in messages %}
+      <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+    </div>
+  </header>
+
+  
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero" >
+   
+    <div class="container position-relative">
+      <div class="row gy-5" data-aos="fade-in">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start">
+          <h2>The Complete Music Education
+             <span></span></h2>
+          <p>Setting Gold Standards since 2009</p>
+          
+        </div>
+       
+      </div>
+    </div>
+
+    </div> 
+  </section>
+  <!-- End Hero Section -->
+
+  <main id="main">
+
+    <section class="courselist">
+        <div class="container mt-5">
+            
+                <div class="input-group">
+                  <input type="text" id="search_input" class="form-control" placeholder="Search here..." aria-label="Search" aria-describedby="button-search">
+              </div>
+    
+            
+            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Courses</h1>
+            <div class="row" id="course">
+               
+ 
+
+
 {% if wishlist %}
-    <h1>My Wishlist</h1>
-    <ul>
         {% for course in wishlist %}
-            <li>{{ course.course.name }}</li>
-            <!-- Add Remove from Wishlist button -->
-            <form action="{% url 'remove_from_wishlist' course.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Remove from Wishlist</button>
-            </form>
-        {% endfor %}
-    </ul>
-{% else %}
+                <div class="col-md-3 course-card1">
+                    <div class="card mb-4 course-card">
+                        <img class="courseimg" src="{% if course.course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                      
+                        <div class="dropdown">
+                            <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown('{{ course.course.id }}')">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                            <div id="myDropdown_{{ course.id }}" class="dropdown-content">
+                                <a href="#" style="text-decoration: none;">
+                                    <!-- Share Icon -->
+                                    <img src="{% static 'images/share.svg' %}" alt="Share Icon" style="width: 20px; height: 20px;">
+                                    <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                        <use xlink:href="#icon-share"></use>
+                                    </svg>
+                                    Share
+                                </a>
+                                <a>
+                                    <!-- Wishlist Icon -->
+                                    <img src="{% static 'images/fav.svg' %}" alt="Wishlist Icon" style="width: 18px; height: 18px;">
+                                    <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                        <!-- Replace this with the appropriate icon ID for "Wishlist" -->
+                                        <use xlink:href="#icon-wishlist"></use>
+                                    </svg>
+                                    <button class="btn btn-outline-primary" onclick="addToWishlist({{ course.id }})">Add to Wishlist</button>
+
+                                </a>
+                            </div>
+                        </div>
+                    
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.course.name }} </h5>
+                            <p class="card-text"><strong>Tutor:</strong> {{ course.course.tutor.first_name }}  {{ course.course.tutor.last_name }}x</p>
+                            <p class="card-text"><strong>Years of Experience:</strong> {{ course.course.years_of_experience }}</p>
+                            <p class="course-description" class="card-text"><strong>Description:</strong> {{ course.course.description }}</p>
+                            <p class="card-text"><strong>price:</strong> {{ course.course.amount }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <!-- Enroll and See Details Links with Line Separator -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-center">
+                                  {% if not user.is_superuser %}
+                                  {% if user.userprofile.isTutor != 2 %}
+                                  {% if user in course.enrolled_learners.all %}
+                                    <span class="text-success">Enrolled</span>
+                                  {% else %}
+                                    <a href="/payment/homepage/{{course.id}}" class="text-primary text-decoration-none">Enroll</a>
+                                  {% endif %}
+                                  {% endif %}
+                                  {% endif %}
+                                </div>
+                                <div class="separator"></div>
+                                <div class="text-center">
+                                    <a href="{% url 'tutor_profile' course.id %}" class="text-info text-decoration-none">See Details</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form action="{% url 'remove_from_wishlist' course.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Remove from Wishlist</button>
+                </form>
+                {% endfor %}
+                {% else %}
     <p>Your wishlist is empty.</p>
 {% endif %}
+            </div>
+        </div>
+    </section>
+    
+   
+    
+    
+    
+</main><!-- End #main -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer" class="footer">
+
+<div class="container">
+<div class="row gy-4">
+<div class="col-lg-5 col-md-12 footer-info">
+<a href="index.html" class="logo d-flex align-items-center">
+  <span>MusicLearn Hub</span>
+</a>
+<p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
+<div class="social-links d-flex mt-4">
+  <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+  <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+  <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+  <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+</div>
+</div>
+
+<div class="col-lg-2 col-6 footer-links">
+<h4>Useful Links</h4>
+<ul>
+  <li><a href="#">Home</a></li>
+  <li><a href="#">About us</a></li>
+  <li><a href="#">Services</a></li>
+  <li><a href="#">Terms of service</a></li>
+  <li><a href="#">Privacy policy</a></li>
+</ul>
+</div>
+
+
+
+<div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+<h4>Contact Us</h4>
+<p>
+  A108 Adam Street <br>
+  New York, NY 535022<br>
+  United States <br><br>
+  <strong>Phone:</strong> +1 5589 55488 55<br>
+  <strong>Email:</strong> info@example.com<br>
+</p>
+
+</div>
+
+</div>
+</div>
+
+
+</div>
+
+</footer><!-- End Footer -->
+<!-- End Footer -->
+
+<a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script src="{%static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+<script src="{%static 'assets/vendor/aos/aos.js'%}"></script>
+<script src="{%static 'assets/vendor/glightbox/js/glightbox.min.js'%}"></script>
+<script src="{%static 'assets/vendor/purecounter/purecounter_vanilla.js'%}"></script>
+<script src="{%static 'assets/vendor/swiper/swiper-bundle.min.js'%}"></script>
+<script src="{%static 'assets/vendor/isotope-layout/isotope.pkgd.min.js'%}"></script>
+<script src="{%static 'assets/vendor/php-email-form/validate.js'%}"></script>
+
+<!-- Template Main JS File -->
+<script src="{%static 'assets/js/main.js'%}"></script>
+
+    <!-- Add Bootstrap JS and jQuery if needed -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+    <script>
+      function changeLanguage(language) {
+          var element = document.getElementById("url");
+          element.value = language;
+          element.innerHTML = language;
+      }
+
+      
+        function showDropdown(courseId) {
+            var dropdown = document.getElementById('myDropdown_' + courseId);
+            dropdown.classList.toggle('show');
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName('dropdown-content');
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        function addToWishlist(courseId) {
+        // Send an AJAX request to your Django backend
+        // You can use libraries like jQuery or fetch API to make the request
+        // Example using fetch API:
+        fetch(`/add_to_wishlist/${courseId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for CSRF protection
+            },
+            body: JSON.stringify({ courseId: courseId })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Course added to wishlist successfully
+                console.log('Course added to wishlist');
+                // You can update UI or display a message here if needed
+            } else {
+                // Error adding course to wishlist
+                console.error('Error adding course to wishlist');
+                // You can handle errors or display an error message here if needed
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // You can handle errors or display an error message here if needed
+        });
+    }
+
+  </script>
+  <script>
+    $(document).ready(function () {
+        // Function to handle live search
+        $("#search_input").on("keyup", function () {
+            var searchText = $(this).val().trim().toLowerCase();
+            
+            // Check if searchText has at least 3 characters
+            if (searchText.length >= 1) {
+                $("#course > div").each(function () {
+                    var listItemText = $(this).text().toLowerCase();
+                    if (listItemText.indexOf(searchText) === -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            } else {
+                // If searchText has less than 3 characters, show all items
+                $("#course > div").show();
+            }
+        });
+    });
+    
+</script>
+<script>
+    // Get the description paragraph by its ID
+    // Get all elements with the class name 'course-description'
+var descriptionParagraphs = document.getElementsByClassName('course-description');
+
+// Loop through each description paragraph
+for (var i = 0; i < descriptionParagraphs.length; i++) {
+    var descriptionParagraph = descriptionParagraphs[i];
+    
+    // Get the full description text
+    var fullDescription = descriptionParagraph.innerHTML;
+    
+    // Define the maximum number of characters to display
+    var maxLength = 120;
+    
+    // Check if the length of the description text exceeds the maximum length
+    if (fullDescription.length > maxLength) {
+        // Truncate the description text to the maximum length
+        var truncatedDescription = fullDescription.substring(0, maxLength) + '...';
+        
+        // Update the description paragraph with the truncated text
+        descriptionParagraph.innerHTML = truncatedDescription;
+    }
+}
+
+</script>
+</body>
+<style>
+  
+
+ 
+
+  .showLeft{
+      background-color: #ffffff !important;
+      text-shadow: none !important;
+      color:#fff !important;
+      padding:11px;
+      width: 35px;
+      height: 40px;
+      margin-right: -7px;
+  }
+
+  .icons li {
+      background: none repeat scroll 0 0 #000000;
+      height: 4px;
+      width: 4px;
+      line-height: 0;
+      list-style: none outside none;
+      margin-right: 15px;
+      margin-top: 3px;
+      vertical-align: top;
+      border-radius:50%;
+      pointer-events: none;
+  }
+
+  .btn-left {
+      left: 0.4em;
+  }
+
+  .btn-right {
+      right: 0.4em;
+  }
+
+  .btn-left, .btn-right {
+      position: absolute;
+      top: 0.24em;
+  }
+
+  .dropbtn {
+      background-color: #4CAF50;
+      position: absolute;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+  }
+
+  .dropbtn:hover, .dropbtn:focus {
+      background-color: #3e8e41;
+  }
+
+  .dropdown {
+      position: absolute;
+      display: inline-block;
+      right: 0.4em;
+      display: flex;
+      align-items: center;
+  }
+
+  .dropdown-content {
+      display: none;
+      position: relative;
+      margin-top: 60px;
+      background-color: #f9f9f9;
+      min-width: 220px;
+      overflow: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+  }
+
+  .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+  }
+
+  .dropdown a:hover {background-color: #f1f1f1}
+
+  .show {display:block;}
+
+</style>
+
+<Style>
+        .separator {
+            width: 2px;
+            height: 30px;
+            background-color: #ccc;
+        }
+    
+    .hero {
+        background-image: url('/static/assets/img/keynote.jpg'); /* Replace with your image path */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 100%;
+        height: 60vh; /* Adjust the height as needed */
+        color: #fff; /* Text color on top of the background */
+        padding: 100px 0; /* Adjust padding as needed */
+        text-align: center;
+    }
+
+    .hero h2 {
+        font-size: 2.5rem; /* Adjust the font size */
+    }
+
+    .hero p {
+        font-size: 1.5rem; /* Adjust the font size */
+    }
+
+     .courselist .container {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .course-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        height:600px;
+    }
+    .courseimg{
+        height : 170px ;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .card-text {
+        font-size: 16px;
+    }
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        height: 60px; /* Set the default height */
+        width: 100%; /* Set the default width to 100% */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+</style>
+</html>
