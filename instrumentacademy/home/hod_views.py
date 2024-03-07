@@ -219,11 +219,15 @@ def view_catgories(request):
 def filtered_course_list(request, category_name):
     # Get the category object based on the category_id
     ccategory = get_object_or_404(category, name=category_name)
+   
 
     # Filter courses based on the category object
     courses = CourseDetail.objects.filter(course=ccategory, is_active=True)
+   
+
 
     context = {
+        
         'category': ccategory,
         'courses': courses,
         'category_name':category_name

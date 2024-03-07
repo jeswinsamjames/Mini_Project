@@ -59,6 +59,12 @@ urlpatterns = [
     path('rating-review/<int:course_id>/', student_views.rating_review, name='rating_review'),
     path('get_updated_rating/<int:course_id>/', student_views.get_updated_rating, name='get_updated_rating'),
 
+    path('wishlist/', student_views.wishlist, name='wishlist'),
+    path('add_to_wishlist/<int:course_id>', student_views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/remove/<int:item_id>/', student_views.remove_from_wishlist, name='remove_from_wishlist'),    
+
+
+  
 
 
 

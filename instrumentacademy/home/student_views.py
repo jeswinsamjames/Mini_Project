@@ -490,6 +490,7 @@ def download_certificate(request, certificate_id):
             return JsonResponse({'error': error_message}, status=500)
     
 from django.db.models import Avg
+from itertools import zip_longest
 
 @login_required
 def tutor_profile(request, course_id):
@@ -505,7 +506,15 @@ def tutor_profile(request, course_id):
         rating = None
         review = None
 
-    ratings = RatingReview.objects.filter(course=course)
+    comments = RatingReview.objects.filter(course=course)
+    user_profiles = UserProfile.objects.filter(user__in=comments.values_list('user', flat=True))
+    comment_user_pairs = zip_longest(comments, user_profiles)
+    learner=request.user
+    enrolled_courses = Enrollment.objects.filter(learner=learner)
+
+
+ 
+
     
 
     context = {
@@ -513,6 +522,11 @@ def tutor_profile(request, course_id):
         'user_profile': user_profile,
         'rating': rating,
         'review': review,
+        'comments': comments,
+        'user_profiles': user_profiles,
+        'comment_user_pairs': comment_user_pairs,
+        'enrolled_courses': enrolled_courses,
+
        
 
 
@@ -531,6 +545,7 @@ def get_updated_rating(request, course_id):
         'average_rating': average_rating,
         'num_ratings': num_ratings,
         'comments': comments_data,
+    
 
     })
 
@@ -570,6 +585,64 @@ def rating_review(request, course_id):
         'course': course,
     }
     return render(request, 'student_template/tutor_profile.html', context)
+
+
+def wishlist(request):
+    if request.user.is_authenticated:
+        wishlist = WishlistItem.objects.filter(user=request.user)
+        # courses = wishlist.course.all()
+        return render(request, 'student_template/wishlist.html', {'wishlist': wishlist})
+    else:
+        return redirect('login')  # Redirect to login page
+    
+from django.views.decorators.http import require_POST
+
+@login_required
+@require_POST
+def add_to_wishlist(request, course_id):
+    print("adedddd")
+    # Get the course object based on the course_id
+    course = CourseDetail.objects.get(pk=course_id)
+
+    # Check if the course is already in the user's wishlist
+    if WishlistItem.objects.filter(user=request.user, course=course).exists():
+        # Course is already in the wishlist
+        return JsonResponse({'message': 'Course is already in the wishlist'}, status=400)
+
+    # Add the course to the user's wishlist
+    wishlist_item = WishlistItem.objects.create(user=request.user, course=course)
+
+    return JsonResponse({'message': 'Course added to wishlist successfully'}, status=200)
+
+def remove_from_wishlist(request, course_id):
+    if request.user.is_authenticated:
+        wishlist = WishlistItem.objects.get(user=request.user)
+        wishlist.courses.remove(course_id)
+        return redirect('wishlist')  # Redirect to wishlist page
+    else:
+        return redirect('login')  # Redirect to login page
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def student_feedback(request):

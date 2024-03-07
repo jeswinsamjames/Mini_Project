@@ -1,0 +1,15 @@
+{% if wishlist %}
+    <h1>My Wishlist</h1>
+    <ul>
+        {% for course in wishlist %}
+            <li>{{ course.course.name }}</li>
+            <!-- Add Remove from Wishlist button -->
+            <form action="{% url 'remove_from_wishlist' course.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Remove from Wishlist</button>
+            </form>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Your wishlist is empty.</p>
+{% endif %}

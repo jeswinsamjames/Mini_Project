@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load template_filters %}
 {% load static %}
 {% load socialaccount %}
   {% block title %}
@@ -19,13 +20,12 @@
               
 
               <div class="rating_top" style="display: flex; justify-content: center; align-items: center;">
-                <p style="color: black;" id="average-rating">Rating : {{ average_rating }}/5</p>
-                <!-- <div id="num-ratings">{{ num_ratings }}</div> -->
+                <p style="color: black; margin-top: 15px;" id="average-rating">Rating : {{ average_rating }}/5</p>
 
 
           
 
-                <div class="rating che d-flex align-items-center" style="width: 100px;">
+                <div class="rating che d-flex align-items-center" style="width: 100px; margin-top: 12px;">
                   <input type="radio" name="new_rating" id="new_rating-5" value="5" disabled>
                   <label for="new_rating-5"></label>
                   <input type="radio" name="new_rating" id="new_rating-4" value="4" disabled>
@@ -37,67 +37,83 @@
                   <input type="radio" name="new_rating" id="new_rating-1" value="1" disabled>
                   <label for="new_rating-1"></label>
               </div>
-              
-              
-                
-                    <p class="d-flex flex-col inner_para mr-3" style="color: black;"> See all reviews</p>
-                    <div id="comments">{{comments}}</div>
-
-                    <i id="rating-arrow" class="fas fa-chevron-down" style="cursor: pointer;"></i>
+              <div id="num-ratings">{{ num_ratings }}</div>
+              <i id="rating-arrow" class="fas fa-chevron-down" style="cursor: pointer;"></i>
 
 <!-- Modal -->
 <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="ratingModalLabel">Rating Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-dialog-centered"> <!-- Remove modal-lg to decrease the width -->
+      <div class="modal-content "> <!-- Add overflow-y to make the content scrollable -->
+          <!-- Modal Header -->
+          <div class="modal-header">
+              <h3 class="modal-title" id="ratingModalLabel">{{course.name}}</h3>
+              <h6 style="margin-top:35px ; margin-left: -36px;">by {{user_profile.user.first_name}} {{user_profile.user.last_name}}</h6>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="rating_tooltip course_rating_statistics custom-scroll">
+              <div style="margin: 40px;" class="position-relative">
+                  {% for comment, user_profile in comment_user_pairs %}
+                  <div class="testimonial_card">
+                      <div class="name_plus_pic_box">
+                          {% if user_profile.profile_picture %}
+                          <img style="width: 50px; height: 50px; border-radius: 100px;" src="{{ user_profile.profile_picture.url }}" alt="Profile Picture">
+                          {% else %}
+                          <!-- Default profile picture or placeholder -->
+                          <img style="width: 50px; height: 50px; border-radius: 100px;" src="{% static 'assets/img/userimg.jpg' %}" alt="Default Profile Picture" class="img-circle elevation-2">
+                          {% endif %}
+                          <div class="name_plus_country">
+                              <p class="stu_name font_jakarta_semibold" style="color: black;">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</p>
+                          </div>
+                      </div>
+                      <div class="review_area">
+                          <div class="review_box">
+                              <div class="stu_rating">
+                                  <div class="rating che d-flex align-items-center" style="width: 100px;">
+                                      {% for i in '12345' %}
+                                      {% if 6|subtract:comment.rating|stringformat:"s" >= i %}
+                                      {% if 6|subtract:comment.rating|stringformat:"s" == i %}
+                                      <input type="radio" value="{{ i }}" checked disabled class="star-filled">
+                                      {% else %}
+                                      <input type="radio" value="{{ i }}" disabled class="star-empty">
+                                      {% endif %}
+                                      {% else %}
+                                      <input type="radio" value="{{ i }}" disabled class="star-empty">
+                                      {% endif %}
+                                      <label for="new_rating-{{ i }}"></label>
+                                      {% endfor %}
+                                  </div>
+                              </div>
+                              <div style="margin: 8px; margin-top: -15px;" class="font_jakarta_regular stu_review">{{ comment.review }}</div>
+                          </div>
+                          <div class="teacher_plus_subcat_box d-flex flex-row">
+                              <p style="margin-top: 20px;" class="font_jakarta_regular platform_review_date">{{ comment.created_at }}</p>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Add a horizontal separator -->
+                  <hr style="margin: 10px 5; background-color: black; ">
+                  {% endfor %}
+              </div>
+          </div>
       </div>
-      <!-- Modal Body -->
-      <div class="rating_tooltip course_rating_statistics">
-        <div class="cover_divs_grid">
-            <div class="rating_outof">
-                <p class="rating_text font_jakarta_regular">Rating out of 5</p>
-                <h5 class="rating-average font_jakarta_regular">4.9</h5>
-                <p class="rating_text font_jakarta_regular">Average of 647</p>
-            </div>
-            <!-- Rating Bars for each star -->
-          
-        </div>
-        <div class="see_rating_div">
-            <p class="see_text_link">See all 647 Reviews</p>
-        </div>
-    </div>
-
-
-    
-
-
-    
-
-
-    </div>
   </div>
 </div>
 
+<style>
+  .custom-scroll {
+    max-height: 400px; /* Set the maximum height for the scrollbar */
+    overflow-y: auto; /* Add vertical scrollbar */
+}
 
-               
-               
+</style>
+
+
+    
             </div>
-            
 
-              
-
-             
             </div>
-            
-           
 
-
-
-
-            
               <hr class="dotted_lines" style="background-color: black; height: 1px; border: none; margin-bottom: 20px;">
               <div style="display: flex; justify-content: center; align-items: center;">
                   <p style="margin: 10px; color: black;">{{ course.tutor.first_name }} {{ course.tutor.last_name }}</p>
@@ -128,7 +144,14 @@
                                 <div class="col-md-8">
                                     <h5 style="color: rgb(0, 0, 0);">₹ {{course.amount}}</h5>
                                     <p style="color: black;" class="card-text">{{ course.description }}</p>
-                                    <a href="/payment/homepage/{{course.id}}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
+                                    {% for course in enrolled_courses  %}
+                                          {% if user in course.course.enrolled_learners.all %}
+                                          <span class="btn btn-primary" style="width: 200px;">Enrolled</span>
+                                      {% else %}
+                                      <a href="/payment/homepage/{{course.id}}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
+                                      {% endif %}
+                                    {% endfor %}
+                                    
                                 </div>
                             </div>
                         </div>
@@ -257,7 +280,35 @@
 
 
 
+      <style>
+        /* Hide the radio buttons */
+        .name_plus_pic_box {
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Center items vertically */
+}
 
+.name_plus_pic_box img {
+    margin-right: 10px; /* Add some spacing between the image and the text */
+}
+
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Style for unchecked star */
+        label {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-image: url('star_empty.png'); /* Path to your empty star image */
+            background-size: cover;
+        }
+        
+        /* Style for checked star */
+        input[type="radio"]:checked + label {
+            background-image: url('star_filled.png'); /* Path to your filled star image */
+        }
+        </style>
 
 
       <style>
@@ -398,7 +449,7 @@
                 },
                 success: function(data) {
                     $('#average-rating').text("Rating: "+data.average_rating.toFixed(1)+"/5");
-                    $('#num-ratings').text(data.num_ratings);
+                    $('#num-ratings').text("See all Review ("+data.num_ratings+")");
                     setStars(data.average_rating);
                     
                     $('#comments').empty();
@@ -406,7 +457,9 @@
                     // Display comments
                     if (data.comments.length > 0) {
                         data.comments.forEach(function(comment) {
-                            $('#comments').append('<div>' + comment.user__username + ': ' + comment.review + '</div>');
+                          
+                            $('#comments').append( comment.review + '</div>');
+
                         });
                     } else {
                         $('#comments').text('No comments yet.');

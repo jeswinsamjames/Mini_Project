@@ -182,6 +182,12 @@ class RatingReview(models.Model):
     def __str__(self):
         return f"Rating: {self.rating}, Review: {self.review}"
     
+
+class WishlistItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+
+    
 # from django.core.validators import MaxValueValidator, MinValueValidator
 # class QuizCompletion(models.Model):
 #     user = models.ForeignKey(User, on_delete=models.CASCADE)

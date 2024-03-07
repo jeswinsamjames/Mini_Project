@@ -177,38 +177,32 @@
                         <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
                       
                         <div class="dropdown">
-                          
-                          <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
-                              <li></li>
-                              <li></li>
-                              <li></li>
-                          </ul>
-                          
-                          <div id="myDropdown" class="dropdown-content">
+                            <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown('{{ course.id }}')">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                            <div id="myDropdown_{{ course.id }}" class="dropdown-content">
+                                <a href="#" style="text-decoration: none;">
+                                    <!-- Share Icon -->
+                                    <img src="{% static 'images/share.svg' %}" alt="Share Icon" style="width: 20px; height: 20px;">
+                                    <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                        <use xlink:href="#icon-share"></use>
+                                    </svg>
+                                    Share
+                                </a>
+                                <a>
+                                    <!-- Wishlist Icon -->
+                                    <img src="{% static 'images/fav.svg' %}" alt="Wishlist Icon" style="width: 18px; height: 18px;">
+                                    <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                        <!-- Replace this with the appropriate icon ID for "Wishlist" -->
+                                        <use xlink:href="#icon-wishlist"></use>
+                                    </svg>
+                                    <button class="btn btn-outline-primary" onclick="addToWishlist({{ course.id }})">Add to Wishlist</button>
 
-                            <a href="#" style="text-decoration: none;">
-                                <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
-                                
-                                <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                    <use xlink:href="#icon-share"></use>
-                                </svg>
-                                
-                                Share
-                            </a>
-                            
-                              
-                           
-                            <a href="#">
-                                <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
-
-                                <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
-                                    <!-- Replace this with the appropriate icon ID for "Wishlist" -->
-                                    <use xlink:href="#icon-wishlist"></use>
-                                </svg>
-                                Wishlist
-                            </a>
-                          </div>
-                      </div>
+                                </a>
+                            </div>
+                        </div>
                     
                         <div class="card-body">
                             <h5 class="card-title">{{ course.name }} </h5>
@@ -333,23 +327,52 @@
           element.innerHTML = language;
       }
 
-      function showDropdown() {
-          document.getElementById("myDropdown").classList.toggle("show");
-      }
+      
+        function showDropdown(courseId) {
+            var dropdown = document.getElementById('myDropdown_' + courseId);
+            dropdown.classList.toggle('show');
+        }
 
-      // Close the dropdown if the user clicks outside of it
-      window.onclick = function(event) {
-          if (!event.target.matches('.dropbtn')) {
-              var dropdowns = document.getElementsByClassName("dropdown-content");
-              var i;
-              for (i = 0; i < dropdowns.length; i++) {
-                  var openDropdown = dropdowns[i];
-                  if (openDropdown.classList.contains('show')) {
-                      openDropdown.classList.remove('show');
-                  }
-              }
-          }
-      }
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName('dropdown-content');
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        function addToWishlist(courseId) {
+        // Send an AJAX request to your Django backend
+        // You can use libraries like jQuery or fetch API to make the request
+        // Example using fetch API:
+        fetch(`/add_to_wishlist/${courseId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for CSRF protection
+            },
+            body: JSON.stringify({ courseId: courseId })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Course added to wishlist successfully
+                console.log('Course added to wishlist');
+                // You can update UI or display a message here if needed
+            } else {
+                // Error adding course to wishlist
+                console.error('Error adding course to wishlist');
+                // You can handle errors or display an error message here if needed
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // You can handle errors or display an error message here if needed
+        });
+    }
+
   </script>
   <script>
     $(document).ready(function () {
