@@ -24,7 +24,8 @@ urlpatterns = [
     path('mark-notifications-as-read/', views.mark_notifications_as_read, name='mark_notifications_as_read'),
 
     path('search/', views.search_results, name='search_results'),
-    path('/metronome', views.metronome, name='metronome'),
+    path('metronome', views.metronome, name='metronome'),
+    path('paino_keys', views.paino_keys, name='paino_keys'),
     
     
 

@@ -194,3 +194,6 @@ def search_results(request):
 def metronome(request):
 
     return render(request, "metronome.html")
+
+def paino_keys(request):
+    return render(request, "student_template/paino_keys.html")
