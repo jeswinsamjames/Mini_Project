@@ -217,7 +217,8 @@
                         </div>
                     
                         <div class="card-body">
-                            <h5 class="card-title">{{ course.name }} </h5>
+                            <h5 class="card-title">{{ course.name }}<p class="card-text" style="color: #333333; font-size: small; font-weight: lighter;">({{ course.level }}) </p> </h5>
+                            
                             <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}x</p>
                             <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
                             <p class="course-description" class="card-text"><strong>Description:</strong> {{ course.description }}</p>

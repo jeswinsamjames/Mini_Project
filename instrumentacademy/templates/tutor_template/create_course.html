@@ -21,15 +21,9 @@
                 <label for="instrument_name" class="custom-label">Instrument Name:</label>
                 <select class="form-control" id="instrument_name" name="instrument_name" required>
                     {% for i in categories %}
-                    <option value="{{i.instrument_name}}">{{i.name}}</option>
+                    <option value="{{i.instrument_name}}" >{{i.name}}</option>
                     {% endfor %}
-                    {% comment %} <option value="piano">Piano</option>
-                    <option value="Violin">Violin</option>
-                    <option value="Guitar">Guitar</option>
-                    <option value="Flute">Flute</option>
-                    <option value="Indian Vocal">Indian Vocal</option>
-                    <option value="Tabala">Tabala</option>
-                    <option value="Western Vocal">Western Vocal</option> {% endcomment %}
+                  
                 </select>
                 <div class="invalid-feedback">
                     Please select an instrument name.
@@ -38,6 +32,31 @@
             <div class="form-group">
                 <label for="years_of_experience" class="custom-label">Years of Experience:</label>
                 <input type="number" class="form-control" id="years_of_experience" name="years_of_experience" required min="0">
+                <div class="invalid-feedback">
+                    Years of experience cannot be negative.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="genre">Genre:</label>
+                <select class="form-control" id="genre" name="genre">
+                    <option value="Classical">Classical</option>
+                    <option value="Jazz">Jazz</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Pop">Pop</option>
+                </select>
+            
+                <div class="invalid-feedback">
+                    Years of experience cannot be negative.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="level">Level:</label>
+                <select class="form-control" id="level" name="level">
+                    <option value="Basic">Basic</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+            
                 <div class="invalid-feedback">
                     Years of experience cannot be negative.
                 </div>
@@ -71,16 +90,14 @@
                 <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; display: none;">
             </div>
         
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input custom-control-input" id="is_active" name="is_active">
-                <label class="form-check-label custom-control-label" for="is_active">Active</label>
-            </div>
+            
         
             <button type="submit" class="btn btn-primary mt-3">Create Course</button>
         </form>
         
         
     </div>
+
 <style>
     /* Custom CSS for styling the form */
     .container {
@@ -132,6 +149,9 @@
                 const courseImage = document.querySelector("#course_image");
                 const isActive = document.querySelector("#is_active");
                 const amount = document.querySelector("#amount"); // Add this line
+                const genre = form.querySelector('#genre').value.trim();
+        const level = form.querySelector('#level').value.trim();
+
 
                 
                 // Custom validation logic
@@ -187,6 +207,15 @@
                 } else {
                     amount.classList.remove("is-invalid");
                 }
+                if (!genre) {
+            alert('Genre field cannot be empty.');
+            return;
+        }
+
+        if (!level) {
+            alert('Level field cannot be empty.');
+            return;
+        }
         
                 if (hasErrors) {
                     event.preventDefault(); // Prevent form submission

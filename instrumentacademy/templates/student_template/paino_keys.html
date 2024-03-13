@@ -13,40 +13,48 @@
       <header>
         <h2>PIANO</h2>
         
-        <div class="column keys-checkbox">
-          <span>Show Keys</span><input type="checkbox" checked>
-        </div>
+        
       </header>
       <div style="margin-left: 300px;" class="column volume-slider">
             <h3>Which note is this?</h3>
       </div>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
       <ul style="margin-left: 68px;" class="piano-keys">
-        <li class="key white" data-key="a"><span>c</span></li>
-        <li class="key black" data-key="w"><span></span></li>
-        <li class="key white" data-key="s"><span>d</span></li>
-        <li class="key black" data-key="e"><span></span></li>
-        <li class="key white" data-key="d"><span>e</span></li>
-        <li class="key white" data-key="f"><span>f</span></li>
-        <li class="key black" data-key="t"><span></span></li>
-        <li class="key white" data-key="g"><span>g</span></li>
-        <li class="key black" data-key="y"><span></span></li>
-        <li class="key white" data-key="h"><span>a</span></li>
-        <li class="key black" data-key="u"><span></span></li>
-        <li class="key white" data-key="j"><span>b</span></li>
-        <li class="key white" data-key="k"><span>c</span></li>
-        <li class="key black" data-key="o"><span></span></li>
-        <li class="key white" data-key="l"><span>d</span></li>
-        <li class="key black" data-key="p"><span></span></li>
-        <li class="key white" data-key=";"><span>e</span></li>
+        <li class="key white " data-key="a" data-value="0" ><span class="pointer" > </span></li>
+        <li class="key black " data-key="w" data-value="1"><span class="pointer"></span></li>
+        <li class="key white " data-key="s" data-value="2"><span class="pointer"></span></li>
+        <li class="key black" data-key="e" data-value="3"><span class="pointer"></span></li>
+        <li class="key white" data-key="d" data-value="4"><span class="pointer"></span></li>
+        <li class="key white" data-key="f" data-value="5"><span class="pointer"></span></li>
+        <li class="key black" data-key="t" data-value="6"><span class="pointer"></span></li>
+        <li class="key white" data-key="g" data-value="7"><span class="pointer"></span></li>
+        <li class="key black" data-key="y" data-value="8"><span class="pointer"></span></li>
+        <li class="key white" data-key="h" data-value="9"><span class="pointer"></span></li>
+        <li class="key black" data-key="u" data-value="10"><span class="pointer"></span></li>
+        <li class="key white" data-key="j" data-value="11"><span class="pointer"></span></li>
+        <li class="key white" data-key="k" data-value="0"><span class="pointer"></span></li>
+        <li class="key black" data-key="o" data-value="1"><span class="pointer"></span></li>
+        <li class="key white" data-key="l" data-value="2"><span class="pointer"></span></li>
+        <li class="key black" data-key="p" data-value="3"><span class="pointer"></span></li>
+        <li class="key white" data-key=";" data-value="4"><span class="pointer"></span></li>
       </ul>
       <div style="margin: 100px; margin-left: 220px" class="svarknapper smalleKnapperMedFastBredde">
-        <button class="btn btn-primary svarknap" value="0" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">C</button>
-        <button class="btn btn-primary svarknap aktiv tone_dn" id="svar1" value="2" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">D</button>
-        <button class="btn btn-primary svarknap aktiv tone_en" id="svar2" value="4" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">E</button>
-        <button class="btn btn-primary svarknap tone_fn" id="svar3" value="5"  style="font-size: 18px; padding: 12px 24px;background-color: #232323;">F</button>
-        <button class="btn btn-primary svarknap tone_gn" id="svar4" value="7"  style="font-size: 18px; padding: 12px 24px; background-color: #232323;">G</button>
-        <button class="btn btn-primary svarknap tone_an" id="svar5" value="9"  style="font-size: 18px; padding: 12px 24px; background-color: #232323;">A</button>
-        <button class="btn btn-primary svarknap tone_hn" id="svar6" value="11"  style="font-size: 18px; padding: 12px 24px ; background-color: #232323;">B</button>
+        <button class="btn btn-primary svarknap" id="svar0" value="0" onclick="checkAnswer(0)" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">C</button>
+        <button class="btn btn-primary svarknap" id="svar0" value="1" onclick="checkAnswer(1)" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">C#</button>
+        <button class="btn btn-primary svarknap tone_dn" id="svar1"  value="2" onclick="checkAnswer(2)" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">D</button>
+        <button class="btn btn-primary svarknap tone_dn" id="svar1" value="3" onclick="checkAnswer(3)" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">D#</button>
+        <button class="btn btn-primary svarknap  tone_en" id="svar2" value="4" onclick="checkAnswer(4)" style="font-size: 18px; padding: 12px 24px; background-color: #232323;">E</button>
+        <button class="btn btn-primary svarknap tone_fn" id="svar3" value="5" onclick="checkAnswer(5)"  style="font-size: 18px; padding: 12px 24px;background-color: #232323;">F</button>
+        <button class="btn btn-primary svarknap tone_fn" id="svar3" value="6" onclick="checkAnswer(6)"  style="font-size: 18px; padding: 12px 24px;background-color: #232323;">F#</button>
+        <button class="btn btn-primary svarknap tone_gn" id="svar4" value="7" onclick="checkAnswer(7)"  style="font-size: 18px; padding: 12px 24px; background-color: #232323;">G</button>
+        <button class="btn btn-primary svarknap tone_gn" id="svar4" value="8" onclick="checkAnswer(8)"  style="font-size: 18px; padding: 12px 24px; background-color: #232323;">G#</button>
+
+        <button class="btn btn-primary svarknap tone_an" id="svar5" value="9" onclick="checkAnswer(9)"  style="font-size: 18px; padding: 12px 24px; background-color: #232323;">A</button>
+        <button class="btn btn-primary svarknap tone_an" id="svar5" value="10" onclick="checkAnswer(10)"  style="font-size: 18px; padding: 12px 24px; background-color: #232323;">A#</button>
+        <button class="btn btn-primary svarknap tone_hn" id="svar6" value="11" onclick="checkAnswer(11)"  style="font-size: 18px; padding: 12px 24px ; background-color: #232323;">B</button>
     </div>
     
     
@@ -57,44 +65,140 @@
   
 
 <script>
-    const pianoKeys = document.querySelectorAll(".piano-keys .key"),
-keysCheckbox = document.querySelector(".keys-checkbox input");
-let allKeys = [],
-audio = new Audio(`tunes/a.wav`); // by default, audio src is "a" tune
-const playTune = (key) => {
-    audio.src = `tunes/${key}.wav`; // passing audio src based on key pressed 
-    audio.play(); // playing audio
-    const clickedKey = document.querySelector(`[data-key="${key}"]`); // getting clicked key element
-    clickedKey.classList.add("active"); // adding active class to the clicked key element
-    setTimeout(() => { // removing active class after 150 ms from the clicked key element
-        clickedKey.classList.remove("active");
-    }, 150);
+  const pianoKeys = document.querySelectorAll(".piano-keys .key");
+  const keysButtons = document.querySelectorAll(".svarknapper button");
+  const pointer = document.querySelector(".pointer");
+  const progressBar = document.querySelector(".progress-bar");
+  let correctCount = 0; // Track the number of correct answers
+  const progressBarSegments = document.querySelectorAll('.progress-bar-segment');
+
+
+
+  function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function positionPointer() {
+      const currentPointer = document.querySelector('.pointer.active');
+
+      if (currentPointer) {
+          currentPointer.classList.remove('active');
+      }
+
+      const pianoKeys = document.querySelectorAll('.piano-keys .key');
+      const randomIndex = getRandomInt(0, pianoKeys.length - 1);
+      const randomKey = pianoKeys[randomIndex];
+
+      const pointerSpan = randomKey.querySelector('.pointer');
+      pointerSpan.classList.add('active');
+
+      const keyRect = randomKey.getBoundingClientRect();
+      const pianoRect = document.querySelector('.piano-keys').getBoundingClientRect();
+
+      const pointerTop = keyRect.top - pianoRect.top + keyRect.height / 2;
+      const pointerLeft = keyRect.left - pianoRect.left + keyRect.width / 2;
+
+      pointer.style.top = `${pointerTop}px`;
+      pointer.style.left = `${pointerLeft}px`;
+  }
+  function checkAnswer(buttonValue) {
+    const activePointer = document.querySelector('.pointer.active');
+    const activeKeyValue = parseInt(activePointer.parentElement.dataset.value);
+
+    if (activeKeyValue === buttonValue) {
+        // Correct button clicked
+        correctCount++;
+        progressBar.style.width = `${(correctCount / 6) * 100}%`;
+
+        if (correctCount === 6) {
+            // Display pop-up after 6 correct answers
+            if (confirm('Congratulations! You answered 6 questions correctly. Do you want to continue?')) {
+                // Reset progress and start quiz again
+                correctCount = 0;
+                progressBar.style.width = '0%';
+                positionPointer();
+            }
+        } else {
+            // Move pointer to another key
+            positionPointer();
+        }
+    } else {
+        // Incorrect button clicked
+        // Handle incorrect answer (e.g., display message)
+        alert('Incorrect answer!');
+    }
 }
-pianoKeys.forEach(key => {
-    allKeys.push(key.dataset.key); // adding data-key value to the allKeys array
-    // calling playTune function with passing data-key value as an argument
-    key.addEventListener("click", () => playTune(key.dataset.key));
+
+keysButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const activePointer = document.querySelector('.pointer.active');
+        const activeKeyValue = parseInt(activePointer.parentElement.dataset.value);
+        const buttonValue = parseInt(button.value);
+
+        if (activeKeyValue === buttonValue) {
+            // Correct button clicked
+            correctAnswers++;
+            updateProgressBar();
+            // Move pointer to another key
+            positionPointer();
+        } else {
+            // Incorrect button clicked
+            // Handle incorrect answer (e.g., reset progress)
+            progressBar.style.width = '0%';
+        }
+
+        if (correctAnswers === 6) {
+            // Show popup after 6 correct answers
+            alert("You have answered 6 questions correctly. Do you want to continue?");
+            correctAnswers = 0; // Reset correct answers count
+            updateProgressBar(); // Reset progress bar
+        }
+    });
 });
 
-const showHideKeys = () => {
-    // toggling hide class from each key on the checkbox click
-    pianoKeys.forEach(key => key.classList.toggle("hide"));
+function updateProgressBar() {
+    const increment = 100 / 6; // Divide the progress bar into 6 segments
+    const width = (correctAnswers * increment) + '%';
+    progressBar.style.width = width;
 }
-const pressedKey = (e) => {
-    // if the pressed key is in the allKeys array, only call the playTune function
-    if(allKeys.includes(e.key)) playTune(e.key);
-}
-keysCheckbox.addEventListener("click", showHideKeys);
-document.addEventListener("keydown", pressedKey);
+
+positionPointer();
 </script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
+    .pointer {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: red;
+            transition: top 0.3s, left 0.3s;
+            pointer-events: none;
+        }
+        .pointer.active {
+            opacity: 1;
+        }
+        .pointer:not(.active) {
+            opacity: 0;
+        }
+        .piano-keys {
+            position: relative;
+            width: fit-content;
+        }
+        .key {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 120px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+        }
 .paino{
     display: flex;
     justify-content: center;
-    height: 700px;
+    height: 800px;
     background-color: #f1eeee;
     align-items: center;
   
@@ -106,7 +210,7 @@ document.addEventListener("keydown", pressedKey);
   border-radius: 20px;
   background-color: #ffffff;
   width: 1000px;
-  height: 600px;
+  height: 700px;
   
 }
 .wrapper header {
@@ -122,11 +226,7 @@ header .column {
   display: flex;
   align-items: center;
 }
-header span {
-  font-weight: 500;
-  margin-right: 15px;
-  font-size: 1.19rem;
-}
+
 header input {
   outline: none;
   border-radius: 30px;
@@ -195,14 +295,13 @@ header input {
 .piano-keys .key span {
   position: absolute;
   bottom: 20px;
-  width: 100%;
+  width: 25px;
   color: #A2A2A2;
   font-size: 1.13rem;
   text-align: center;
+  margin-left: 10px;
 }
-.piano-keys .key.hide span {
-  display: none;
-}
+
 .piano-keys .black span {
   bottom: 13px;
   color: #888888;

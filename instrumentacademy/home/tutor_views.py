@@ -102,10 +102,8 @@ def create_course(request):
         description = request.POST['description']
         years_of_experience = request.POST['years_of_experience']
         amount = request.POST['amount']
-
-        is_active = True if request.POST.get('is_active') else False
-
-        # Handle the uploaded course image
+        genre = request.POST['genre']
+        level = request.POST['level']
         course_image = request.FILES.get('course_image')
         # Create a new category object based on the selected instrument_name
         try:
@@ -124,10 +122,12 @@ def create_course(request):
             course=category_obj,  # Use the category_obj as the course_type
             description=description,
             years_of_experience=years_of_experience,
-            is_active=is_active,
+            genre=genre,
+            level=level,
             image=course_image,
             amount=amount,
-            tutor=request.user
+            tutor=request.user,
+            is_active=True
         )
 
         # Save the course object to the database

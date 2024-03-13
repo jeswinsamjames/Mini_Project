@@ -42,17 +42,50 @@ class Courses(models.Model):
         return f"{self.tutor.username}'s {self.course_type.name} Course"
 
 class CourseDetail(models.Model):
+    LEVEL_CHOICES = [
+        ('Basic', 'Basic'),
+        ('Intermediate', 'Intermediate'),
+        ('Advanced', 'Advanced'),
+        ]
+    GENRE_CHOICES = [
+        ('Classical', 'Classical'),
+        ('Jazz', 'Jazz'),
+        ('Rock', 'Rock'),
+        ('Pop', 'Pop'),
+        # Add other genre choices as needed
+    ]
+
     name = models.CharField(max_length=120, default='DefaultName')
     course = models.ForeignKey(category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='course_images', null=True, blank=True)
     tutor = models.ForeignKey(User, on_delete=models.CASCADE)
     tutor_name = models.CharField(max_length=255)
     years_of_experience = models.PositiveIntegerField()
+    level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='Basic')
+    genre = models.CharField(max_length=20, choices=GENRE_CHOICES, blank=True, null=True)
     description = models.TextField()
     is_active = models.BooleanField(default=True)
     enrolled_learners = models.ManyToManyField(User, through='Enrollment', related_name='enrolled_courses')
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    def experience_category(self):
+        if self.years_of_experience <= 5:
+            return '0-5 years'
+        elif 5 < self.years_of_experience <= 10:
+            return '5-10 years'
+        elif 10 < self.years_of_experience <= 15:
+            return '10-15 years'
+        else:
+            return '15+ years'
 
+    def budget_category(self):
+        if self.amount <= 500:
+            return 'Limited budget'
+        elif 500 < self.amount <= 1000:
+            return 'Moderate budget'
+        elif 1000 < self.amount <= 2000:
+            return 'High budget'
+        else:
+            return 'No budget constraints'  
 
     def __str__(self):
         return f"{self.name}"
