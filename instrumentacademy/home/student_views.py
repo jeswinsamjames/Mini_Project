@@ -204,14 +204,7 @@ def course_material(request, course_id):
     user_responses = Response.objects.filter(user=request.user, question_id__in=questions.values_list('id', flat=True))
     total_active_questions = questions.count()
     total_user_responses = user_responses.count()
-    all_questions_attempted = total_user_responses == total_active_questions
-    print('attt', all_questions_attempted)
-
-
-
-
-
-   
+    all_questions_attempted = total_user_responses == total_active_questions and total_user_responses > 0 and total_active_questions > 0;
     res=True
     for lesson in lesson_materials:
         progress=Progress.objects.filter(learner=request.user,lesson_material=lesson)
@@ -219,8 +212,12 @@ def course_material(request, course_id):
         if progress:
             if not progress[0].is_completed:
                 res=False
+                message = "Content is being uploaded. Please check back later."
+
         else:
             res=False
+            message = "Content is being uploaded. Please check back later."
+
     # print(a)
     video_lesson_materials = lesson_materials.filter(
         material_file__icontains='.mp4')  # You can customize the condition based on your file naming convention

@@ -59,7 +59,9 @@ class CourseForm(forms.ModelForm):
             'description',
             'amount',
             'image',
-            'is_active',  # Include the is_active field in the form
+            'genre',
+            'level',
+            
         ]
 
         widgets = {
@@ -68,7 +70,8 @@ class CourseForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),  # Add 'required' here
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'genre': forms.Select(attrs={'class': 'form-control'}),  # Add genre field widget
+            'level': forms.Select(attrs={'class': 'form-control'}),
         }
 
 

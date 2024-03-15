@@ -103,8 +103,21 @@
     
     <section class="courselist">
         <div class="container mt-5">
+            <div class="dropdown" style="margin-right: 300px;">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Sort Courses
+                </button>
+                <div class="dropdown-menu" aria-labelledby="sortDropdown">
+                  <a class="dropdown-item" href="#" id="notStartedSort">Not Started</a>
+                  <a class="dropdown-item" href="#" id="ongoingSort">Ongoing</a>
+                  <a class="dropdown-item" href="#" id="completedSort">Completed</a>
+                </div>
+              </div>
+              
             <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Enrolled Courses</h1>
+            
             <div class="row">
+                
                 {% for course in enrolled_courses %}
                 <div class="col-md-3 course-card1">
                     <div class="card mb-4 course-card">
@@ -223,6 +236,38 @@
                 }
             }
         }
+        // Function to filter and display courses based on selected category
+function filterCourses(category) {
+  const notStartedCourses = document.querySelectorAll('.not-started-course');
+  const ongoingCourses = document.querySelectorAll('.ongoing-course');
+  const completedCourses = document.querySelectorAll('.completed-course');
+
+  switch (category) {
+    case 'notStarted':
+      notStartedCourses.forEach(course => course.style.display = 'block');
+      ongoingCourses.forEach(course => course.style.display = 'none');
+      completedCourses.forEach(course => course.style.display = 'none');
+      break;
+    case 'ongoing':
+      notStartedCourses.forEach(course => course.style.display = 'none');
+      ongoingCourses.forEach(course => course.style.display = 'block');
+      completedCourses.forEach(course => course.style.display = 'none');
+      break;
+    case 'completed':
+      notStartedCourses.forEach(course => course.style.display = 'none');
+      ongoingCourses.forEach(course => course.style.display = 'none');
+      completedCourses.forEach(course => course.style.display = 'block');
+      break;
+    default:
+      break;
+  }
+}
+
+// Event listeners for sorting dropdown items
+document.getElementById('notStartedSort').addEventListener('click', () => filterCourses('notStarted'));
+document.getElementById('ongoingSort').addEventListener('click', () => filterCourses('ongoing'));
+document.getElementById('completedSort').addEventListener('click', () => filterCourses('completed'));
+
     </script>
     <style>
   

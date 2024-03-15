@@ -74,6 +74,14 @@
             {{ form.years_of_experience }}
         </div>
         <div class="form-group">
+            {{ form.genre.label_tag }}
+            {{ form.genre }}
+        </div>
+        <div class="form-group">
+            {{ form.level.label_tag }}
+            {{ form.level }}
+        </div>
+        <div class="form-group">
             {{ form.description.label_tag }}
             {{ form.description }}
         </div>
@@ -91,10 +99,7 @@
         </div>
         
         
-        <div class="form-check">
-            {{ form.is_active }}
-            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Is Active</label>
-        </div>
+       
         <div class="form-group">
             <button type="submit" class="btn btn-primary" onclick="showSuccessMessage()">Save</button>
             <a href="#" class="btn btn-secondary" onclick="cancelAction()">Cancel</a>
