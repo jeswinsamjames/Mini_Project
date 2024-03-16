@@ -21,19 +21,40 @@ from django.views.decorators.cache import cache_control
 from .forms import *
 from .models import *
 
-
+@login_required
 def tutor_home(request):
-    # tutor = get_object_or_404(tutor, admin=request.user)
-    # total_students = Student.objects.filter(course=tutor.course).count()
-    tutors_with_learner_and_course_count = UserProfile.objects.filter(isTutor=0).annotate(
-    learner_count=Count('user__enrollment__learner', distinct=True),
-    course_count=Count('user__courses', distinct=True)
-    )
+    # Retrieve the UserProfile associated with the logged-in user
+    user_profile = UserProfile.objects.get(user=request.user)
+    
+    # Assuming isTutor indicates whether the user is a tutor
+    if user_profile.isTutor:
+        # Retrieve the User instance associated with the UserProfile
+        user = user_profile.user
+        
+        # Retrieve the courses associated with the tutor (assuming tutor is a foreign key in CourseDetail)
+        tutor_courses = CourseDetail.objects.filter(tutor=user)
+        
+        # Count the enrolled students for each course
+        students_count_per_course = {}
+        for course in tutor_courses:
+            students_count = course.enrolled_learners.count()
+            students_count_per_course[course] = students_count
+        
+        # Sum up the counts
+        total_enrolled_students_count = sum(students_count_per_course.values())
+        num_courses = tutor_courses.count()
 
-    context = {
-        'tutors_with_learner_and_course_count': tutors_with_learner_and_course_count,
-    }
-    return render(request, 'tutor_template/home_content.html',context)
+        
+        context = {
+            'count': total_enrolled_students_count,
+            'num_courses': num_courses,  # Include the number of courses in the context
+
+        }
+        return render(request, 'tutor_template/home_content.html', context)
+    else:
+        # Handle the case where the logged-in user is not a tutor
+        # For example, you can redirect them to another page or display an error message
+        return HttpResponse("You are not a tutor.")
 
 
 @login_required

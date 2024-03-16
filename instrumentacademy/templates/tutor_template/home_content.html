@@ -1,6 +1,6 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
 {% block content %}
 <section class="content">
     <div class="container-fluid">
@@ -10,59 +10,25 @@
                 <!-- small box -->
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>{{tutor.learner_count}}</h3>
-
+                        <h3>{{ count }}</h3>
                         <p>Total Students</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-bag"></i>
                     </div>
-                   
                 </div>
             </div>
-            <!-- ./col -->
-            {% comment %} <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>{{total_attendance}}</h3>
-
-                        <p>Total Attendance Taken</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                   
-                </div>
-            </div> {% endcomment %}
-            <!-- ./col -->
-            {% comment %} <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>{{total_leave}}</h3>
-
-                        <p>Total Leave Applied</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-person-add"></i>
-                    </div>
-                   
-                </div>
-            </div> {% endcomment %}
             <!-- ./col -->
             <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-danger">
                     <div class="inner">
-                        <h3>{{utor.course_count}}</h3>
-
+                        <h3>{{ num_courses }}</h3>
                         <p>Total Subjects</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-pie-graph"></i>
                     </div>
-                   
                 </div>
             </div>
             <!-- ./col -->
@@ -74,40 +40,46 @@
                 <!-- LINE CHART -->
                 <div class="card card-secondary">
                   <div class="card-header">
-                    <h3 class="card-title">{{page_title}}</h3>
-    
+                    <h3 class="card-title">{{ page_title }}</h3>
                     <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                      </button>
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
                       <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
                     </div>
                   </div>
                   <div class="card-body">
-                    <div class="chart">
-                      <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <div class="col-md-6">
+                <div class="card card-secondary">
+                  <div class="card-header">
+                    <h3 class="card-title">{{ page_title }}</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
                     </div>
-                  </div></div>
-                  <!-- /.card-body -->
+                  </div>
+                  <div class="card-body">
+                    <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{page_title}}</h3>
-
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="col-md-6">
+              <div class="card card-secondary">
+                <div class="card-header">
+                  <h3 class="card-title">{{ page_title }}</h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                  </div>
                 </div>
-              </div>
-              <div class="card-body">
-                <div class="chart">
+                <div class="card-body">
                   <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                 </div>
               </div>
-              <!-- /.card-body -->
-            </div>
-                </div>
+          </div>
             <!-- right col -->
         </div>
         <!-- /.row (main row) -->
@@ -116,162 +88,126 @@
 {% endblock content %}
 
 {% block custom_js %}
-  <script>
-      $(document).ready(function(){
-        var donutData        = {
-            labels: ['Attendance', 'Leave'],
-            datasets: [
+<script src="{% static 'assets/js/chart/Chart.js' %}"></script>
+<script>
+  $(document).ready(function(){
+      // Data for the pie chart (total students)
+      var totalStudentsData = {
+          labels: ['Enrolled Students', 'Total Students'],
+          datasets: [
               {
-                data:[{{total_attendance}}, {{total_leave}}],
-                backgroundColor : ['#00a65a', '#f39c12',],
+                  data: [{{ count }}, {{ total_students }} - {{ count }}], // Assuming total_students is available in your context
+                  backgroundColor: ['#00a65a', '#f39c12'],
               }
-            ]
-          }
-        var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-        var pieData        = donutData;
-        var pieOptions     = {
-          maintainAspectRatio : false,
-          responsive : true,
-        }
-        //Create pie or douhnut chart
-        // You can switch between pie and douhnut using the method below.
-        var pieChart = new Chart(pieChartCanvas, {
-          type: 'pie',
-          data: pieData,
-          options: pieOptions      
-        });
-
-        var subject_list = {{ subject_list|safe|escape }};
-        var attendance_list = {{ attendance_list }};
-  
-            var barChartData = {
-      labels  : subject_list,
-      datasets: [
-      {
-        label               : 'Attendance Per Subject',
-        backgroundColor     : '#6c757d',
-        borderColor         : 'rgba(60,141,188,0.8)',
-        pointRadius          : false,
-        pointColor          : '#3b8bba',
-        pointStrokeColor    : 'rgba(60,141,188,1)',
-        pointHighlightFill  : '#fff',
-        pointHighlightStroke: 'rgba(60,141,188,1)',
-        data                : attendance_list
-      }, 
+          ]
+      };
       
-      ]
-    }
-        var barChartCanvas = $('#barChart').get(0).getContext('2d')
-        var temp0 = barChartData.datasets[0]
-        //var temp1 = areaChartData.datasets[1]
-        barChartData.datasets[0] = temp0
-       // barChartData.datasets[1] = temp0
-    
-    var stackedBarChartOptions = {
-      responsive              : true,
-      maintainAspectRatio     : false,
-      scales: {
-        xAxes: [{
-          stacked: true,
-        }],
-        yAxes: [{
-          stacked: true
-        }]
-      }
-    }
-    
-        var barChart = new Chart(barChartCanvas, {
-          type: 'bar', 
-          data: barChartData,
-          options: stackedBarChartOptions
-        })
-      })
-
-    
-  </script>
-      <!-- The core Firebase JS SDK is always required and must be listed first -->
-      <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
-
-      <!-- TODO: Add SDKs for Firebase products that you want to use
-       https://firebase.google.com/docs/web/setup#available-libraries -->
-      <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-analytics.js"></script>
-      <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-messaging.js"></script>
-  
-  
-      <script>
-          // Your web app's Firebase configuration
-          // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-          var firebaseConfig = {
-              apiKey: "AIzaSyBarDWWHTfTMSrtc5Lj3Cdw5dEvjAkFwtM",
-              authDomain: "sms-with-django.firebaseapp.com",
-              databaseURL: "https://sms-with-django.firebaseio.com",
-              projectId: "sms-with-django",
-              storageBucket: "sms-with-django.appspot.com",
-              messagingSenderId: "945324593139",
-              appId: "1:945324593139:web:03fa99a8854bbd38420c86",
-              measurementId: "G-2F2RXTL9GT"
-          };
-          // Initialize Firebase
-          firebase.initializeApp(firebaseConfig)
-          const messaging = firebase.messaging();
-          function InitializeFireBaseMessaging() {
-              messaging
-                  .requestPermission()
-                  .then(function () {
-                      console.log("Notification Permission");
-                      return messaging.getToken();
-                  })
-                  .then(function (token) {
-                      console.log("Token : " + token);
-                      sendToServer(token);
-                  })
-                  .catch(function (reason) {
-                      console.log(reason)
-                  })
-          }
-          messaging.onMessage(function (payload) {
-              const notificationOption = {
-                  body: payload.notification.body,
-                  icon: payload.notification.icon,
-  
+      // Data for the bar chart (total courses)
+      var totalCoursesData = {
+          labels: ['Total Courses'],
+          datasets: [
+              {
+                  label: 'Total Courses',
+                  data: [{{ num_courses }}], // Assuming num_courses is available in your context
+                  backgroundColor: '#6c757d',
+                  borderColor: 'rgba(60,141,188,0.8)',
+                  pointRadius: false,
+                  pointColor: '#3b8bba',
+                  pointStrokeColor: 'rgba(60,141,188,1)',
+                  pointHighlightFill: '#fff',
+                  pointHighlightStroke: 'rgba(60,141,188,1)',
               }
-              if (Notification.permission == 'granted') {
-                  var notification = new Notification(payload.notification.title, notificationOption);
-                  notification.onclick = function (event) {
-                      event.preventDefault();
-                      window.open(payload.notification.click_action, "_blank");
-                      notification.close();
+          ]
+      };
+      
+      // Render the pie chart (total students)
+      var pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+      var pieChart = new Chart(pieChartCanvas, {
+          type: 'pie',
+          data: totalStudentsData,
+          options: {
+              maintainAspectRatio: false,
+              responsive: true,
+          }
+      });
+      
+      // Render the bar chart (total courses)
+      var barChartCanvas = $('#barChart').get(0).getContext('2d');
+      var barChart = new Chart(barChartCanvas, {
+          type: 'bar',
+          data: totalCoursesData,
+          options: {
+              maintainAspectRatio: false,
+              responsive: true,
+          }
+      });
+  });
+</script>
+<script>
+  $(document).ready(function(){
+      // Data for the bar chart (courses and number of enrolled students)
+      var courseLabels = {{ course_labels|safe|escape }}; // Assuming course_labels is available in your context
+      var enrolledStudentsData = {{ enrolled_students_data|safe|escape }}; // Assuming enrolled_students_data is available in your context
+
+      var barChartData = {
+          labels: courseLabels,
+          datasets: [
+              {
+                  label: 'Number of Enrolled Students',
+                  data: enrolledStudentsData,
+                  backgroundColor: '#6c757d',
+                  borderColor: 'rgba(60,141,188,0.8)',
+                  borderWidth: 1
+              }
+          ]
+      };
+
+      var barChartCanvas = $('#barChart').get(0).getContext('2d');
+      var barChart = new Chart(barChartCanvas, {
+          type: 'bar',
+          data: barChartData,
+          options: {
+              maintainAspectRatio: false,
+              responsive: true,
+              scales: {
+                  x: {
+                      title: {
+                          display: true,
+                          text: 'Courses'
+                      }
+                  },
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Number of Students'
+                      }
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              var label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              if (context.parsed.y !== null) {
+                                  label += context.parsed.y + ' students';
+                              }
+                              return label;
+                          },
+                          title: function(context) {
+                              var title = context[0].label || '';
+                              return title;
+                          }
+                      }
                   }
               }
-              console.log(payload);
-          });
-          messaging.onTokenRefresh(function () {
-              messaging.getToken()
-                  .then(function (newToken) {
-                      console.log("New Token : " + newToken);
-                      sendToServer(newToken);
-
-                  })
-                  .catch(function (reason) {
-                      console.log(reason)
-                  })
-          })
-  
-          function sendToServer(token){
-            $.ajax({
-              url: "#",
-              type: 'POST',
-              data: {
-                  token: token,
-              }
-          }).done(function (response) {
-   
-             
-          }).fail(function (response) {
-          })
-
           }
-          
-          InitializeFireBaseMessaging();
-      </script>
+      });
+  });
+</script>
+
+
 {% endblock custom_js %}

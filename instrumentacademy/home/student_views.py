@@ -82,9 +82,27 @@ def enrolled_courses_list_leaner(request):
     learner = request.user
     enrolled_courses = Enrollment.objects.filter(learner=learner)
     print(enrolled_courses) 
+    not_started_courses = []
+    ongoing_courses = []
+    completed_courses = []
+    for enrollment in enrolled_courses:
+        
+        CourseDetail = enrollment.course
+        progress = Progress.objects.filter(learner=learner, lesson_material__course=CourseDetail).first()
+
+        if progress:
+            if progress.is_completed:
+                completed_courses.append(CourseDetail)
+            else:
+                ongoing_courses.append(CourseDetail)
+        else:
+            not_started_courses.append(CourseDetail)
 
     context = {
         'enrolled_courses': enrolled_courses,
+        'not_started_courses': not_started_courses,
+        'ongoing_courses': ongoing_courses,
+        'completed_courses': completed_courses,
     }
     return render(request, 'student_template/My_learning.html', context)
 

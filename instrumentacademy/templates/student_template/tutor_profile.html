@@ -145,14 +145,14 @@
                                 <div class="col-md-8">
                                     <h5 style="color: rgb(0, 0, 0);">₹ {{course.amount}}</h5>
                                     <p style="color: black;" class="card-text">{{ course.description }}</p>
-                                    {% for course in enrolled_courses  %}
-                                          {% if user in course.course.enrolled_learners.all %}
-                                          <span class="btn btn-primary" style="width: 200px;">Enrolled</span>
-                                      {% else %}
-                                      <a href="/payment/homepage/{{course.id}}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
-                                      {% endif %}
-                                    {% endfor %}
-                                    
+                                    {% if enrolled_courses %}
+                            {% if user in enrolled_courses.course.enrolled_learners.all %}
+                                <span class="btn btn-primary" style="width: 200px;">Enrolled</span>
+                            {% else %}
+                                <a href="/payment/homepage/{{ enrolled_courses.id }}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
+                            {% endif %}
+                        {% endif %}
+
                                 </div>
                             </div>
                         </div>

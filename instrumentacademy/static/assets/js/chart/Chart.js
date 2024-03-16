@@ -5,6 +5,8 @@
  * Released under the MIT License
  */
 (function (global, factory) {
+	console.log("=============================================");
+    console.log('Chart.bundle.min.js');
 typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(function() { try { return require('moment'); } catch(e) { } }()) :
 typeof define === 'function' && define.amd ? define(['require'], function(require) { return factory(function() { try { return require('moment'); } catch(e) { } }()); }) :
 (global = global || self, global.Chart = factory(global.moment));

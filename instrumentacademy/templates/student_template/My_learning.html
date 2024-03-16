@@ -102,95 +102,268 @@
     
     
     <section class="courselist">
-        <div class="container mt-5">
-            <div class="dropdown" style="margin-right: 300px;">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Sort Courses
-                </button>
-                <div class="dropdown-menu" aria-labelledby="sortDropdown">
-                  <a class="dropdown-item" href="#" id="notStartedSort">Not Started</a>
-                  <a class="dropdown-item" href="#" id="ongoingSort">Ongoing</a>
-                  <a class="dropdown-item" href="#" id="completedSort">Completed</a>
+        <div class="container mt-5" style="background-color: #fafafa;">
+            <h1 class="text-center" style=" margin: 50px;">  Enrolled Courses</h1>
+
+            <div class="course-tabs">
+                <ul class="nav nav-tabs" id="courseTab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="notStartedTab" data-toggle="tab" href="#notStarted" role="tab" aria-controls="notStarted" aria-selected="true">Not Started</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="ongoingTab" data-toggle="tab" href="#ongoing" role="tab" aria-controls="ongoing" aria-selected="false">Ongoing</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="completedTab" data-toggle="tab" href="#completed" role="tab" aria-controls="completed" aria-selected="false">Completed</a>
+                  </li>
+                </ul>
+                <div class="tab-content" id="courseTabContent">
+                  <div class="tab-pane fade show active" id="notStarted" role="tabpanel" aria-labelledby="notStartedTab">
+                    <!-- Courses not started content here -->
+                    
+                    <div class="row">
+                
+                        {% for course in not_started_courses %}
+                        <div class="col-md-3 course-card1">
+                            <div class="card mb-4 course-card">
+                                <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                                <div class="dropdown">
+                                  
+                                  <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                                      <li></li>
+                                      <li></li>
+                                      <li></li>
+                                  </ul>
+                                  
+                                  <div id="myDropdown" class="dropdown-content">
+        
+                                    <a href="#" style="text-decoration: none;">
+                                        <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
+                                        
+                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                            <use xlink:href="#icon-share"></use>
+                                        </svg>
+                                        
+                                        Share
+                                    </a>
+                                    
+                                      
+                                   
+                                    <a href="#">
+                                        <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
+        
+                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
+                                            <!-- Replace this with the appropriate icon ID for "Wishlist" -->
+                                            <use xlink:href="#icon-wishlist"></use>
+                                        </svg>
+                                        Wishlist
+                                    </a>
+                                  </div>
+                              </div>
+        
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ course.name }}</h5>
+                                    
+                                    <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
+                                    <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
+                                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <!-- Enroll and See Details Links with Line Separator -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="text-center">
+                                           
+                                            {% if user in course.enrolled_learners.all %}
+                                                <span class="text-success">Enrolled</span>
+                                            {% else %}
+                                                <a href="{% url 'enroll_course' course.course.id %}" class="text-primary text-decoration-none">Enroll</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="text-center">
+                                           {% if user in course.enrolled_learners.all %}
+                                                <a href="{% url 'course_material' course.id  %}" class="text-info text-decoration-none">Start Learn</a>
+                                                
+                                            {% else %}
+                                                <a href="#" class="text-info text-decoration-none">See Details</a>
+                                            {% endif %} 
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                        
+                  </div>
+                  <div class="tab-pane fade" id="ongoing" role="tabpanel" aria-labelledby="ongoingTab">
+                   
+                    <div class="row">
+                
+                        {% for course in ongoing_courses %}
+                        <div class="col-md-3 course-card1">
+                            <div class="card mb-4 course-card">
+                                <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                                <div class="dropdown">
+                                  
+                                  <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                                      <li></li>
+                                      <li></li>
+                                      <li></li>
+                                  </ul>
+                                  
+                                  <div id="myDropdown" class="dropdown-content">
+        
+                                    <a href="#" style="text-decoration: none;">
+                                        <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
+                                        
+                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                            <use xlink:href="#icon-share"></use>
+                                        </svg>
+                                        
+                                        Share
+                                    </a>
+                                    
+                                      
+                                   
+                                    <a href="#">
+                                        <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
+        
+                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
+                                            <!-- Replace this with the appropriate icon ID for "Wishlist" -->
+                                            <use xlink:href="#icon-wishlist"></use>
+                                        </svg>
+                                        Wishlist
+                                    </a>
+                                  </div>
+                              </div>
+        
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ course.name }}</h5>
+                                    
+                                    <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
+                                    <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
+                                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <!-- Enroll and See Details Links with Line Separator -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="text-center">
+                                           
+                                            {% if user in course.enrolled_learners.all %}
+                                                <span class="text-success">Enrolled</span>
+                                            {% else %}
+                                                <a href="{% url 'enroll_course' course.course.id %}" class="text-primary text-decoration-none">Enroll</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="text-center">
+                                           {% if user in course.enrolled_learners.all %}
+                                                <a href="{% url 'course_material' course.id  %}" class="text-info text-decoration-none">Start Learn</a>
+                                                
+                                            {% else %}
+                                                <a href="#" class="text-info text-decoration-none">See Details</a>
+                                            {% endif %} 
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                        
+                    
+                    <!-- Ongoing courses content here -->
+                  </div>
+                  <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completedTab">
+                    <!-- Completed courses content here -->
+                    
+                    <div class="row">
+                
+                        {% for course in completed_courses %}
+                        <div class="col-md-3 course-card1">
+                            <div class="card mb-4 course-card">
+                                <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                                <div class="dropdown">
+                                  
+                                  <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
+                                      <li></li>
+                                      <li></li>
+                                      <li></li>
+                                  </ul>
+                                  
+                                  <div id="myDropdown" class="dropdown-content">
+        
+                                    <a href="#" style="text-decoration: none;">
+                                        <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
+                                        
+                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
+                                            <use xlink:href="#icon-share"></use>
+                                        </svg>
+                                        
+                                        Share
+                                    </a>
+                                    
+                                      
+                                   
+                                    <a href="#">
+                                        <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
+        
+                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
+                                            <!-- Replace this with the appropriate icon ID for "Wishlist" -->
+                                            <use xlink:href="#icon-wishlist"></use>
+                                        </svg>
+                                        Wishlist
+                                    </a>
+                                  </div>
+                              </div>
+        
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ course.name }}</h5>
+                                    
+                                    <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
+                                    <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
+                                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <!-- Enroll and See Details Links with Line Separator -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="text-center">
+                                           
+                                            {% if user in course.enrolled_learners.all %}
+                                                <span class="text-success">Enrolled</span>
+                                            {% else %}
+                                                <a href="{% url 'enroll_course' course.id %}" class="text-primary text-decoration-none">Enroll</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="text-center">
+                                           {% if user in course.enrolled_learners.all %}
+                                                <a href="{% url 'course_material' course.id  %}" class="text-info text-decoration-none">Start Learn</a>
+                                                
+                                            {% else %}
+                                                <a href="#" class="text-info text-decoration-none">See Details</a>
+                                            {% endif %} 
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                        
+                   
+                  </div>
                 </div>
               </div>
               
-            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Enrolled Courses</h1>
+              
             
-            <div class="row">
-                
-                {% for course in enrolled_courses %}
-                <div class="col-md-3 course-card1">
-                    <div class="card mb-4 course-card">
-                        <img class="courseimg" src="{% if course.course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
-                        <div class="dropdown">
-                          
-                          <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
-                              <li></li>
-                              <li></li>
-                              <li></li>
-                          </ul>
-                          
-                          <div id="myDropdown" class="dropdown-content">
-
-                            <a href="#" style="text-decoration: none;">
-                                <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
-                                
-                                <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                    <use xlink:href="#icon-share"></use>
-                                </svg>
-                                
-                                Share
-                            </a>
-                            
-                              
-                           
-                            <a href="#">
-                                <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
-
-                                <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
-                                    <!-- Replace this with the appropriate icon ID for "Wishlist" -->
-                                    <use xlink:href="#icon-wishlist"></use>
-                                </svg>
-                                Wishlist
-                            </a>
-                          </div>
-                      </div>
-
-                        <div class="card-body">
-                            <h5 class="card-title">{{ course.course.name }}</h5>
-                            
-                            <p class="card-text"><strong>Tutor:</strong> {{ course.course.tutor.first_name }}  {{ course.course.tutor.last_name }}</p>
-                            <p class="card-text"><strong>Years of Experience:</strong> {{ course.course.years_of_experience }}</p>
-                            <p class="card-text"><strong>Description:</strong> {{ course.course.description }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <!-- Enroll and See Details Links with Line Separator -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="text-center">
-                                   
-                                    {% if user in course.course.enrolled_learners.all %}
-                                        <span class="text-success">Enrolled</span>
-                                    {% else %}
-                                        <a href="{% url 'enroll_course' course.course.id %}" class="text-primary text-decoration-none">Enroll</a>
-                                    {% endif %}
-                                </div>
-                                <div class="separator"></div>
-                                <div class="text-center">
-                                   {% if user in course.course.enrolled_learners.all %}
-                                        <a href="{% url 'course_material' course.course_id  %}" class="text-info text-decoration-none">Start Learn</a>
-                                        
-                                        {% comment %} <a href="{% url 'tutor_course_content' course.course.pk   %}" class="text-info text-decoration-none">Start Learn</a> {% endcomment %}
-                                    {% else %}
-                                        <a href="#" class="text-info text-decoration-none">See Details</a>
-                                    {% endif %} 
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
+           
         </div>
     </section>
             
@@ -237,36 +410,7 @@
             }
         }
         // Function to filter and display courses based on selected category
-function filterCourses(category) {
-  const notStartedCourses = document.querySelectorAll('.not-started-course');
-  const ongoingCourses = document.querySelectorAll('.ongoing-course');
-  const completedCourses = document.querySelectorAll('.completed-course');
 
-  switch (category) {
-    case 'notStarted':
-      notStartedCourses.forEach(course => course.style.display = 'block');
-      ongoingCourses.forEach(course => course.style.display = 'none');
-      completedCourses.forEach(course => course.style.display = 'none');
-      break;
-    case 'ongoing':
-      notStartedCourses.forEach(course => course.style.display = 'none');
-      ongoingCourses.forEach(course => course.style.display = 'block');
-      completedCourses.forEach(course => course.style.display = 'none');
-      break;
-    case 'completed':
-      notStartedCourses.forEach(course => course.style.display = 'none');
-      ongoingCourses.forEach(course => course.style.display = 'none');
-      completedCourses.forEach(course => course.style.display = 'block');
-      break;
-    default:
-      break;
-  }
-}
-
-// Event listeners for sorting dropdown items
-document.getElementById('notStartedSort').addEventListener('click', () => filterCourses('notStarted'));
-document.getElementById('ongoingSort').addEventListener('click', () => filterCourses('ongoing'));
-document.getElementById('completedSort').addEventListener('click', () => filterCourses('completed'));
 
     </script>
     <style>
