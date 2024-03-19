@@ -1,0 +1,229 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<div class="row" style="display: flex; flex-direction: row; margin-left: 20px;">
+    <div class="col-12">
+        <h3 >Schedule Assignments for <span style="color: rgb(45, 67, 140); font-size: larger; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">{{courses.name}}</span></h3>
+
+    </div>
+
+    <div class="col-md-6" style=" margin-left: 1230px;">
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAssignmentModal">
+            Create Assignment
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="createAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="createAssignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createAssignmentModalLabel">Create Assignment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="assignmentForm" method="post" enctype="multipart/form-data" data-assignment-id="{{ assignment_id }}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Due Date:</label>
+                        <input type="datetime-local" class="form-control datepicker" id="dueDate" name="due_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date:</label>
+                        <input type="datetime-local" class="form-control datetimepicker" id="startDate" name="start_date">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="editAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="editAssignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAssignmentModalLabel">Edit Assignment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editAssignmentForm" method="post" >
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Due Date:</label>
+                        <input type="datetime-local" class="form-control" id="dueDate" name="due_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date:</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="start_date">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Assignment List</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        {% if assignments %}
+
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>SN</th>
+                <th>Title</th>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in assignments %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ assignment.title }}</td>
+                                    <td>{{ assignment.start_date }}</td>
+                                    <td>{{ assignment.due_date }}</td>
+                                    <td style="display: flex; justify-content: center; align-items: center;"> 
+                                        <a href="#" class="btn btn-primary edit-assignment-btn" data-assignment-id="{{ assignment.id }}">
+                                            <i class="fas fa-edit" style="color: black;"></i>
+                                        </a>
+                                        <a href="{% url 'toggle_assignment_status' assignment.id %}" onclick="return confirm('Are you sure you want to delete this course ?')" class="btn btn-danger" style="color: black;">
+                                            <i class="fas fa-trash-alt" style="margin-top: 10px;"></i>
+                                        </a> 
+                                    </td>
+                                    
+                                   
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                            <p>No assignments found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Add this script to your HTML template -->
+<script>
+     $('.edit-assignment-btn').click(function() {
+        var assignmentId = $(this).data('assignment-id');
+        editAssignment(assignmentId);
+    });
+    function editAssignment(assignmentId) {
+        $.ajax({
+            url: '/get_assignment_details/' + assignmentId + '/',
+            type: 'GET',
+            success: function(response) {
+                $('#editAssignmentModal #title').val(response.title);
+                $('#editAssignmentModal #dueDate').val(response.due_date);
+                $('#editAssignmentModal #startDate').val(response.start_date);
+                $('#editAssignmentModal').modal('show');
+
+                // Store assignment ID in a data attribute
+                $('#editAssignmentModal').data('assignment-id', assignmentId);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
+    $('#editAssignmentForm').submit(function(event) {
+        event.preventDefault();
+        var assignmentId = $('#editAssignmentModal').data('assignment-id'); // Retrieve assignment ID from data attribute
+        $.ajax({
+            url: '/get_assignment_details/' + assignmentId + '/',
+            type: 'POST',
+            data: $(this).serialize() + '&assignment_id=' + assignmentId, // Add assignment ID to the data
+            success: function(response) {
+                console.log(response);
+                // Handle success response
+                $('#editAssignmentModal').modal('hide');
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                // Handle error response
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('assignmentForm').addEventListener('submit', function(event) {
+        var title = document.getElementById('title').value;
+        var dueDate = new Date(document.getElementById('dueDate').value);
+        var startDate = new Date(document.getElementById('startDate').value);
+        var currentDate = new Date();
+
+        if (!title || !dueDate || !startDate) {
+            alert('All fields are required.');
+            event.preventDefault();
+            return;
+        }
+
+        if (dueDate <= currentDate || startDate <= currentDate) {
+            alert('Due date and start date must be after the current date.');
+            event.preventDefault();
+            return;
+        }
+    });
+</script>
+
+
+{% endblock content %}

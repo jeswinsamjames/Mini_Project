@@ -1,3 +1,4 @@
+
 {% extends 'main_app/base.html' %}
 {% load static %}
 {% block page_title %}{{page_title}}{% endblock page_title %}
@@ -27,31 +28,22 @@
                             <thead>
                                 <tr>
                                     <th>SN</th>
-                                    <th>Instrument Name</th>
-                                    <th>Course Name</th>
-                                    <th>Year of Experience</th>
-                                    <th>Price</th>
-                                    <th>Edit</th>
+                                    <th>course Name</th>
+                                    <th>Edit moduels/lessons</th>
                                     
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for course in courses %}
-                                <tr>
+                                <tr> 
                                     <td>{{ forloop.counter }}</td>
-                                    <td >{{course.course.instrument_name}}</td>
-                                    <td>{{course.name}}</td>
-                                    <td>{{course.years_of_experience}}</td>
-                                    <td>{{course.amount}}</td>
-                                    <td style="display: flex; justify-content: center; align-items: center;"> 
-                                        <a href="{% url 'edit_course' course.id %}" class="btn btn-primary" style="color: black;">
-                                            <i class="fas fa-edit" style="margin-top: 10px;"></i>
-                                        </a> -
-                                        <a href="{% url 'deactivate_course' course.id %}" onclick="return confirm('Are you sure you want to delete this course ?')" class="btn btn-danger" style="color: black;">
-                                            <i class="fas fa-trash-alt" style="margin-top: 10px;"></i>
-                                        </a> 
-                                    </td>
+                                    <td>{{ course.name }}</td>
                                     
+                                    
+                                    <td>
+                                        <a href="{% url 'tutor_view_assignments' course.id   %}" class="btn btn-primary">View</a>
+                                        
+                                    </td>
                                    
                                 </tr>
                                 {% endfor %}

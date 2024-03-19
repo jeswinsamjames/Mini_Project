@@ -221,17 +221,29 @@ class WishlistItem(models.Model):
     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
 
     
-# from django.core.validators import MaxValueValidator, MinValueValidator
-# class QuizCompletion(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
-#     score = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
-#     completion_date = models.DateTimeField(auto_now_add=True)
-#     is_completed = models.BooleanField(default=False)
+class Assignments(models.Model):
+    title = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assigned_assignments')
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)  # Changed field name
+    due_date = models.DateTimeField()
+    start_date = models.DateTimeField()  
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
 
-#     class Meta:
-#         verbose_name = "Quiz Completion"
-#         verbose_name_plural = "Quiz Completions"
+    def __str__(self):
+        return self.title
+    
+class UploadAssignment(models.Model):  # Changed model name to follow Python naming conventions
+    feedback = models.TextField()
+    files = models.FileField(upload_to='assignments/')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_assignments')
+    course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)  # Changed field name
+    assignment = models.ForeignKey(Assignments, on_delete=models.CASCADE)
 
-#     def __str__(self):
-#         return f"{self.user.username} - {self.course.name}"
+    def __str__(self):
+        return self.feedback
+
+
+

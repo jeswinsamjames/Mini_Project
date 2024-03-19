@@ -33,12 +33,17 @@ def tutor_home(request):
         
         # Retrieve the courses associated with the tutor (assuming tutor is a foreign key in CourseDetail)
         tutor_courses = CourseDetail.objects.filter(tutor=user)
-        
+        course_labels = []
+        enrolled_students_data = []
         # Count the enrolled students for each course
         students_count_per_course = {}
         for course in tutor_courses:
             students_count = course.enrolled_learners.count()
             students_count_per_course[course] = students_count
+            course_labels.append(course.name)
+            # Count the enrolled students for the current course and append to enrolled_students_data
+            enrolled_students_data.append(course.enrolled_learners.count())
+        
         
         # Sum up the counts
         total_enrolled_students_count = sum(students_count_per_course.values())
@@ -48,6 +53,8 @@ def tutor_home(request):
         context = {
             'count': total_enrolled_students_count,
             'num_courses': num_courses,  # Include the number of courses in the context
+            'course_labels': course_labels,  # List of course names for the chart
+            'enrolled_students_data': enrolled_students_data,
 
         }
         return render(request, 'tutor_template/home_content.html', context)
@@ -177,9 +184,26 @@ def course_list(request):
     return render(request, 'tutor_template/course_list.html', context)
 
 def manage_courses(request):
-    courses = CourseDetail.objects.filter(tutor=request.user)  # Retrieve all courses
+    courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)  # Retrieve all courses
     context = {'courses': courses, 'page_title': 'Manage Courses'}
     return render(request, 'tutor_template/manage_course.html', context)
+
+
+
+def deactivate_course(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+    # Ensure that only the tutor who created the course can deactivate it
+    if request.user == course.tutor:
+        course.is_active = False
+        course.save()
+        messages.success(request, 'Course has been deleted successfully.')
+
+        return redirect('manage_courses')  
+    else:
+        
+        return HttpResponseForbidden("You are not authorized to delete this course.because this course is created by other tutor")
+
 
 @login_required
 def edit_course(request, course_id):
@@ -201,40 +225,8 @@ def edit_course(request, course_id):
         pass
 
 from django.http import HttpResponseForbidden
-def delete_course(request, course_id):
-    course = get_object_or_404(CourseDetail, pk=course_id)
 
-    # Ensure that only the tutor who created the course can delete it
-    if request.user == course.tutor:
-        course.delete()
-        messages.success(request, 'Course has been deleted successfully.')
-        return redirect('manage_courses')  # Redirect to the tutor's dashboard
-    else:
-        # Handle unauthorized access (e.g., redirect to an error page)
-        return HttpResponseForbidden("You are not authorized to delete this course.because this course is created by other tutor")
-def activate_course(request, course_id):
-    course = get_object_or_404(CourseDetail, pk=course_id)
 
-    # Ensure that only the tutor who created the course can activate it
-    if request.user == course.tutor:
-        course.is_active = True
-        course.save()
-        return redirect('manage_courses')  # Redirect to the tutor's dashboard
-    else:
-        # Handle unauthorized access (e.g., redirect to an error page)
-        pass
-
-def deactivate_course(request, course_id):
-    course = get_object_or_404(CourseDetail, pk=course_id)
-
-    # Ensure that only the tutor who created the course can deactivate it
-    if request.user == course.tutor:
-        course.is_active = False
-        course.save()
-        return redirect('manage_courses')  
-    else:
-        
-        pass
                     # ...........END COURSE.............
 
 
@@ -271,9 +263,12 @@ def enrolled_courses_list(request):
 def enrolled_course_details(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     enrolled_students = Enrollment.objects.filter(course=course)
+    user_profile = request.user.userprofile
+
     context = {
         'course': course,
         'enrolled_students': enrolled_students,
+        'user_profile': user_profile,
     }
     return render(request, 'tutor_template/enrolled_course_detail.html', context)
 
@@ -716,6 +711,103 @@ def take_attendance(request, session_id):
         {'class_session': class_session, 'learners': learners, 'present_learner_ids': present_learner_ids}
     )
  # ...........Attendence class Scheduling.............
+
+
+def course_schedule_assignments(request):
+    courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)
+    return render(request, 'tutor_template/create_assignment_list.html', {'courses':courses})
+
+
+def create_assignment(request, course_id):
+    course = get_object_or_404(CourseDetail, pk=course_id)
+    user = request.user
+    assignments = Assignments.objects.filter(course=course,is_active=True)
+
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        due_date = request.POST.get('due_date')
+        start_date = request.POST.get('start_date')
+        
+        # Assuming the related name between User and UserProfile is 'profile'
+        # Replace 'profile' with the actual related name in your models
+        user_profile = user.userprofile
+        
+        # Create the assignment with the course, user, and user_profile
+        assignment = Assignments.objects.create(
+            title=title,
+            due_date=due_date,
+            start_date=start_date,
+            course=course,
+            user=user,
+            user_profile=user_profile
+        )
+        
+        # Redirect to a success page or another view
+        messages.success(request, 'Assignment created successfully.')
+        return redirect('create_assignment' ,course_id=course_id)
+
+
+    
+    return render(request, 'tutor_template/create_assignment.html',{'assignments':assignments,'courses':course})
+
+def toggle_assignment_status(request, assignment_id):
+    assignment = get_object_or_404(Assignments, pk=assignment_id)
+    # Deactivate the assignment
+    assignment.is_active = False
+    assignment.save()
+    messages.success(request, 'Assignment deactivated successfully.')
+    return redirect('create_assignment', course_id=assignment.course.id)
+
+@csrf_exempt
+def get_assignment_details(request, assignment_id):
+    assignment = get_object_or_404(Assignments, pk=assignment_id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        due_date = request.POST.get('due_date')
+        start_date = request.POST.get('start_date')
+        
+        assignment.title = title
+        assignment.due_date = due_date
+        assignment.start_date = start_date
+        assignment.save()
+
+        return JsonResponse({'message': 'Assignment details updated successfully'})
+
+    assignment_details = {
+        'title': assignment.title,
+        'due_date': assignment.due_date.strftime('%Y-%m-%dT%H:%M'),  
+        'start_date': assignment.start_date.strftime('%Y-%m-%dT%H:%M'),
+    }
+
+    return JsonResponse(assignment_details)
+
+
+def view_assignment(request):
+    courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)
+    return render(request, 'tutor_template/view_assignment_course.html', {'courses':courses})
+
+
+def tutor_view_assignments(request, course_id):
+    # Get assignments uploaded by learners for the specified course taught by the tutor
+    assignments = UploadAssignment.objects.filter(assignment__course=course_id, assignment__is_active=True)
+    course = get_object_or_404(CourseDetail, pk=course_id)
+
+
+
+    if request.method == 'POST':
+        # Handle feedback submission
+        assignment_id = request.POST.get('assignment_id')
+        uploaded_assignment = get_object_or_404(UploadAssignment, pk=assignment_id)
+        feedback = request.POST.get('feedback')
+
+        # Save feedback for the assignment
+        uploaded_assignment.feedback = feedback
+        uploaded_assignment.save()
+        messages.success(request, "Feedback added successfully.")
+
+    return render(request, 'tutor_template/view_assignment.html', {'assignments': assignments, 'course_id': course_id,'course': course})
 
 #////////////////////////////
 

@@ -69,14 +69,14 @@
             <div class="col-md-6">
               <div class="card card-secondary">
                 <div class="card-header">
-                  <h3 class="card-title">{{ page_title }}</h3>
+                  <h3 class="card-title">{{ page_title }} Enrolled Students</h3>
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
                 <div class="card-body">
-                  <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  <canvas id="barChart1" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                 </div>
               </div>
           </div>
@@ -146,11 +146,17 @@
 <script>
   $(document).ready(function(){
       // Data for the bar chart (courses and number of enrolled students)
-      var courseLabels = {{ course_labels|safe|escape }}; // Assuming course_labels is available in your context
-      var enrolledStudentsData = {{ enrolled_students_data|safe|escape }}; // Assuming enrolled_students_data is available in your context
+      var courseLabels = {{ course_labels|safe|escape }};
+      var enrolledStudentsData = {{ enrolled_students_data|safe|escape }};
 
+      // Abbreviate course names for x-axis labels (show only the first three words)
+      var abbreviatedCourseLabels = courseLabels.map(function(label) {
+          return label.split(' ').slice(0, 3).join(' '); // Take only the first three words
+      });
+
+      // Create bar chart data
       var barChartData = {
-          labels: courseLabels,
+          labels: abbreviatedCourseLabels,
           datasets: [
               {
                   label: 'Number of Enrolled Students',
@@ -162,7 +168,8 @@
           ]
       };
 
-      var barChartCanvas = $('#barChart').get(0).getContext('2d');
+      // Render the bar chart
+      var barChartCanvas = $('#barChart1').get(0).getContext('2d');
       var barChart = new Chart(barChartCanvas, {
           type: 'bar',
           data: barChartData,
@@ -174,6 +181,10 @@
                       title: {
                           display: true,
                           text: 'Courses'
+                      },
+                      ticks: {
+                          autoSkip: false,
+                          maxRotation: 0
                       }
                   },
                   y: {
@@ -188,18 +199,12 @@
                   tooltip: {
                       callbacks: {
                           label: function(context) {
-                              var label = context.dataset.label || '';
-                              if (label) {
-                                  label += ': ';
-                              }
-                              if (context.parsed.y !== null) {
-                                  label += context.parsed.y + ' students';
-                              }
-                              return label;
+                              // Empty label to only display the course name in the tooltip
+                              return '';
                           },
                           title: function(context) {
-                              var title = context[0].label || '';
-                              return title;
+                              // Displaying the full course label in the tooltip along with 'c1', 'c2', etc.
+                              return 'c' + (context[0].dataIndex + 1) + ' - ' + courseLabels[context[0].dataIndex];
                           }
                       }
                   }
@@ -208,6 +213,9 @@
       });
   });
 </script>
+
+
+
 
 
 {% endblock custom_js %}

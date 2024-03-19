@@ -32,7 +32,7 @@
           <td>{{ class_schedule.course.name }}</td>
           <td>{{ class_schedule.start_datetime }}</td>
           <td>{{ class_schedule.duration }} hours</td>
-          <td><a class="btn btn-sm btn-danger" href="{% url 'delete_class_schedule' class_schedule.id %}" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></td>
+          <td ><a class="btn btn-sm btn-danger" href="{% url 'delete_class_schedule' class_schedule.id %}" onclick="return confirm('Are you sure you want to delete this course?')" style="color: rgb(255, 255, 255);">Delete</a></td>
         </tr>
       {% empty %}
         <tr>
@@ -76,7 +76,7 @@
           <td>{{ class_schedule.course.name }}</td>
           <td>{{ class_schedule.start_datetime }}</td>
           <td>{{ class_schedule.duration }} hours</td>
-          <td><a class="btn btn-sm btn-danger delete-lesson" href="{% url 'delete_class_schedule' class_schedule.id %}" onclick="return confirm('Are you sure you want to delete this course?')" >Delete</a></td>
+          <td><a class="btn btn-sm btn-danger delete-lesson" href="{% url 'delete_class_schedule' class_schedule.id %}" onclick="return confirm('Are you sure you want to delete this course?')" style="color: rgb(255, 255, 255);">Delete</a></td>
         </tr>
       {% empty %}
         <tr>

@@ -637,15 +637,72 @@ def remove_from_wishlist(request, course_id):
     else:
         return redirect('login')  # Redirect to login page
 
+import pytz
+from django.utils import timezone
+from datetime import timedelta
+
+def view_assignments(request):
+    # Get courses enrolled by the user (learner)
+    enrolled_courses = request.user.enrolled_courses.all()
+    assignments_by_course = {}
+    ist = pytz.timezone('Asia/Kolkata')  # Indian Standard Time
+    current_date = timezone.now().astimezone(ist)    
+    print("curwent datetime", current_date)
+    for course in enrolled_courses:
+        current_datetime = timezone.now().astimezone(timezone.get_fixed_timezone(330))  # 330 minutes offset for IST
+        current_datetime = current_datetime + timedelta(hours=5, minutes=30)
+
+    # Get assignments uploaded by learners for the specified course taught by the tutor
+        assignments = Assignments.objects.filter(course=course, is_active=True)
+
+        # Loop through each assignment and check if its due date has passed
+        for assignment in assignments:
+            if assignment.due_date < current_datetime:
+                assignment.ended = True  # Due date has passed
+            else:
+                assignment.ended = False  # Due date is in the future
+        if assignments.exists():
+            assignments_by_course[course] = assignments
+    if request.method == 'POST':
+        # Handle file upload for the selected assignment
+        assignment_id = request.POST.get('assignment_id')
+        assignment = get_object_or_404(Assignments, pk=assignment_id)
+        uploaded_file = request.FILES.get('file')
+        if uploaded_file:
+            # Save the uploaded file
+            user_profile = request.user.userprofile
+            course_id = assignment.course_id  # Get the course ID from the assignment
+            assignment_file = UploadAssignment.objects.create(files=uploaded_file, assignment=assignment,user=request.user,user_profile=user_profile, course_id=course_id)
+            assignment_file.save()
+            messages.success(request, "File has been saved.")
+            return redirect('view_assignments')
+    for assignments in assignments_by_course.values():
+        for assignment in assignments:
+            assignment.uploaded_file = UploadAssignment.objects.filter(assignment=assignment).first()
+    context = {'assignments_by_course': assignments_by_course, 'current_date': datetime.now()}
+    return render(request, 'student_template/upload_assignment.html', context)
 
 
 
+# def delete_assignment_file(request, file_id):
+#     if request.method == 'POST':
+#         upload = get_object_or_404(UploadAssignment, pk=upload_id)
+#         # Check if the logged-in user has permission to delete the file
+#         if request.user == upload.user:
+#             upload.files.delete()
+#             upload.delete()
+#             return redirect('view_assignments')
+#         else:
+#             return HttpResponseBadRequest("You don't have permission to delete this file.")
+#     else:
+#         return HttpResponseBadRequest("Invalid request method.")
 
-
-
-
-
-
+def delete_assignment_file(request, upload_assignment_id):
+    assignment_file = get_object_or_404(UploadAssignment, pk=upload_assignment_id)
+    assignment_file.files.delete()  # Delete the file from the storage
+    assignment_file.delete()  # Delete the UploadAssignment instance
+    
+    return redirect('view_assignments') 
 
 
 

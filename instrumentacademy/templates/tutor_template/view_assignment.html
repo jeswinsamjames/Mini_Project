@@ -1,0 +1,99 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<!-- view_assignments.html -->
+<style>
+    .assignment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    .assignment-table th,
+    .assignment-table td {
+        padding: 10px;
+        border: 1px solid #dddddd;
+        text-align: left;
+    }
+    
+    .assignment-table th {
+        background-color: #f2f2f2; /* Header background color */
+    }
+    
+    .assignment-table td:nth-child(odd) {
+        background-color: #f9f9f9; /* Alternate row background color */
+    }
+    
+    .feedback-form {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .feedback-textarea {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ccc;
+    }
+    
+    .save-feedback-btn {
+        background-color: #007bff; /* Button background color */
+        color: #fff; /* Button text color */
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    
+    .save-feedback-btn:hover {
+        background-color: #0056b3; /* Button background color on hover */
+    }
+    
+</style>
+<div class="container" style="display: flex;  align-items: center; flex-direction: column;">
+    <h2>Assignment of <span style="color: #0e3762; font-size: larger; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">{{ course.name }}</span></h2>
+<div class="line" style="width: 920px; background-color: black; height: 1px;"></div>
+<table class="assignment-table" style="width: 1320px;">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>Learner Name</th>
+            <th>Assignment Title</th>
+            <th>Started Date</th>
+            <th>Ended Date</th>
+            <th>File</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for assignment in assignments %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ assignment.user.first_name }} {{ assignment.user.last_name }}</td>
+            <td>{{ assignment.assignment.title }}</td>
+            <td>{{ assignment.assignment.start_date }}</td>
+            <td>{{ assignment.assignment.due_date }}</td>
+            <td>
+                {% if assignment.files %}
+                <a href="{{ assignment.files.url }}" download>
+                    <i class="fa fa-download"></i> Download
+                </a>
+                {% else %}
+                No file uploaded
+                {% endif %}
+            </td>
+            <td>
+                <form method="post" class="feedback-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+                    <textarea name="feedback" rows="2" cols="30" class="feedback-textarea" >{{ assignment.feedback }}</textarea>
+                    <button type="submit" class="save-feedback-btn" style="background-color: rgb(36, 36, 36);">Save Feedback</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock content %}

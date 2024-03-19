@@ -145,4 +145,3 @@ class ScheduleClassForm(forms.Form):
         required=False,
         help_text="Optional: Provide additional information about the class."
     )
-

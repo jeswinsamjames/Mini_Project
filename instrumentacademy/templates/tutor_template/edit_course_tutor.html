@@ -104,13 +104,7 @@
             <button type="submit" class="btn btn-primary" onclick="showSuccessMessage()">Save</button>
             <a href="#" class="btn btn-secondary" onclick="cancelAction()">Cancel</a>
             
-            {% if course.is_active %}
-            <!-- Deactivate button -->
-            <a href="{% url 'deactivate_course' course.id %}" class="btn btn-danger">Deactivate Course</a>
-        {% else %}
-            <!-- Activate button -->
-            <a href="{% url 'activate_course' course.id %}" class="btn btn-success">Activate Course</a>
-        {% endif %}
+          
 
         </div>
         <div id="successMessage" class="alert alert-success" style="display: none;">

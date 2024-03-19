@@ -1,0 +1,148 @@
+<!-- upload_assignment.html -->
+
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<style>
+    .course-table {
+        width: 50%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .course-table th,
+    .course-table td {
+        padding: 10px;
+        border: 1px solid #dddddd;
+        text-align: left;
+        
+    }
+    .assignments-table {
+        width: 90%; /* Increased width */
+        border-collapse: collapse;
+        margin: 20px auto; /* Center align */
+    }
+    .assignments-table th,
+    .assignments-table td {
+        padding: 10px;
+        border: 1px solid #dddddd;
+        text-align: center; /* Center align */
+        width: 80px;
+        margin: 50px;
+    }
+    .assignments-table th {
+        background-color: #f0f0f0; /* Different color for header */
+    }
+    .plus-icon {
+        font-size: 24px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+    .assignments-list {
+        display: none;
+    }
+</style>
+
+
+
+<script>
+    function toggleAssignments(courseId) {
+        var assignmentsList = document.getElementById('assignments-' + courseId);
+        assignmentsList.style.display = assignmentsList.style.display === 'none' ? 'table' : 'none';
+    }
+</script>
+
+<div class="main" style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
+    <h2 class="text-center" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; font-size: 20px;">Upload Assignments</h2>
+    <div class="line" style="width: 820px; background-color: black;height: 1px;"></div>
+    
+
+
+
+<table class="course-table" style="width: 1220px;">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>Course Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for course, assignments in assignments_by_course.items %}
+        <tr style="background-color: rgb(249, 238, 238);">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ course.name }}</td>
+            <td class="course-heading text-center" onclick="toggleAssignments('{{ course.id }}')">
+                <i class="fa fa-plus-circle plus-icon"></i> Show Assignments
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table id="assignments-{{ course.id }}" class="assignments-table assignments-list" style="width: 1220px;">
+                    <thead>
+                        <tr>
+                            <th>SN</th>
+                            <th>Title</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Upload</th>
+                            <th>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment in assignments %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ assignment.title }}</td>
+                            <td>{{ assignment.start_date }}</td>
+                            <td>{{ assignment.due_date }}</td>
+                            <td>
+                                {% if assignment.uploaded_file %}
+                                <a href="{{ assignment.uploaded_file.files.url }}" download>
+                                    <i class="fa fa-download " style="color: black;"></i> 
+                                </a>
+                                <a href="{% url 'delete_assignment_file' assignment.uploaded_file.id %}">
+                                    <i class="fa fa-trash" style="color: red; margin-left: 25px;"></i> 
+                                </a>
+                                <td style="color: rgb(15, 15, 61);">{{ assignment.uploaded_file.feedback }}</td>
+
+                                {% else %}
+                                {% if assignment.ended %}
+                               
+                                    <p style="color: red;">Time is over</p>
+                                {% else %}
+                                
+                                    <form method="post" action="{% url 'view_assignments' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+                                        <input type="file" name="file" placeholder="Choose File"> 
+                                        <button type="submit" style="background-color: rgb(27, 27, 27); color: white; border-radius: 10px;">Upload</button>
+                                        <br>
+                                        <span style="font-size: small; font-weight: lighter; margin-right: 200px; color: red;">mp3, pdf, mp4</span>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                                
+                                
+                            </td>
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+
+{% endblock content %}
+
+
+
+
+

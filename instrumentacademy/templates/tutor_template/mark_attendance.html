@@ -4,66 +4,71 @@
 {% block page_title %}{{ page_title }}{% endblock page_title %}
 {% block content %}
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ class_session.course.name }}</h3>
-                    </div>
-
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    <div class="card-body">
-                        <div class="form-group">
-                            <h2>{{ class_session.start_datetime }}</h2>
-                            
-                            <p>Meeting Link: <a href="{{ class_session.meeting_link }}">{{ class_session.meeting_link }}</a></p>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ class_session.course.name }}</h3>
                         </div>
-                        <form method="post" action="{% url 'take_attendance' class_session.id %}">
-                            {% csrf_token %}
-                            <h3>Mark Attendance:</h3>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Learner</th>
-                                        <th>Attendance <br>
-                                            
-                                       
-                                            <label for="select_all_learners">Select All Learners:</label>
-                                            <input type="checkbox" id="select_all_learners" class="select-all-checkbox">
-                                            
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for learner in learners %}
+
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <div class="card-body">
+                            <div class="form-group">
+                                <h2>{{ class_session.start_datetime }}</h2>
+                                
+                                <p>Meeting Link: <a href="{{ class_session.meeting_link }}">{{ class_session.meeting_link }}</a></p>
+                            </div>
+                            {% if learners %}
+
+                            <form method="post" action="{% url 'take_attendance' class_session.id %}">
+                                {% csrf_token %}
+                                <h3>Mark Attendance:</h3>
+                                <table class="table table-bordered">
+                                    <thead>
                                         <tr>
-                                            <td>{{ learner.username }}</td>
-                                            <td>
-                                                <input type="checkbox" name="attendance" class="learner-checkbox" value="{{ learner.id }}" id="id_{{ learner.id }}"
-                                                    {% if learner.id in present_learner_ids %}
-                                                    checked
-                                                    {% endif %}>
-                                                <label for="id_{{ learner.id }}">Present</label>
-                                            </td>
-                                            
+                                            <th>Learner</th>
+                                            <th>Attendance <br>
+                                                
+                                        
+                                                <label for="select_all_learners">Select All Learners:</label>
+                                                <input type="checkbox" id="select_all_learners" class="select-all-checkbox">
+                                                
+                                            </th>
                                         </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <button type="submit" class="btn btn-primary">Submit Attendance</button>
-                        </form>
-                        
+                                    </thead>
+                                    <tbody>
+                                        {% for learner in learners %}
+                                            <tr>
+                                                <td>{{ learner.username }}</td>
+                                                <td>
+                                                    <input type="checkbox" name="attendance" class="learner-checkbox" value="{{ learner.id }}" id="id_{{ learner.id }}"
+                                                        {% if learner.id in present_learner_ids %}
+                                                        checked
+                                                        {% endif %}>
+                                                    <label for="id_{{ learner.id }}">Present</label>
+                                                </td>
+                                                
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <button type="submit" class="btn btn-primary">Submit Attendance</button>
+                            </form>
+                            {% else %}
+                            <p>No enrolled learners for this session.</p>
+                        {% endif %}
+                            
+                        </div>
                     </div>
+                    <!-- /.card -->
                 </div>
-                <!-- /.card -->
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 <script>
     // JavaScript code to handle the "Select All" checkbox and individual learner checkboxes

@@ -63,6 +63,8 @@ urlpatterns = [
     path('wishlist/', student_views.wishlist, name='wishlist'),
     path('add_to_wishlist/<int:course_id>', student_views.add_to_wishlist, name='add_to_wishlist'),
     path('wishlist/remove/<int:item_id>/', student_views.remove_from_wishlist, name='remove_from_wishlist'),    
+    path('view_assignments/', student_views.view_assignments, name='view_assignments'),    
+    path('delete_assignment_file/<int:upload_assignment_id>/', student_views.delete_assignment_file, name='delete_assignment_file'),    
 
 
   
@@ -82,8 +84,6 @@ urlpatterns = [
     path('edit-course/<int:course_id>/', tutor_views.edit_course, name='edit_course'),
 
     # Define the URL for the delete_course view with a dynamic course_id parameter
-    path('delete-course/<int:course_id>/', tutor_views.delete_course, name='delete_course'),
-    path('course/activate/<int:course_id>/', tutor_views.activate_course, name='activate_course'),
     path('course/deactivate/<int:course_id>/', tutor_views.deactivate_course, name='deactivate_course'),
 
 
@@ -119,6 +119,13 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
 
     path('quiz_form/<int:course_id>/', tutor_views.quiz_form, name='quiz_form'),
     path('update_question_status/<int:question_id>/', tutor_views.update_question_status, name='update_question_status'),
+    path('course_schedule_assignments/', tutor_views.course_schedule_assignments, name='course_schedule_assignments'),
+    path('create_assignment/<int:course_id>/', tutor_views.create_assignment, name='create_assignment'),
+    path('toggle_assignment_status/<int:assignment_id>/', tutor_views.toggle_assignment_status, name='toggle_assignment_status'),
+    path('get_assignment_details/<int:assignment_id>/', tutor_views.get_assignment_details, name='get_assignment_details'),
+    path('view_assignment/', tutor_views.view_assignment, name='view_assignment'),
+
+    path('tutor_view_assignments/<int:course_id>/', tutor_views.tutor_view_assignments, name='tutor_view_assignments'),
 
 
 

@@ -338,6 +338,22 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'course_schedule_assignments' %}" class="nav-link {% if student_view_result == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Create Assignments
+                        </p>
+                    </a>
+                </li> 
+                <li class="nav-item">
+                    <a href=" {% url "view_assignment" %}" class="nav-link {% if student_view_result == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            View Assignments
+                        </p>
+                    </a>
+                </li> 
                <li class="nav-item">
                     {% url 'tutor_courses' as tutor_courses %}
                     <a href="{{tutor_courses}}" class="nav-link {% if tutor_courses == request.path %} active {% endif %}">
@@ -435,15 +451,7 @@
                     </a>
                 </li>
 
-                {% comment %} <li class="nav-item">
-                    {% url 'student_view_result' as student_view_result %}
-                    <a href="{% url 'student_view_result' %}" class="nav-link {% if student_view_result == request.path %} active {% endif %}">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            View Results
-                        </p>
-                    </a>
-                </li> {% endcomment %}
+                
                 
                 <li class="nav-item">
                     <a href="{% url 'view_scheduled_classes_leaner' %}" class="nav-link {% if 'view_scheduled_classes_leaner' in request.path %} active {% endif %}">
@@ -453,6 +461,14 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'view_assignments' %}" class="nav-link {% if student_view_result == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Upload Assignments
+                        </p>
+                    </a>
+                </li> 
           
                 <li class="nav-item">
                     {% url 'student_view_attendance' as student_view_attendance %}
@@ -461,6 +477,7 @@
                         <p>View Attendance</p>
                     </a>
                 </li>
+
 
                 {% comment %} <li class="nav-item">
                     {% url 'student_view_notification' as student_view_notification %}
