@@ -237,7 +237,7 @@
                                   {% if user in course.enrolled_learners.all %}
                                     <span class="text-success">Enrolled</span>
                                   {% else %}
-                                    <a href="/payment/homepage/{{course.id}}" class="text-primary text-decoration-none">Enroll</a>
+                                    <a href="/payment/homepage/{{course.course.id}}" class="text-primary text-decoration-none">Enroll</a>
                                   {% endif %}
                                   {% endif %}
                                   {% endif %}
@@ -368,34 +368,7 @@
                 }
             }
         }
-        function addToWishlist(courseId) {
-        // Send an AJAX request to your Django backend
-        // You can use libraries like jQuery or fetch API to make the request
-        // Example using fetch API:
-        fetch(`/add_to_wishlist/${courseId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for CSRF protection
-            },
-            body: JSON.stringify({ courseId: courseId })
-        })
-        .then(response => {
-            if (response.ok) {
-                // Course added to wishlist successfully
-                console.log('Course added to wishlist');
-                // You can update UI or display a message here if needed
-            } else {
-                // Error adding course to wishlist
-                console.error('Error adding course to wishlist');
-                // You can handle errors or display an error message here if needed
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // You can handle errors or display an error message here if needed
-        });
-    }
+        
 
   </script>
   <script>

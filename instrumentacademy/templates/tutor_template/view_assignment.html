@@ -73,13 +73,13 @@
             <td>{{ assignment.assignment.title }}</td>
             <td>{{ assignment.assignment.start_date }}</td>
             <td>{{ assignment.assignment.due_date }}</td>
-            <td>
+            <td id="filePreview">
                 {% if assignment.files %}
-                <a href="{{ assignment.files.url }}" download>
-                    <i class="fa fa-download"></i> Download
-                </a>
+                    <a href="#" onclick="previewFile('{{ assignment.files.url }}'); return false;">
+                        <i class="fa fa-eye"></i> View
+                    </a>
                 {% else %}
-                No file uploaded
+                    No file uploaded
                 {% endif %}
             </td>
             <td>
@@ -95,5 +95,34 @@
     </tbody>
 </table>
 </div>
+<script>
+    function previewFile(fileUrl) {
+        var fileType = getFileType(fileUrl);
+
+        if (fileType === 'pdf') {
+            // Open PDF file in a new tab
+            window.open(fileUrl, '_blank');
+        } else if (fileType === 'audio' || fileType === 'video') {
+            // Open audio or video file in a new tab
+            window.open(fileUrl, '_blank');
+        } else {
+            // Unsupported file type
+            alert('Cannot preview this file type.');
+        }
+    }
+
+    function getFileType(fileUrl) {
+        var extension = fileUrl.split('.').pop().toLowerCase();
+        if (extension === 'pdf') {
+            return 'pdf';
+        } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
+            return 'audio';
+        } else if (['mp4', 'webm'].includes(extension)) {
+            return 'video';
+        } else {
+            return 'unsupported';
+        }
+    }
+</script>
 
 {% endblock content %}

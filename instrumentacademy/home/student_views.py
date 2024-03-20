@@ -602,6 +602,7 @@ def rating_review(request, course_id):
     return render(request, 'student_template/tutor_profile.html', context)
 
 
+#..................................wishlist........................
 def wishlist(request):
     if request.user.is_authenticated:
         wishlist = WishlistItem.objects.filter(user=request.user)
@@ -636,6 +637,8 @@ def remove_from_wishlist(request, course_id):
         return redirect('wishlist')  # Redirect to wishlist page
     else:
         return redirect('login')  # Redirect to login page
+
+#..............................wiahlist/................................................................
 
 import pytz
 from django.utils import timezone

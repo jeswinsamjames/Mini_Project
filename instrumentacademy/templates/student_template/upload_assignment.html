@@ -113,14 +113,15 @@
                                     <p style="color: red;">Time is over</p>
                                 {% else %}
                                 
-                                    <form method="post" action="{% url 'view_assignments' %}" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
-                                        <input type="file" name="file" placeholder="Choose File"> 
-                                        <button type="submit" style="background-color: rgb(27, 27, 27); color: white; border-radius: 10px;">Upload</button>
-                                        <br>
-                                        <span style="font-size: small; font-weight: lighter; margin-right: 200px; color: red;">mp3, pdf, mp4</span>
-                                    </form>
+                                <form method="post" action="{% url 'view_assignments' %}" enctype="multipart/form-data" onsubmit="return validateFile()">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+                                    <input type="file" id="fileInput" name="file" placeholder="Choose File"> 
+                                    <button type="submit" style="background-color: rgb(27, 27, 27); color: white; border-radius: 10px;">Upload</button>
+                                    <br>
+                                    <span style="font-size: small; font-weight: lighter; margin-right: 200px; color: red;">mp3, pdf, mp4</span>
+                                </form>
+                                
                                 {% endif %}
                             {% endif %}
                                 
@@ -139,7 +140,21 @@
 </table>
 </div>
 
+<script>
+    function validateFile() {
+        var fileInput = document.getElementById('fileInput');
+        var fileName = fileInput.value;
+        var allowedExtensions = /(\.pdf|\.mp3|\.mp4)$/i;
 
+        if (!allowedExtensions.exec(fileName)) {
+            alert('Please upload files with .pdf, .mp3, or .mp4 extensions only. and cannot be null');
+            fileInput.value = '';
+            return false;
+        }
+
+        return true;
+    }
+</script>
 {% endblock content %}
 
 

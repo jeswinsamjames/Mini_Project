@@ -37,11 +37,12 @@
                     </div>
                     <div class="form-group">
                         <label for="dueDate">Due Date:</label>
-                        <input type="datetime-local" class="form-control datepicker" id="dueDate" name="due_date">
+                        <input type="datetime-local" class="form-control datepicker" id="dueDate" name="due_date" required>
                     </div>
                     <div class="form-group">
                         <label for="startDate">Start Date:</label>
-                        <input type="datetime-local" class="form-control datetimepicker" id="startDate" name="start_date">
+                        <input type="datetime-local" class="form-control datetimepicker" id="startDate" name="start_date" required>
+                        
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -54,6 +55,10 @@
 </div>
 
 
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <div class="modal fade" id="editAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="editAssignmentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -63,21 +68,22 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                
             </div>
             <div class="modal-body">
                 <form id="editAssignmentForm" method="post" >
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="title">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title">
+                        <input type="text" class="form-control" id="title" name="title" required>
                     </div>
                     <div class="form-group">
                         <label for="dueDate">Due Date:</label>
-                        <input type="datetime-local" class="form-control" id="dueDate" name="due_date">
+                        <input type="datetime-local" class="form-control" id="dueDate" name="due_date" min="{{ current_date }}" oninput="validateDueDate()">
                     </div>
                     <div class="form-group">
                         <label for="startDate">Start Date:</label>
-                        <input type="datetime-local" class="form-control" id="startDate" name="start_date">
+                        <input type="datetime-local" class="form-control" id="startDate" name="start_date"  min="{{ current_date }}" oninput="validateStartDate()">
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
@@ -88,7 +94,7 @@
         </div>
     </div>
 </div>
-
+<!-- Bootstrap JS -->
 
 
 
@@ -125,7 +131,7 @@
                                     <td>{{ assignment.start_date }}</td>
                                     <td>{{ assignment.due_date }}</td>
                                     <td style="display: flex; justify-content: center; align-items: center;"> 
-                                        <a href="#" class="btn btn-primary edit-assignment-btn" data-assignment-id="{{ assignment.id }}">
+                                        <a href="#" class="btn btn-primary edit-assignment-btn" data-toggle="modal"  data-assignment-id="{{ assignment.id }}">
                                             <i class="fas fa-edit" style="color: black;"></i>
                                         </a>
                                         <a href="{% url 'toggle_assignment_status' assignment.id %}" onclick="return confirm('Are you sure you want to delete this course ?')" class="btn btn-danger" style="color: black;">
@@ -205,25 +211,78 @@
     });
 </script>
 <script>
+    // Function to validate the title field
+    function validateTitle() {
+        var titleInput = document.getElementById('title');
+        var titleValue = titleInput.value.trim();
+        if (titleValue === '') {
+            titleInput.setCustomValidity('Title cannot be empty.');
+        } else {
+            titleInput.setCustomValidity('');
+        }
+    }
+
+    // Function to validate the due date field
+   // Function to validate the due date field
+// Function to validate the due date field
+function validateDueDate() {
+    var dueDateInput = document.getElementById('dueDate');
+    var dueDateValue = new Date(dueDateInput.value);
+    var currentDate = new Date();
+    var startDateInput = document.getElementById('startDate');
+    var startDateValue = new Date(startDateInput.value);
+
+    if (dueDateValue <= currentDate) {
+        dueDateInput.setCustomValidity('Due date must be after the current date.');
+    } else if (dueDateValue <= startDateValue) {
+        dueDateInput.setCustomValidity('Due date must be after the start date.');
+    } else {
+        dueDateInput.setCustomValidity('');
+    }
+}
+
+// Function to validate the start date field
+function validateStartDate() {
+    var startDateInput = document.getElementById('startDate');
+    var startDateValue = new Date(startDateInput.value);
+    var currentDate = new Date();
+    var dueDateInput = document.getElementById('dueDate');
+    var dueDateValue = new Date(dueDateInput.value);
+
+    if (startDateValue <= currentDate) {
+        startDateInput.setCustomValidity('Start date must be after the current date.');
+    } else if (startDateValue >= dueDateValue) {
+        startDateInput.setCustomValidity('Start date must be before the due date.');
+    } else {
+        startDateInput.setCustomValidity('');
+    }
+}
+
+
+
+    // Event listeners for live validation
+    document.getElementById('title').addEventListener('input', validateTitle);
+    document.getElementById('dueDate').addEventListener('input', validateDueDate);
+    document.getElementById('startDate').addEventListener('input', validateStartDate);
+
+    // Event listener for form submission
     document.getElementById('assignmentForm').addEventListener('submit', function(event) {
-        var title = document.getElementById('title').value;
-        var dueDate = new Date(document.getElementById('dueDate').value);
-        var startDate = new Date(document.getElementById('startDate').value);
-        var currentDate = new Date();
+        // Validate all fields before submitting the form
+        validateTitle();
+        validateDueDate();
+        validateStartDate();
 
-        if (!title || !dueDate || !startDate) {
-            alert('All fields are required.');
+        // Prevent form submission if any field is invalid
+        if (!this.checkValidity()) {
             event.preventDefault();
-            return;
+            event.stopPropagation();
         }
 
-        if (dueDate <= currentDate || startDate <= currentDate) {
-            alert('Due date and start date must be after the current date.');
-            event.preventDefault();
-            return;
-        }
+        // Add Bootstrap's was-validated class to show feedback styling
+        this.classList.add('was-validated');
     });
 </script>
+
 
 
 {% endblock content %}

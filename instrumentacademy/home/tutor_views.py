@@ -717,11 +717,14 @@ def course_schedule_assignments(request):
     courses = CourseDetail.objects.filter(tutor=request.user, is_active=True)
     return render(request, 'tutor_template/create_assignment_list.html', {'courses':courses})
 
+import datetime
 
 def create_assignment(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     user = request.user
     assignments = Assignments.objects.filter(course=course,is_active=True)
+    current_date = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M')  # Format the date as required by datetime-local input
+    print('Create assignment called', current_date)
 
 
     if request.method == 'POST':
@@ -749,7 +752,7 @@ def create_assignment(request, course_id):
 
 
     
-    return render(request, 'tutor_template/create_assignment.html',{'assignments':assignments,'courses':course})
+    return render(request, 'tutor_template/create_assignment.html',{'assignments':assignments,'courses':course,'current_date':current_date})
 
 def toggle_assignment_status(request, assignment_id):
     assignment = get_object_or_404(Assignments, pk=assignment_id)
