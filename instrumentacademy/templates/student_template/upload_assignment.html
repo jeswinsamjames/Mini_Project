@@ -97,6 +97,7 @@
                             <td>{{ assignment.title }}</td>
                             <td>{{ assignment.start_date }}</td>
                             <td>{{ assignment.due_date }}</td>
+                            <td hidden id="allowedExtensions">{{ assignment.allowed_file_type }}</td>
                             <td>
                                 {% if assignment.uploaded_file %}
                                 <a href="{{ assignment.uploaded_file.files.url }}" download>
@@ -119,8 +120,9 @@
                                     <input type="file" id="fileInput" name="file" placeholder="Choose File"> 
                                     <button type="submit" style="background-color: rgb(27, 27, 27); color: white; border-radius: 10px;">Upload</button>
                                     <br>
-                                    <span style="font-size: small; font-weight: lighter; margin-right: 200px; color: red;">mp3, pdf, mp4</span>
+                                    <span id="fileTypeMessage" style="font-size: small; font-weight: lighter; color: red;"></span>
                                 </form>
+                                
                                 
                                 {% endif %}
                             {% endif %}
@@ -147,14 +149,30 @@
         var allowedExtensions = /(\.pdf|\.mp3|\.mp4)$/i;
 
         if (!allowedExtensions.exec(fileName)) {
-            alert('Please upload files with .pdf, .mp3, or .mp4 extensions only. and cannot be null');
+            document.getElementById('fileTypeMessage').textContent = 'Please upload files with .pdf, .mp3, or .mp4 extensions only.';
             fileInput.value = '';
             return false;
         }
 
+        // Check file extension and display appropriate message
+        var extension = fileName.split('.').pop().toLowerCase();
+        var fileTypeMessage = '';
+        if (extension === 'pdf') {
+            fileTypeMessage = 'PDF files only are allowed.';
+        } else if (extension === 'mp3') {
+            fileTypeMessage = 'MP3 files only are allowed.';
+        } else if (extension === 'mp4') {
+            fileTypeMessage = 'MP4 files only are allowed.';
+        }
+
+        // Display the message
+        document.getElementById('fileTypeMessage').textContent = fileTypeMessage;
+
         return true;
     }
 </script>
+
+
 {% endblock content %}
 
 

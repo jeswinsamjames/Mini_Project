@@ -181,84 +181,56 @@
               </div>
     
             
-            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Courses</h1>
+            <h1 class="text-center" style=" margin: 50px;"> {{category_name|title}} Wishlist</h1>
             <div class="row" id="course">
                
  
 
-
-{% if wishlist %}
-        {% for course in wishlist %}
-                <div class="col-md-3 course-card1">
-                    <div class="card mb-4 course-card">
-                        <img class="courseimg" src="{% if course.course.image %}{{ course.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
-                      
-                        <div class="dropdown">
-                            <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown('{{ course.course.id }}')">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </ul>
-                            <div id="myDropdown_{{ course.id }}" class="dropdown-content">
-                                <a href="#" style="text-decoration: none;">
-                                    <!-- Share Icon -->
-                                    <img src="{% static 'images/share.svg' %}" alt="Share Icon" style="width: 20px; height: 20px;">
-                                    <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                        <use xlink:href="#icon-share"></use>
-                                    </svg>
-                                    Share
-                                </a>
-                                <a>
-                                    <!-- Wishlist Icon -->
-                                    <img src="{% static 'images/fav.svg' %}" alt="Wishlist Icon" style="width: 18px; height: 18px;">
-                                    <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                        <!-- Replace this with the appropriate icon ID for "Wishlist" -->
-                                        <use xlink:href="#icon-wishlist"></use>
-                                    </svg>
-                                    <button class="btn btn-outline-primary" onclick="addToWishlist({{ course.id }})">Add to Wishlist</button>
-
-                                </a>
+                {% if wishlist %}
+                {% for course_item in wishlist %}
+                    <div class="col-md-3 course-card1">
+                        <div class="card mb-4 course-card">
+                            <img class="courseimg" src="{% if course_item.course.image %}{{ course_item.course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
+                            
+                            
+                            <a href="#" class="remove-from-wishlist love-icon position-absolute" data-course-id="{{ course_item.course.id }}" style="margin-left: 220px;">
+                                <i class="fa fa-heart" style="color: red; top: 5px; right: 5px; font-size:3ch;" ></i>
+                            </a>
+                        
+                            <div class="card-body">
+                                <h5 class="card-title">{{ course_item.course.name }} </h5>
+                                <p class="card-text"><strong>Tutor:</strong> {{ course_item.course.tutor.first_name }}  {{ course_item.course.tutor.last_name }}</p>
+                                <p class="card-text"><strong>Years of Experience:</strong> {{ course_item.course.years_of_experience }}</p>
+                                <p class="course-description" class="card-text"><strong>Description:</strong> {{ course_item.course.description }}</p>
+                                <p class="card-text"><strong>price:</strong> {{ course_item.course.amount }}</p>
                             </div>
-                        </div>
-                    
-                        <div class="card-body">
-                            <h5 class="card-title">{{ course.course.name }} </h5>
-                            <p class="card-text"><strong>Tutor:</strong> {{ course.course.tutor.first_name }}  {{ course.course.tutor.last_name }}x</p>
-                            <p class="card-text"><strong>Years of Experience:</strong> {{ course.course.years_of_experience }}</p>
-                            <p class="course-description" class="card-text"><strong>Description:</strong> {{ course.course.description }}</p>
-                            <p class="card-text"><strong>price:</strong> {{ course.course.amount }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <!-- Enroll and See Details Links with Line Separator -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="text-center">
-                                  {% if not user.is_superuser %}
-                                  {% if user.userprofile.isTutor != 2 %}
-                                  {% if user in course.enrolled_learners.all %}
-                                    <span class="text-success">Enrolled</span>
-                                  {% else %}
-                                    <a href="/payment/homepage/{{course.course.id}}" class="text-primary text-decoration-none">Enroll</a>
-                                  {% endif %}
-                                  {% endif %}
-                                  {% endif %}
-                                </div>
-                                <div class="separator"></div>
-                                <div class="text-center">
-                                    <a href="{% url 'tutor_profile' course.id %}" class="text-info text-decoration-none">See Details</a>
-
+                            <div class="card-footer">
+                                <!-- Enroll and See Details Links with Line Separator -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-center">
+                                        {% if not user.is_superuser %}
+                                        {% if user.userprofile.isTutor != 2 %}
+                                            {% if not user in course_item.course.enrolled_learners.all %}
+                                                <a href="/payment/homepage/{{ course_item.course.id }}" class="text-primary text-decoration-none">Enroll</a>
+                                            {% else %}
+                                                <span class="text-success">Enrolled</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    </div>
+                                    <div class="separator"></div>
+                                    <div class="text-center">
+                                        <a href="{% url 'tutor_profile' course_item.course.id %}" class="text-info text-decoration-none">See Details</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <form action="{% url 'remove_from_wishlist' course.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Remove from Wishlist</button>
-                </form>
                 {% endfor %}
-                {% else %}
-    <p>Your wishlist is empty.</p>
-{% endif %}
+            {% else %}
+                <p>Your wishlist is empty.</p>
+            {% endif %}
+            
             </div>
         </div>
     </section>
@@ -344,33 +316,34 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-      function changeLanguage(language) {
-          var element = document.getElementById("url");
-          element.value = language;
-          element.innerHTML = language;
-      }
-
-      
-        function showDropdown(courseId) {
-            var dropdown = document.getElementById('myDropdown_' + courseId);
-            dropdown.classList.toggle('show');
-        }
-
-        window.onclick = function (event) {
-            if (!event.target.matches('.dropbtn')) {
-                var dropdowns = document.getElementsByClassName('dropdown-content');
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
+        $(document).ready(function() {
+            $('.remove-from-wishlist').click(function(e) {
+                e.preventDefault();
+                var courseId = $(this).data('course-id');
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "remove_from_wishlist" 0 %}'.replace('0', courseId),
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.message) {
+                            // Remove the course card from the wishlist
+                            $('#course-card-' + courseId).remove();
+                            alert(response.message);
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('An error occurred: ' + error);
                     }
-                }
-            }
-        }
-        
-
-  </script>
+                });
+            });
+        });
+    </script>
   <script>
     $(document).ready(function () {
         // Function to handle live search

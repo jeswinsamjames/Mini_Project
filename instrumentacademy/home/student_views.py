@@ -606,8 +606,11 @@ def rating_review(request, course_id):
 def wishlist(request):
     if request.user.is_authenticated:
         wishlist = WishlistItem.objects.filter(user=request.user)
-        # courses = wishlist.course.all()
-        return render(request, 'student_template/wishlist.html', {'wishlist': wishlist})
+        # Retrieve course ids from the wishlist items
+        course_ids = [item.course.id for item in wishlist]
+        # Retrieve course details based on the course ids
+        courses = CourseDetail.objects.filter(pk__in=course_ids)
+        return render(request, 'student_template/wishlist.html', {'wishlist': wishlist, 'courses': courses})
     else:
         return redirect('login')  # Redirect to login page
     
@@ -632,11 +635,18 @@ def add_to_wishlist(request, course_id):
 
 def remove_from_wishlist(request, course_id):
     if request.user.is_authenticated:
-        wishlist = WishlistItem.objects.get(user=request.user)
-        wishlist.courses.remove(course_id)
-        return redirect('wishlist')  # Redirect to wishlist page
+        try:
+            # Get the wishlist item associated with the user and course
+            wishlist_item = WishlistItem.objects.get(user=request.user, course_id=course_id)
+            # Remove the course from the wishlist
+            wishlist_item.delete()
+            return JsonResponse({'message': 'Course removed from wishlist.'})
+        except WishlistItem.DoesNotExist:
+            return JsonResponse({'error': 'Wishlist item does not exist.'}, status=400)
+        except CourseDetail.DoesNotExist:
+            return JsonResponse({'error': 'Course does not exist.'}, status=400)
     else:
-        return redirect('login')  # Redirect to login page
+        return JsonResponse({'error': 'User is not authenticated.'}, status=401)
 
 #..............................wiahlist/................................................................
 

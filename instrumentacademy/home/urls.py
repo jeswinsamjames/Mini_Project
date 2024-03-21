@@ -62,7 +62,7 @@ urlpatterns = [
 
     path('wishlist/', student_views.wishlist, name='wishlist'),
     path('add_to_wishlist/<int:course_id>', student_views.add_to_wishlist, name='add_to_wishlist'),
-    path('wishlist/remove/<int:item_id>/', student_views.remove_from_wishlist, name='remove_from_wishlist'),    
+    path('wishlist/remove/<int:course_id>/', student_views.remove_from_wishlist, name='remove_from_wishlist'),    
     path('view_assignments/', student_views.view_assignments, name='view_assignments'),    
     path('delete_assignment_file/<int:upload_assignment_id>/', student_views.delete_assignment_file, name='delete_assignment_file'),    
 

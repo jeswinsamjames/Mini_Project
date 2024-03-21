@@ -44,6 +44,14 @@
                         <input type="datetime-local" class="form-control datetimepicker" id="startDate" name="start_date" required>
                         
                     </div>
+                    <div class="form-group">
+                        <label for="allowedFileType">Allowed File Type:</label>
+                        <select class="form-control" id="allowedFileType" name="allowed_file_type" required>
+                            <option value="pdf">PDF</option>
+                            <option value="mp3">MP3</option>
+                            <option value="mp4">MP4</option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
@@ -85,6 +93,14 @@
                         <label for="startDate">Start Date:</label>
                         <input type="datetime-local" class="form-control" id="startDate" name="start_date"  min="{{ current_date }}" oninput="validateStartDate()">
                     </div>
+                    <div class="form-group">
+                        <label for="allowedFileType">Allowed File Type:</label>
+                        <select class="form-control" id="allowedFileTypee" name="allowed_file_type" required>
+                            <option value="pdf">PDF</option>
+                            <option value="mp3">MP3</option>
+                            <option value="mp4">MP4</option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
             </div>
@@ -120,6 +136,7 @@
                 <th>Title</th>
                 <th>Start Date</th>
                 <th>Due Date</th>
+                <th>File Type</th>
                                     
                                 </tr>
                             </thead>
@@ -130,6 +147,7 @@
                                     <td>{{ assignment.title }}</td>
                                     <td>{{ assignment.start_date }}</td>
                                     <td>{{ assignment.due_date }}</td>
+                                    <td>{{ assignment.allowed_file_type }}</td>
                                     <td style="display: flex; justify-content: center; align-items: center;"> 
                                         <a href="#" class="btn btn-primary edit-assignment-btn" data-toggle="modal"  data-assignment-id="{{ assignment.id }}">
                                             <i class="fas fa-edit" style="color: black;"></i>
@@ -168,10 +186,11 @@
 
 <!-- Add this script to your HTML template -->
 <script>
-     $('.edit-assignment-btn').click(function() {
+    $('.edit-assignment-btn').click(function() {
         var assignmentId = $(this).data('assignment-id');
         editAssignment(assignmentId);
     });
+    
     function editAssignment(assignmentId) {
         $.ajax({
             url: '/get_assignment_details/' + assignmentId + '/',
@@ -180,9 +199,8 @@
                 $('#editAssignmentModal #title').val(response.title);
                 $('#editAssignmentModal #dueDate').val(response.due_date);
                 $('#editAssignmentModal #startDate').val(response.start_date);
+                $('#editAssignmentModal #allowedFileType').val(response.allowed_file_typee); // Set the value for allowed_file_type field
                 $('#editAssignmentModal').modal('show');
-
-                // Store assignment ID in a data attribute
                 $('#editAssignmentModal').data('assignment-id', assignmentId);
             },
             error: function(xhr, status, error) {
@@ -190,25 +208,24 @@
             }
         });
     }
-
+    
     $('#editAssignmentForm').submit(function(event) {
         event.preventDefault();
-        var assignmentId = $('#editAssignmentModal').data('assignment-id'); // Retrieve assignment ID from data attribute
+        var assignmentId = $('#editAssignmentModal').data('assignment-id');
         $.ajax({
             url: '/get_assignment_details/' + assignmentId + '/',
             type: 'POST',
-            data: $(this).serialize() + '&assignment_id=' + assignmentId, // Add assignment ID to the data
+            data: $(this).serialize() + '&assignment_id=' + assignmentId,
             success: function(response) {
                 console.log(response);
-                // Handle success response
                 $('#editAssignmentModal').modal('hide');
             },
             error: function(xhr, status, error) {
                 console.error(error);
-                // Handle error response
             }
         });
     });
+    
 </script>
 <script>
     // Function to validate the title field

@@ -719,18 +719,24 @@ def course_schedule_assignments(request):
 
 import datetime
 
+
 def create_assignment(request, course_id):
     course = get_object_or_404(CourseDetail, pk=course_id)
     user = request.user
-    assignments = Assignments.objects.filter(course=course,is_active=True)
+    assignments = Assignments.objects.filter(course=course, is_active=True)
     current_date = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M')  # Format the date as required by datetime-local input
-    print('Create assignment called', current_date)
-
 
     if request.method == 'POST':
         title = request.POST.get('title')
         due_date = request.POST.get('due_date')
         start_date = request.POST.get('start_date')
+        allowed_file_type = request.POST.get('allowed_file_type')  # Get the selected allowed file type
+        
+        # Validate allowed file type
+        allowed_file_types = ['pdf', 'mp3', 'mp4']
+        if allowed_file_type not in allowed_file_types:
+            messages.error(request, 'Invalid file type selected.')
+            return redirect('create_assignment', course_id=course_id)
         
         # Assuming the related name between User and UserProfile is 'profile'
         # Replace 'profile' with the actual related name in your models
@@ -743,16 +749,21 @@ def create_assignment(request, course_id):
             start_date=start_date,
             course=course,
             user=user,
-            user_profile=user_profile
+            user_profile=user_profile,
+            allowed_file_type=allowed_file_type  # Save the selected allowed file type
         )
         
         # Redirect to a success page or another view
         messages.success(request, 'Assignment created successfully.')
-        return redirect('create_assignment' ,course_id=course_id)
+        return redirect('create_assignment', course_id=course_id)
 
+    context = {
+        'course': course,
+        'current_date': current_date,
+        'assignments': assignments,
+    }
+    return render(request, 'tutor_template/create_assignment.html', context)
 
-    
-    return render(request, 'tutor_template/create_assignment.html',{'assignments':assignments,'courses':course,'current_date':current_date})
 
 def toggle_assignment_status(request, assignment_id):
     assignment = get_object_or_404(Assignments, pk=assignment_id)
@@ -770,10 +781,12 @@ def get_assignment_details(request, assignment_id):
         title = request.POST.get('title')
         due_date = request.POST.get('due_date')
         start_date = request.POST.get('start_date')
-        
+        allowed_file_type = request.POST.get('allowed_file_type')  # Retrieve the allowed file type
+
         assignment.title = title
         assignment.due_date = due_date
         assignment.start_date = start_date
+        assignment.allowed_file_type = allowed_file_type  # Update the allowed file type field
         assignment.save()
 
         return JsonResponse({'message': 'Assignment details updated successfully'})
@@ -782,9 +795,11 @@ def get_assignment_details(request, assignment_id):
         'title': assignment.title,
         'due_date': assignment.due_date.strftime('%Y-%m-%dT%H:%M'),  
         'start_date': assignment.start_date.strftime('%Y-%m-%dT%H:%M'),
+        'allowed_file_type': assignment.allowed_file_type  # Include the allowed file type in the response
     }
 
     return JsonResponse(assignment_details)
+
 
 
 def view_assignment(request):

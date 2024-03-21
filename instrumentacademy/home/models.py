@@ -230,6 +230,13 @@ class Assignments(models.Model):
     start_date = models.DateTimeField()  
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    FILE_TYPE_CHOICES = (
+        ('pdf', 'PDF'),
+        ('mp3', 'MP3'),
+        ('mp4', 'MP4'),
+    )
+    allowed_file_type = models.CharField(max_length=3, choices=FILE_TYPE_CHOICES)
+
 
     def __str__(self):
         return self.title
