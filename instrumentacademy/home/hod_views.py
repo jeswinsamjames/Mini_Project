@@ -321,6 +321,27 @@ def edit_admin_profile(request):
     return render(request, 'hod_template/admin_view_profile.html', {'user': user})
 
 
+
+
+
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from datetime import datetime
+
+# Sample function to generate a line chart for payments including price
+def generate_payments_line_chart(request):
+    # Retrieve payment data
+    payments_data = Enrollment.objects.filter(is_active=True).count()
+
+    # Prepare context
+    context = {
+        'page_title': 'Payments Line Chart',
+        'payments_data': payments_data,
+    }
+
+    # Render the template with context
+    return render(request, 'hod_template/payment.html', context)
+
 # def delete_student(request, learner_id):
 #     student = get_object_or_404(UserProfile, id=learner_id, isTutor=0)
    

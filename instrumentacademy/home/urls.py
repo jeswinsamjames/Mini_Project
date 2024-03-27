@@ -177,5 +177,6 @@ path('activate-course/<int:course_id>/', tutor_views.activate_course, name='acti
      path("student/delete/<int:student_id>", hod_views.delete_student, name='delete_student'),
    
      path('reject_and_delete_tutor/<int:tutor_id>/', hod_views.reject_and_delete_tutor, name='reject_and_delete_tutor'),
+     path('generate_payments_line_chart/', hod_views.generate_payments_line_chart, name='generate_payments_line_chart'),
 
 ]

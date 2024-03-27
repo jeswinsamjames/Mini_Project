@@ -697,18 +697,7 @@ def view_assignments(request):
 
 
 
-# def delete_assignment_file(request, file_id):
-#     if request.method == 'POST':
-#         upload = get_object_or_404(UploadAssignment, pk=upload_id)
-#         # Check if the logged-in user has permission to delete the file
-#         if request.user == upload.user:
-#             upload.files.delete()
-#             upload.delete()
-#             return redirect('view_assignments')
-#         else:
-#             return HttpResponseBadRequest("You don't have permission to delete this file.")
-#     else:
-#         return HttpResponseBadRequest("Invalid request method.")
+
 
 def delete_assignment_file(request, upload_assignment_id):
     assignment_file = get_object_or_404(UploadAssignment, pk=upload_assignment_id)

@@ -39,9 +39,9 @@
         vertical-align: middle;
         margin-right: 5px;
     }
-    .assignments-list {
+    {% comment %} .assignments-list {
         display: none;
-    }
+    } {% endcomment %}
 </style>
 
 
@@ -92,12 +92,21 @@
                     </thead>
                     <tbody>
                         {% for assignment in assignments %}
+                        "{{ assignment.id }}": "{{ assignment.allowed_file_type }}",
+
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ assignment.title }}</td>
                             <td>{{ assignment.start_date }}</td>
                             <td>{{ assignment.due_date }}</td>
-                            <td hidden id="allowedExtensions">{{ assignment.allowed_file_type }}</td>
+                            <td  id="allowedExtensions">{{ assignment.allowed_file_type }}</td>
+                            <!-- var allowedExtensions = "{{ assignment.allowed_file_type }}".trim();
+                            console.log("Allowed file type:", allowedExtensions);     -->
+                            <script>
+                                
+                            </script>
+                            
+                            
                             <td>
                                 {% if assignment.uploaded_file %}
                                 <a href="{{ assignment.uploaded_file.files.url }}" download>
@@ -114,14 +123,17 @@
                                     <p style="color: red;">Time is over</p>
                                 {% else %}
                                 
-                                <form method="post" action="{% url 'view_assignments' %}" enctype="multipart/form-data" onsubmit="return validateFile()">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
-                                    <input type="file" id="fileInput" name="file" placeholder="Choose File"> 
-                                    <button type="submit" style="background-color: rgb(27, 27, 27); color: white; border-radius: 10px;">Upload</button>
-                                    <br>
-                                    <span id="fileTypeMessage" style="font-size: small; font-weight: lighter; color: red;"></span>
-                                </form>
+                               <!-- Template code -->
+                               <form id="uploadForm-{{ assignment.id }}" method="post" action="{% url 'view_assignments' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+                                <input type="file" id="fileInput-{{ assignment.id }}" name="file" placeholder="Choose File"> 
+                                <button type="button" onclick="validateAndSubmit('{{ assignment.id }}', allowedFileTypes)" style="background-color: rgb(27, 27, 27); color: white; border-radius: 10px;">Upload</button>
+                                <br>
+                                <span id="fileTypeMessage-{{ assignment.id }}" style="font-size: small; font-weight: lighter; margin-right: 200px; color: red;"></span>
+                            </form>
+                            
+
                                 
                                 
                                 {% endif %}
@@ -141,36 +153,28 @@
     </tbody>
 </table>
 </div>
-
 <script>
-    function validateFile() {
-        var fileInput = document.getElementById('fileInput');
-        var fileName = fileInput.value;
-        var allowedExtensions = /(\.pdf|\.mp3|\.mp4)$/i;
+    // Define the validateAndSubmit function with allowedFileTypes as a parameter
+    function validateAndSubmit(assignmentId, allowedFileTypes) {
+        var fileName = document.getElementById('fileInput-' + assignmentId).value;
+        var extension = fileName.split('.').pop().toLowerCase();
+        var allowedExtensions = allowedFileTypes[assignmentId].trim().toLowerCase();
 
-        if (!allowedExtensions.exec(fileName)) {
-            document.getElementById('fileTypeMessage').textContent = 'Please upload files with .pdf, .mp3, or .mp4 extensions only.';
-            fileInput.value = '';
+        var allowedExtensionsArray = allowedExtensions.split(',');
+        if (!allowedExtensionsArray.includes(extension)) {
+            var validationMessage = 'Please upload files with ' + allowedExtensions + ' extensions only.';
+            document.getElementById('fileTypeMessage-' + assignmentId).textContent = validationMessage;
             return false;
         }
 
-        // Check file extension and display appropriate message
-        var extension = fileName.split('.').pop().toLowerCase();
-        var fileTypeMessage = '';
-        if (extension === 'pdf') {
-            fileTypeMessage = 'PDF files only are allowed.';
-        } else if (extension === 'mp3') {
-            fileTypeMessage = 'MP3 files only are allowed.';
-        } else if (extension === 'mp4') {
-            fileTypeMessage = 'MP4 files only are allowed.';
-        }
-
-        // Display the message
-        document.getElementById('fileTypeMessage').textContent = fileTypeMessage;
-
-        return true;
+        document.getElementById('uploadForm-' + assignmentId).submit();
     }
 </script>
+
+
+
+
+
 
 
 {% endblock content %}
