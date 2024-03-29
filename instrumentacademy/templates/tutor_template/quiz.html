@@ -78,7 +78,7 @@
                         <div id="minimapButtons">
                             {% for question in questions %}
                             <button class="minimap-btn btn btn-primary h-10 px-4 py-2" data-question-id="{{ question.id }}" style="background-color: #323649;">
-                                <span class="minimap-number">{{ forloop.counter }}</span>
+                                <span class="minimap-number" style="color: white">{{ forloop.counter }}</span>
 
                             </button>
                             {% endfor %}
@@ -90,7 +90,7 @@
                     <form id="quizForm" method="POST" class="flex flex-col space-y-4 mx-auto" data-id="{{ course.id }}" action="{% url 'quiz_form' course.id %}">
                         {% csrf_token %}
                     <div id="question-{{ question.id }}" class="question-container">
-                            <button id="addQuestionBtn" class="btn btn-primary w-100" type="button" style="background-color: #323649;">Create new question</button>
+                            <button id="addQuestionBtn" class="btn btn-primary w-100" type="button" style="background-color: #323649; color: white">Create new question</button>
                         <div class="form-group">
                             <label class="text-md font-semibold" for="question-title">Question Title</label>
                             <input type="text" class="form-control" id="question-title" name="question-title" placeholder="Question title" required>
@@ -98,9 +98,9 @@
                         <div id="optionsContainer" class="options-container">
                             <!-- Options will be dynamically added here -->
                         </div>
-                        <button id="addOptionBtn" class="btn btn-primary" type="button" style="background-color: #323649;">Add Option</button>
+                        <button id="addOptionBtn" class="btn btn-primary" type="button" style="background-color: #323649; color: white">Add Option</button>
                         <div class="action-buttons">
-                            <button id="saveQuestionBtn" class="btn btn-primary" type="button" style="background-color: #323649;">Save and add new question</button>
+                            <button id="saveQuestionBtn" class="btn btn-primary" type="button" style="background-color: #323649; color: white">Save and add new question</button>
                             
                             <input type="hidden" name="question_id" id="question-id" value="">
                             {% comment %} <button id="updateQuestionBtn" class="btn btn-primary" type="button">Update or Create Question</button> {% endcomment %}

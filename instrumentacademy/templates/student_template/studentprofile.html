@@ -69,9 +69,10 @@
                                 {% if user.userprofile.profile_picture %}
                                 <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle border border-secondary" style="max-width:120px;">
                                 {% endif %}
-                                <input type="file" class="form-control-file mt-2" id="id_profile_picture" name="profile_picture" style="display: none;">
-                                <small class="form-text text-muted">Upload a professional profile picture.</small>
+                                <input type="file" class="form-control-file mt-2" id="id_profile_picture" name="profile_picture" accept=".jpg" style="display: none;" required>
+                                <small class="form-text text-muted">Upload a professional profile picture (JPG format only).</small>
                             </div>
+                            
                             
                             <div class="form-group">
                               <label for="id_first_name">First Name:</label>
@@ -269,6 +270,18 @@
     }
 
     </script>
+
+    <script>
+        document.getElementById('id_profile_picture').addEventListener('change', function() {
+            var file = this.files[0];
+            var fileType = file.type.toLowerCase();
+            if (fileType !== 'image/jpeg') {
+                alert('Please upload a JPG file.');
+                this.value = ''; // Clear the file input field
+            }
+        });
+    </script>
+    
     
     
     
