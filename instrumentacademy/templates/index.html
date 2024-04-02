@@ -291,7 +291,7 @@
             {% if user.is_authenticated %}
             <li>
               
-              <a  id="notification-icon"  style="padding-right: 0; padding-left: 0; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a  id="notification-icon"  style="padding-right: 0; padding-left: 0; border-bottom: 1px solid; display: inline-block; "  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fa fa-thin fa-bell" id="custom-notification-icon" style="color: #fff;"></i>
                   <div id="notification-badge-container">
                       <sup class="badge" id="notification-badge" style="color: red;" >0</sup>
@@ -307,7 +307,10 @@
           </li>
           {% endif %}
           <li>
+            {{ wishlist_count }}
             <a href=" {% url 'wishlist'  %}" >
+              <span id="wishlistCount" style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; display: none;"></span>
+
                 <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="24" height="24">
                     <path d="M0 0h24v24H0z" fill="none"/>
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -318,6 +321,9 @@
            <li>
             <a href="{% url 'metronome' %}">Metronome</a>
             </li>
+            <li>
+              <a href="{% url 'paino_keys' %}">Exercise</a>
+              </li>
     <style>
       /* Customize the width of the notification panel */
   
@@ -353,8 +359,8 @@
           <li><a href="#resource">Resource</a></li>   {% endcomment %}
          
            {% if user.is_authenticated %}
-           <li><a href="homecontent">Welcome, {{ user.username }}</a></li>
-          <li><a href="{% url 'logout' %}">logout</a></li>
+           <li ><a style="border-bottom: 1px solid rgba(0, 0, 0, 0.1); display: inline-block;" href="homecontent" ><i class="fas fa-user" style="font-size: large;" title="Welcome, {{ user.username }}"></i></a></li>
+           <li><a href="{% url 'logout' %}">logout</a></li>
           {% else %}
          
           <li><a href="{% url 'login' %}">Login</a></li> 
@@ -410,30 +416,26 @@
 
         <div class="section-header">
           <h2>About Us</h2>
-          <p>Aperiam dolorum et et wuia molestias qui eveniet numquam nihil porro incidunt dolores placeat sunt id nobis omnis tiledo stran delop</p>
+          <p>At MusicLearn Hub, we endeavor to be the world’s most technologically advanced and credible platform for e-learning. We work towards creating a user-friendly live learning platform for hobbies.</p>
         </div>
 
         <div class="row gy-4">
           <div class="col-lg-6">
-            <h3>Voluptatem dignissimos provident quasi corporis</h3>
+            <h3>Advanced and credible platform for e-learning</h3>
             <img src="{%static 'assets/img/about.jpg'%}" class="img-fluid rounded-4 mb-4" alt="">
-            <p>Ut fugiat ut sunt quia veniam. Voluptate perferendis perspiciatis quod nisi et. Placeat debitis quia recusandae odit et consequatur voluptatem. Dignissimos pariatur consectetur fugiat voluptas ea.</p>
-            <p>Temporibus nihil enim deserunt sed ea. Provident sit expedita aut cupiditate nihil vitae quo officia vel. Blanditiis eligendi possimus et in cum. Quidem eos ut sint rem veniam qui. Ut ut repellendus nobis tempore doloribus debitis explicabo similique sit. Accusantium sed ut omnis beatae neque deleniti repellendus.</p>
+            <p>We intend to fill the gap that exists for students in finding experienced and knowledgeable teachers. The ipassio platform enables teachers with proficient technology support for course and student management- ensuring a hassle-free teaching experience.</p>
           </div>
           <div class="col-lg-6">
             <div class="content ps-0 ps-lg-5">
               <p class="fst-italic">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                magna aliqua.
+                Every aspect of a teacher's journey needed to provide high-quality training to students is taken care of. This includes student enrolment, course structure, class strength, scheduling, rescheduling, fee collection, fee disbursal, and several others. ipassio’s technology also provides teachers with a robust repository for all their course material. The repository makes the course material accessible, as and when required.
               </p>
               <ul>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
+                <li><i class="bi bi-check-circle-fill"></i> Students have the advantage of learning exactly what they want from the best in the field</li>
+                <li><i class="bi bi-check-circle-fill"></i> Every aspect of a teacher's journey needed to provide high-quality training.</li>
               </ul>
               <p>
-                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident
+                Sustained guidance from teachers after classes ensures students are not consumed by their questions. Instead, students find solutions to their queries within hours. Students through discussion forums, establish productive peer to peer relationships. Guided and monitored by the teacher, the discussion forums are a healthy learning environment. Regular assessment and feedback by the teacher guarantee that every effort of students is accounted for.
               </p>
 
               <div class="position-relative mt-4">
@@ -461,17 +463,17 @@
 
             <div class="stats-item d-flex align-items-center">
               <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" class="purecounter"></span>
-              <p><strong>Happy Clients</strong> consequuntur quae diredo para mesta</p>
+              <p><strong>Happy Clients</strong> </p>
             </div><!-- End Stats Item -->
 
             <div class="stats-item d-flex align-items-center">
               <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
-              <p><strong>Projects</strong> adipisci atque cum quia aut</p>
+              <p><strong>Projects</strong> </p>
             </div><!-- End Stats Item -->
 
             <div class="stats-item d-flex align-items-center">
               <span data-purecounter-start="0" data-purecounter-end="453" data-purecounter-duration="1" class="purecounter"></span>
-              <p><strong>Hours Of Support</strong> aut commodi quaerat</p>
+              <p><strong>Hours Of Support</strong></p>
             </div><!-- End Stats Item -->
 
           </div>
@@ -522,7 +524,41 @@
               </div>
           </div>
       </section>
-      <div class="pagination">
+      <style>
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+    
+        .step-links {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    
+        .step-links a {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            text-decoration: none;
+            color: #333;
+        }
+    
+        .step-links a:hover {
+            background-color: #f0f0f0;
+        }
+    
+        .current-page {
+            font-weight: bold;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: #f0f0f0;
+        }
+    </style>
+    
+    <div class="pagination">
         <span class="step-links">
             {% if categories.has_previous %}
                 <a href="?page=1">&laquo; first</a>
@@ -537,6 +573,7 @@
             {% endif %}
         </span>
     </div>
+    
     
     <style>
         .btn-dark-brown  {
@@ -605,7 +642,7 @@
 
        
     <!-- ======= Our Team Section ======= -->
-    <section id="team" class="team">
+    {% comment %} <section id="team" class="team">
       <div class="container" data-aos="fade-up">
 
         <div class="section-header">
@@ -674,12 +711,13 @@
         </div>
 
       </div>
-    </section><!-- End Our Team Section -->
+    </section> {% endcomment %}
+    <!-- End Our Team Section -->
 
    
 
     <!-- ======= Frequently Asked Questions Section ======= -->
-    <section id="faq" class="faq">
+    {% comment %} <section id="faq" class="faq">
       <div class="container" data-aos="fade-up">
 
         <div class="row gy-4">
@@ -773,7 +811,8 @@
         </div>
 
       </div>
-    </section><!-- End Frequently Asked Questions Section -->
+    </section> {% endcomment %}
+    <!-- End Frequently Asked Questions Section -->
 
    
 

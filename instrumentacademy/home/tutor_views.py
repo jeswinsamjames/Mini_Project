@@ -615,10 +615,11 @@ def tutor_schedule_class(request, course_id):
 
     return render(request, 'tutor_template/tutor_schedule_class.html', {'form': form, 'course': course})
 
+from datetime import datetime
 
 @login_required
 def view_scheduled_classes(request):
-    current_datetime = datetime.now()
+    current_datetime = datetime.datetime.now()
     tutor = request.user  # Get the currently logged-in tutor
 
     # Get upcoming classes for the logged-in tutor

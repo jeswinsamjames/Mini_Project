@@ -18,11 +18,19 @@ from django.views.decorators.cache import cache_control
 
 
 def index(request):
+    print("sdfsdfsdfsdfsfd")
+    if request.user.is_authenticated:
+        wishlist_count = WishlistItem.objects.filter(user=request.user).count()
+        print("Wishlist count is ",wishlist_count)
+    else:
+        wishlist_count = 0
+
     course = category.objects.all()
     # courses = get_object_or_404(CourseDetail, id=course_id)
 
     context  = {
         'course' : course,
+        'wishlist_count':wishlist_count,
         # 'courses' : courses,
     }
     return render(request,'index.html',context)
