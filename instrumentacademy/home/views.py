@@ -6,7 +6,7 @@ from captcha.widgets import ReCaptchaV3
 from django.conf import settings
 from django.contrib.auth import authenticate,login as userlogin, logout
 from django.views.decorators.csrf import csrf_exempt
-
+from django.db.models import Avg
 from hashlib import sha256
 from .models import *
 from .forms import *
@@ -16,34 +16,59 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 
+def get_recommended_courses(courses):
+    recommended_courses = sorted(courses, key=lambda x: x.sentiment_score if x.sentiment_score is not None else 0, reverse=True)[:5]
+    return recommended_courses
+def map_sentiment_to_star_rating(sentiment_score):
+    if sentiment_score is None:
+        return None
+    rating = round((float(sentiment_score) + 1) * 2.5, 1)  # Convert Decimal to float and then perform arithmetic
+    return rating
+
 
 def index(request):
-    print("sdfsdfsdfsdfsfd")
+    query = request.GET.get('q')
+    
+    # Fetch all courses
+    courses = CourseDetail.objects.all()
+    
+    # Integrate sentiment analysis recommendation logic
+    recommended_courses = get_recommended_courses(courses)
+    
+    # Fetch categories for pagination
+    categories = category.objects.all()
+    paginator = Paginator(categories, 6)  # Show 6 categories per page
+    
+    # Get page number from request
+    page_number = request.GET.get('page')
+    categories = paginator.get_page(page_number)
+    
+    # Count wishlist items if user is authenticated
+    wishlist_count = 0
     if request.user.is_authenticated:
         wishlist_count = WishlistItem.objects.filter(user=request.user).count()
-        print("Wishlist count is ",wishlist_count)
-    else:
-        wishlist_count = 0
-
-    course = category.objects.all()
-    # courses = get_object_or_404(CourseDetail, id=course_id)
-
-    context  = {
-        'course' : course,
-        'wishlist_count':wishlist_count,
-        # 'courses' : courses,
+    
+    # Prepare average rating data for each course
+    average_ratings = []
+    for course in courses:
+        sentiment_score = course.sentiment_score
+        star_rating = map_sentiment_to_star_rating(sentiment_score)
+        average_ratings.append((course, star_rating))
+    
+    # Sort courses in decreasing order of star ratings
+    average_ratings = sorted(average_ratings, key=lambda x: x[1] if x[1] is not None else float('-inf'), reverse=True)
+    
+    context = {
+        'courses': courses,
+        'query': query,
+        'recommended_courses': recommended_courses,
+        'categories': categories,
+        'wishlist_count': wishlist_count,
+        'average_ratings': average_ratings,
     }
-    return render(request,'index.html',context)
-
-def index(request):
-    categories = category.objects.all()  
-    paginator = Paginator(categories, 6)  # Show 10 categories per page (adjust as needed)
-    page_number = request.GET.get('page')  # Get the current page number from the request
-
-    categories = paginator.get_page(page_number) 
-    context = {'categories': categories}  
     
     return render(request, 'index.html', context)
+
 
 
 def loggout(request):

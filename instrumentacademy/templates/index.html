@@ -307,7 +307,8 @@
           </li>
           {% endif %}
           <li>
-            {{ wishlist_count }}
+            
+
             <a href=" {% url 'wishlist'  %}" >
               <span id="wishlistCount" style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; display: none;"></span>
 
@@ -315,7 +316,8 @@
                     <path d="M0 0h24v24H0z" fill="none"/>
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
-                
+                <sup class="badge" id="wishlist-badge" style="color: red; border-radius: 50%; position: absolute; top: -12px; right: -10px;">{{ wishlist_count }}</sup>
+
             </a>
            </li>
            <li>
@@ -449,6 +451,165 @@
       </div>
     </section><!-- End About Us Section -->
 
+
+    <section id="team" class="team">
+        <div class="container" data-aos="fade-up">
+            <h1>Top Rated Courses</h1>
+            <div class="course-slider swiper-container">
+                <div class="swiper-wrapper">
+                    <!-- Courses will be dynamically added here -->
+                    {% for course, star_rating in average_ratings %}
+                    <div class="swiper-slide">
+                        <div class="course-card">
+                            <div class="card mb-4">
+                                <img class="card-img-top" style="height: 180px;" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" alt="Course Image">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ course.name }}</h5>
+                                    <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }} {{ course.tutor.last_name }}</p>
+                                    <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
+                                    <p class="course-description card-text">
+                                        <strong>Description:</strong>
+                                        {% if course.description|length > 50 %}
+                                        {{ course.description|truncatechars:50 }}...
+                                        {% else %}
+                                        {{ course.description }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text"><strong>Price:</strong> {{ course.amount }}</p>
+                                    <p>Rating: <span style="color: red;">{{ star_rating }}/5 </span> </p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="text-center">
+                                            {% if not user.is_superuser %}
+                                            {% if user.userprofile.isTutor != 2 %}
+                                            {% if user not in course.enrolled_learners.all %}
+                                            <!-- Add button or link for enrollment -->
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-center">
+                                            <!-- Link to view details -->
+                                            <a href="{% url 'tutor_profile' course.id %}" class="btn btn-info">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- Navigation buttons -->
+                <div class="swiper-button-next next-btn"></div>
+                <div class="swiper-button-prev prev-btn"></div>
+            </div>
+        </div>
+    </section>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+
+
+ <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var swiper = new Swiper('.course-slider', {
+        slidesPerView: 4,
+        spaceBetween: 30,
+        loop: true,
+        navigation: {
+            nextEl: '.next-btn',
+            prevEl: '.prev-btn',
+        },
+        breakpoints: {
+            768: {
+                slidesPerView: 2,
+                spaceBetween: 10,
+            },
+            992: {
+                slidesPerView: 3,
+                spaceBetween: 5,
+            },
+        },
+    });
+});
+
+
+
+
+
+  </script>
+<style>
+
+  /* Styles for swiper container */
+.course-slider {
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+/* Styles for navigation buttons */
+.next-btn,
+.prev-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
+    
+    
+}
+
+
+
+
+  /* Styling for the recommended courses section */
+.recommended-courses {
+    margin-top: 20px;
+}
+/* Style for dots (...) after truncated text */
+.course-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Styling for each course card */
+.course-card {
+    margin-bottom: 20px;
+    width: 250px;
+    height: 600px;
+    margin-left: 80px;
+    
+}
+
+/* Decrease width of course card for small and medium devices */
+@media (max-width: 768px) {
+    .course-card {
+        width: 100%;
+    }
+}
+
+/* Decrease height of course card */
+.card {
+    height: 100%;
+}
+
+/* Styling for course descriptions */
+.course-description {
+    margin-bottom: 10px;
+}
+
+  </style>  
+    
+
+
     <!-- ======= Stats Counter Section ======= -->
     <section id="stats-counter" class="stats-counter">
       <div class="container" data-aos="fade-up">
@@ -468,7 +629,7 @@
 
             <div class="stats-item d-flex align-items-center">
               <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
-              <p><strong>Projects</strong> </p>
+              <p><strong>Courses</strong> </p>
             </div><!-- End Stats Item -->
 
             <div class="stats-item d-flex align-items-center">

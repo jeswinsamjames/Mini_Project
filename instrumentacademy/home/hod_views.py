@@ -211,7 +211,9 @@ def delete_student(request, student_id):
 
 def view_catgories(request):
     course = category.objects.all()
-    return render(request, 'hod_template/tutor_course_enroll.html', {'courses': course})
+    wishlist_count = 0
+    wishlist_count = WishlistItem.objects.filter(user=request.user).count()
+    return render(request, 'hod_template/tutor_course_enroll.html', {'courses': course,'wishlist_count': wishlist_count})
 
     
         # .........COURSE MANAGING...............
@@ -219,7 +221,8 @@ def view_catgories(request):
 def filtered_course_list(request, category_name):
     # Get the category object based on the category_id
     ccategory = get_object_or_404(category, name=category_name)
-   
+    wishlist_count = 0
+    wishlist_count = WishlistItem.objects.filter(user=request.user).count()
 
     # Filter courses based on the category object
     courses = CourseDetail.objects.filter(course=ccategory, is_active=True)
@@ -230,7 +233,8 @@ def filtered_course_list(request, category_name):
         
         'category': ccategory,
         'courses': courses,
-        'category_name':category_name
+        'category_name':category_name,
+        'wishlist_count': wishlist_count
     }   
     print(ccategory)
 

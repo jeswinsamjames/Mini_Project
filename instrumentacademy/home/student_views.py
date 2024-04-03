@@ -81,6 +81,8 @@ def edit_profile_learner(request):
 def enrolled_courses_list_leaner(request):
     learner = request.user
     enrolled_courses = Enrollment.objects.filter(learner=learner)
+    wishlist_count = 0
+    wishlist_count = WishlistItem.objects.filter(user=request.user).count()
     print(enrolled_courses) 
     not_started_courses = []
     ongoing_courses = []
@@ -103,6 +105,8 @@ def enrolled_courses_list_leaner(request):
         'not_started_courses': not_started_courses,
         'ongoing_courses': ongoing_courses,
         'completed_courses': completed_courses,
+                'wishlist_count': wishlist_count,
+
     }
     return render(request, 'student_template/My_learning.html', context)
 
@@ -527,11 +531,6 @@ def tutor_profile(request, course_id):
     learner=request.user
     enrolled_courses = Enrollment.objects.filter(learner=learner)
 
-
- 
-
-    
-
     context = {
         'course': course,
         'user_profile': user_profile,
@@ -606,11 +605,14 @@ def rating_review(request, course_id):
 def wishlist(request):
     if request.user.is_authenticated:
         wishlist = WishlistItem.objects.filter(user=request.user)
+        wishlist_count = 0
+        wishlist_count = WishlistItem.objects.filter(user=request.user).count()
         # Retrieve course ids from the wishlist items
         course_ids = [item.course.id for item in wishlist]
         # Retrieve course details based on the course ids
         courses = CourseDetail.objects.filter(pk__in=course_ids)
-        return render(request, 'student_template/wishlist.html', {'wishlist': wishlist, 'courses': courses})
+        return render(request, 'student_template/wishlist.html', {'wishlist': wishlist, 'courses': courses,'wishlist_count': wishlist_count,
+})
     else:
         return redirect('login')  # Redirect to login page
     

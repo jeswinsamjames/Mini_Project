@@ -46,7 +46,7 @@ class CourseDetail(models.Model):
         ('Basic', 'Basic'),
         ('Intermediate', 'Intermediate'),
         ('Advanced', 'Advanced'),
-        ]
+    ]
     GENRE_CHOICES = [
         ('Classical', 'Classical'),
         ('Jazz', 'Jazz'),
@@ -64,9 +64,28 @@ class CourseDetail(models.Model):
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='Basic')
     genre = models.CharField(max_length=20, choices=GENRE_CHOICES, blank=True, null=True)
     description = models.TextField()
+    sentiment_score = models.DecimalField(max_digits=3, decimal_places=2, null=True, default=0.00)  # Allow null values and set default to 0
     is_active = models.BooleanField(default=True)
     enrolled_learners = models.ManyToManyField(User, through='Enrollment', related_name='enrolled_courses')
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+   
+
+    def update_sentiment_score(self):
+        print("asds")
+        reviews=RatingReview.objects.filter(course=self)
+        print(121)
+        total_sentiment_score = sum(review.sentiment_score for review in reviews)
+        num_reviews = reviews.count()
+        if num_reviews > 0:
+            self.sentiment_score = total_sentiment_score / num_reviews
+        else:
+            self.sentiment_score = 0.00
+        self.save()
+
+
+ 
+    
     def experience_category(self):
         if self.years_of_experience <= 5:
             return '0-5 years'
@@ -85,9 +104,9 @@ class CourseDetail(models.Model):
         elif 1000 < self.amount <= 2000:
             return 'High budget'
         else:
-            return 'No budget constraints'  
+            return 'No budget constraints'
 
-    def __str__(self):
+    def str(self):
         return f"{self.name}"
 
 class Enrollment(models.Model):
@@ -203,18 +222,48 @@ class Certificate(models.Model):
     def str(self):
         return f"Certificate for {self.user.username} - {self.course.course_title}"
 
+# def calculate_sentiment_score(text):
+#     # Your sentiment analysis code using NLTK or any other library
+#     # Return sentiment score
+#     pass
 
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from django.db import models
+from django.contrib.auth.models import User
+from .models import CourseDetail
 
 class RatingReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(CourseDetail, on_delete=models.CASCADE)
     rating = models.IntegerField()
     review = models.TextField()
+    sentiment_score = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Rating: {self.rating}, Review: {self.review}"
+    def save(self, *args, **kwargs):
+        # Calculate sentiment score and save it
+        self.sentiment_score = self.calculate_sentiment_score(self.review)
+        super().save(*args, **kwargs)
+        self.course.update_sentiment_score()  # Update sentiment score of the associated course
+
+
+    def calculate_sentiment_score(self, text):
+        # Initialize NLTK's VADER sentiment analyzer
+        sid = SentimentIntensityAnalyzer()
+        # Calculate sentiment score
+        sentiment_score = sid.polarity_scores(text)['compound']
+        return sentiment_score
     
+    def calculate_sentiment_score(self, text):
+        # Initialize NLTK's VADER sentiment analyzer
+        sid = SentimentIntensityAnalyzer()
+        # Calculate sentiment score
+        sentiment_score = sid.polarity_scores(text)['compound']
+        return sentiment_score
+
+    def str(self):
+        return f"Rating: {self.rating}, Review: {self.review}"
 
 class WishlistItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
