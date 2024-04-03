@@ -145,12 +145,10 @@
                                 <div class="col-md-8">
                                     <h5 style="color: rgb(0, 0, 0);">₹ {{course.amount}}</h5>
                                     <p style="color: black;" class="card-text">{{ course.description }}</p>
-                                    {% if enrolled_courses %}
-                            {% if user in enrolled_courses.course.enrolled_learners.all %}
-                                <span class="btn btn-primary" style="width: 200px;">Enrolled</span>
-                            {% else %}
-                                <a href="/payment/homepage/{{ enrolled_courses.id }}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
-                            {% endif %}
+                            {% if yes %}
+                                    <span class="btn btn-primary" style="width: 200px;">Enrolled</span>
+                                {% else %}
+                                    <a href="/payment/homepage/{{ course.id }}" class="btn btn-primary" style="width: 200px;">Enroll Now</a>
                         {% endif %}
 
                                 </div>
@@ -241,7 +239,7 @@
 
           
         <!-- FAQ Section -->
-        <section id="faq" class="faq">
+        {% comment %} <section id="faq" class="faq">
           <div class="container">
             <h2>Frequently Asked Questions</h2>
             <!-- FAQ Accordion -->
@@ -264,7 +262,7 @@
               <!-- Add more FAQ items here -->
             </div>
           </div>
-        </section>
+        </section> {% endcomment %}
     
         <!-- Contact Section -->
         <section id="contact" class="contact">

@@ -530,6 +530,11 @@ def tutor_profile(request, course_id):
     comment_user_pairs = zip_longest(comments, user_profiles)
     learner=request.user
     enrolled_courses = Enrollment.objects.filter(learner=learner)
+    yes=None
+    for i in enrolled_courses:
+        if i.course==course:
+            yes=True
+    print(12356,enrolled_courses)
 
     context = {
         'course': course,
@@ -540,9 +545,7 @@ def tutor_profile(request, course_id):
         'user_profiles': user_profiles,
         'comment_user_pairs': comment_user_pairs,
         'enrolled_courses': enrolled_courses,
-
-       
-
+        'yes':yes
 
     }
     return render(request, "student_template/tutor_profile.html", context)
