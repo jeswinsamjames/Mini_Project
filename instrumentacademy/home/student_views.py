@@ -111,41 +111,60 @@ def enrolled_courses_list_leaner(request):
     return render(request, 'student_template/My_learning.html', context)
 
 def student_home(request):
-    # student = get_object_or_404(Student, admin=request.user)
-    # total_subject = Subject.objects.filter(course=student.course).count()
-    # total_attendance = AttendanceReport.objects.filter(student=student).count()
-    # total_present = AttendanceReport.objects.filter(student=student, status=True).count()
-    # if total_attendance == 0:  # Don't divide. DivisionByZero
-    #     percent_absent = percent_present = 0
-    # else:
-    #     percent_present = math.floor((total_present/total_attendance) * 100)
-    #     percent_absent = math.ceil(100 - percent_present)
-    # subject_name = []
-    # data_present = []
-    # data_absent = []
-    # subjects = Subject.objects.filter(course=student.course)
-    # for subject in subjects:
-    #     attendance = Attendance.objects.filter(subject=subject)
-    #     present_count = AttendanceReport.objects.filter(
-    #         attendance__in=attendance, status=True, student=student).count()
-    #     absent_count = AttendanceReport.objects.filter(
-    #         attendance__in=attendance, status=False, student=student).count()
-    #     subject_name.append(subject.name)
-    #     data_present.append(present_count)
-    #     data_absent.append(absent_count)
-    # context = {
-    #     'total_attendance': total_attendance,
-    #     'percent_present': percent_present,
-    #     'percent_absent': percent_absent,
-    #     'total_subject': total_subject,
-    #     'subjects': subjects,
-    #     'data_present': data_present,
-    #     'data_absent': data_absent,
-    #     'data_name': subject_name,
-    #     'page_title': 'Student Homepage'
+    # Retrieve student based on logged-in user
+    student_profile = UserProfile.objects.get(user=request.user)
 
-    # }
-    return render(request, 'student_template/home_content.html')
+    # Retrieve total number of subjects for the student's course
+    total_subjects = CourseDetail.objects.filter(tutor=student_profile.user).count()
+
+    # Retrieve total attendance reports for the student
+    total_attendance_reports = Attendance.objects.filter(learner=student_profile.user).count()
+
+    # Retrieve total number of present attendances for the student
+    total_present = Attendance.objects.filter(learner=student_profile.user, is_present=True).count()
+
+    # Calculate percentage present and percentage absent
+    if total_attendance_reports == 0:
+        percent_absent = percent_present = 0
+    else:
+        percent_present = round((total_present / total_attendance_reports) * 100)
+        percent_absent = 100 - percent_present
+
+    # Initialize lists to store subject names, present data, and absent data
+    subject_names = []
+    data_present = []
+    data_absent = []
+
+    # Retrieve subjects for the student's course
+    subjects = CourseDetail.objects.filter(tutor=student_profile.user)
+    for subject in subjects:
+        # Retrieve class schedules for the subject
+        class_schedules = ClassSchedule.objects.filter(course=subject)
+        
+        # Count attendance records for the student in each class schedule
+        attendance_count = Attendance.objects.filter(class_schedule__in=class_schedules, learner=student_profile.user).count()
+        present_count = Attendance.objects.filter(class_schedule__in=class_schedules, learner=student_profile.user, is_present=True).count()
+        absent_count = attendance_count - present_count
+        
+        # Append subject name and attendance data to respective lists
+        subject_names.append(subject.name)
+        data_present.append(present_count)
+        data_absent.append(absent_count)
+    
+    # Prepare context dictionary to pass data to template
+    context = {
+        'total_attendance': total_attendance_reports,
+        'percent_present': percent_present,
+        'percent_absent': percent_absent,
+        'total_subjects': total_subjects,
+        'subjects': subjects,
+        'data_present': data_present,
+        'data_absent': data_absent,
+        'subject_names': subject_names,
+        'page_title': 'Student Homepage'
+    }
+    
+    return render(request, 'student_template/home_content.html', context)
 
 
 def tutor_course_content(request, course_id):

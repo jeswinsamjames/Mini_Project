@@ -15,31 +15,54 @@ from django.core.paginator import Paginator
 from .forms import *
 from .models import *
 
+from django.db.models import Count
+from collections import Counter
+import json
 
 def admin_home(request):
-    tutor_count = UserProfile.objects.filter(isTutor=2).count()
+    # Count total students and tutors
     student_count = UserProfile.objects.filter(isTutor=0).count()
-    # course_count = Course.objects.count()
-    # attendance_list = Attendance.objects.filter(subject__in=subjects)
-    # total_attendance = attendance_list.count()
-    # attendance_list = []
-    # subject_list = []
-    # for subject in subjects:
-    #     attendance_count = Attendance.objects.filter(subject=subject).count()
-    #     subject_list.append(subject.name[:7])
-    #     attendance_list.append(attendance_count)
-    context = {
-    #     'page_title': "Administrative Dashboard",
-         'student_count': student_count,
-          'tutor_count': tutor_count,
-        # 'course_count': course_count,
-    #     'total_subject': total_subject,
-    #     'subject_list': subject_list,
-    #     'attendance_list': attendance_list
+    tutor_count = UserProfile.objects.filter(isTutor=2).count()
+    
+    # Count total courses
+    course_count = CourseDetail.objects.all().count()
+    
+    # Get attendance per course
+    attendance_per_course = Attendance.objects.values('course__name').annotate(attendance_count=Count('id'))
+    course_list = [item['course__name'] for item in attendance_per_course]
+    attendance_list = [item['attendance_count'] for item in attendance_per_course]
 
+    # Get attendance per student
+    attendance_per_student = Attendance.objects.values('learner__username').annotate(attendance_count=Count('id'))
+    student_list = [item['learner__username'] for item in attendance_per_student]
+    student_attendance_list = [item['attendance_count'] for item in attendance_per_student]
+    enrollment_data = Enrollment.objects.values('course__name').annotate(enrollment_count=Count('id'))
+
+    course_list = [item['course__name'] for item in enrollment_data]
+    enrollment_count_list = [item['enrollment_count'] for item in enrollment_data]
+
+    specializations = UserProfile.objects.values_list('specialist', flat=True).exclude(specialist__isnull=True)
+    specialization_counts = Counter(specializations)
+
+    # Prepare data in a format suitable for the chart
+    specialization_data = dict(specialization_counts)
+
+    # Convert the data to JSON format
+    specialization_data_json = json.dumps(specialization_data)
+
+
+    context = {
+        'student_count': student_count,
+        'tutor_count': tutor_count,
+        'course_count': course_count,
+        'course_list': course_list,
+        'attendance_list': attendance_list,
+        'student_list': student_list,
+        'student_attendance_list': student_attendance_list,
+        'enrollment_count_list' : enrollment_count_list,
+        'specialization_data_json': specialization_data_json
     }
     return render(request, 'hod_template/home_content.html', context)
-
 
 
 def manage_staff(request):

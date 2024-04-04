@@ -53,7 +53,7 @@
 
                 data.forEach(function(notification) {
                     var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
-                    var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+                    var notificationContent = '<span class="notification-content" style="color: black;">' + notification.content + '</span>';
                     var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
                     notificationItem.find('a').append(notificationContent + notificationTimestamp);
 
@@ -124,7 +124,7 @@
 
         data.forEach(function(notification) {
           var notificationItem = $('<li><a href="/scheduled-classes/' + '"></a></li>');
-          var notificationContent = '<span class="notification-content">' + notification.content + '</span>';
+          var notificationContent = '<span class="notification-content"  style="color: black;">' + notification.content + '</span>';
           var notificationTimestamp = '<span class="notification-timestamp">' + notification.timestamp + '</span>';
           notificationItem.find('a').append(notificationContent + notificationTimestamp);
 
@@ -298,8 +298,8 @@
                   </div>
               </a>
               
-              <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto;">
-                <p id="no-notifications-message" style="display: none;">No notifications</p>
+              <ul class="dropdown-menu" id="notification-panel" style="max-height: 300px; overflow-y: auto; ">
+                <p id="no-notifications-message" style="display: none; color: #000000;">No notifications</p>
 
                   <!-- Customize the appearance of notifications here -->
               </ul>
