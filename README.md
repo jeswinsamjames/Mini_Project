@@ -37,4 +37,4 @@ MusicLearn Hub is a project aimed at revolutionizing the way instrumental academ
 
 1. Run the Django development server:
 
-2. Access the MusicLearn Hub application in your web browser at [http://localhost:8000](http://localhost:8000).
+2. Access the MusicLearn Hub application in your web browser at [http://http://127.0.0.1:8000](http://localhost:8000).
