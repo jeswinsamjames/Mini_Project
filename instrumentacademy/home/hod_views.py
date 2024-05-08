@@ -234,8 +234,12 @@ def delete_student(request, student_id):
 
 def view_catgories(request):
     course = category.objects.all()
-    wishlist_count = 0
-    wishlist_count = WishlistItem.objects.filter(user=request.user).count()
+    if request.user.is_authenticated:
+        wishlist_count = WishlistItem.objects.filter(user=request.user).count()
+    else:
+        # Handle the case where the user is not authenticated
+        wishlist_count = 0  # Or whatever default value you want
+
     return render(request, 'hod_template/tutor_course_enroll.html', {'courses': course,'wishlist_count': wishlist_count})
 
     
@@ -245,7 +249,9 @@ def filtered_course_list(request, category_name):
     # Get the category object based on the category_id
     ccategory = get_object_or_404(category, name=category_name)
     wishlist_count = 0
-    wishlist_count = WishlistItem.objects.filter(user=request.user).count()
+    if request.user.is_authenticated:
+
+      wishlist_count = WishlistItem.objects.filter(user=request.user).count()
 
     # Filter courses based on the category object
     courses = CourseDetail.objects.filter(course=ccategory, is_active=True)

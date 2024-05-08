@@ -127,46 +127,14 @@
                         <div class="col-md-3 course-card1">
                             <div class="card mb-4 course-card">
                                 <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
-                                <div class="dropdown">
-                                  
-                                  <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
-                                      <li></li>
-                                      <li></li>
-                                      <li></li>
-                                  </ul>
-                                  
-                                  <div id="myDropdown" class="dropdown-content">
-        
-                                    <a href="#" style="text-decoration: none;">
-                                        <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
-                                        
-                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                            <use xlink:href="#icon-share"></use>
-                                        </svg>
-                                        
-                                        Share
-                                    </a>
-                                    
-                                      
-                                   
-                                    <a href="#">
-                                        <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
-        
-                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
-                                            <!-- Replace this with the appropriate icon ID for "Wishlist" -->
-                                            <use xlink:href="#icon-wishlist"></use>
-                                        </svg>
-                                        Wishlist
-                                    </a>
-                                  </div>
-                              </div>
+                                
         
                                 <div class="card-body">
                                     <h5 class="card-title">{{ course.name }}</h5>
                                     
                                     <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
                                     <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
-                                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                                    <p class="card-text"><strong>Description:</strong> {{ course.description |truncatewords:10 }}</p>
                                 </div>
                                 <div class="card-footer">
                                     <!-- Enroll and See Details Links with Line Separator -->
@@ -205,46 +173,14 @@
                         <div class="col-md-3 course-card1">
                             <div class="card mb-4 course-card">
                                 <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
-                                <div class="dropdown">
-                                  
-                                  <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
-                                      <li></li>
-                                      <li></li>
-                                      <li></li>
-                                  </ul>
-                                  
-                                  <div id="myDropdown" class="dropdown-content">
-        
-                                    <a href="#" style="text-decoration: none;">
-                                        <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
-                                        
-                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                            <use xlink:href="#icon-share"></use>
-                                        </svg>
-                                        
-                                        Share
-                                    </a>
-                                    
-                                      
-                                   
-                                    <a href="#">
-                                        <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
-        
-                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
-                                            <!-- Replace this with the appropriate icon ID for "Wishlist" -->
-                                            <use xlink:href="#icon-wishlist"></use>
-                                        </svg>
-                                        Wishlist
-                                    </a>
-                                  </div>
-                              </div>
+                                
         
                                 <div class="card-body">
                                     <h5 class="card-title">{{ course.name }}</h5>
                                     
                                     <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
                                     <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
-                                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                                    <p class="card-text"><strong>Description:</strong> {{ course.description |truncatewords:10 }}</p>
                                 </div>
                                 <div class="card-footer">
                                     <!-- Enroll and See Details Links with Line Separator -->
@@ -287,46 +223,14 @@
                         <div class="col-md-3 course-card1">
                             <div class="card mb-4 course-card">
                                 <img class="courseimg" src="{% if course.image %}{{ course.image.url }}{% else %}{% static 'placeholder.png' %}{% endif %}" class="card-img-top" alt="Course Image">
-                                <div class="dropdown">
-                                  
-                                  <ul class="dropbtn icons btn-right showLeft" onclick="showDropdown()">
-                                      <li></li>
-                                      <li></li>
-                                      <li></li>
-                                  </ul>
-                                  
-                                  <div id="myDropdown" class="dropdown-content">
-        
-                                    <a href="#" style="text-decoration: none;">
-                                        <img src="{% static 'images/share.svg' %}" alt="al"  style="width: 20px; height: 20px;">
-                                        
-                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon" width="16" height="16">
-                                            <use xlink:href="#icon-share"></use>
-                                        </svg>
-                                        
-                                        Share
-                                    </a>
-                                    
-                                      
-                                   
-                                    <a href="#">
-                                        <img src="{% static 'images/fav.svg' %}" alt="al" style="width: 18px; height: 18px;">
-        
-                                        <svg aria-hidden="true" focusable="false" class="ud-icon ud-icon-xsmall ud-block-list-item-icon"width="16" height="16">
-                                            <!-- Replace this with the appropriate icon ID for "Wishlist" -->
-                                            <use xlink:href="#icon-wishlist"></use>
-                                        </svg>
-                                        Wishlist
-                                    </a>
-                                  </div>
-                              </div>
+                               
         
                                 <div class="card-body">
                                     <h5 class="card-title">{{ course.name }}</h5>
                                     
                                     <p class="card-text"><strong>Tutor:</strong> {{ course.tutor.first_name }}  {{ course.tutor.last_name }}</p>
                                     <p class="card-text"><strong>Years of Experience:</strong> {{ course.years_of_experience }}</p>
-                                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                                    <p class="card-text"><strong>Description:</strong> {{ course.description |truncatewords:10 }}</p>
                                 </div>
                                 <div class="card-footer">
                                     <!-- Enroll and See Details Links with Line Separator -->
@@ -413,6 +317,7 @@
 
 
     </script>
+    
     <style>
   
 
